@@ -5,6 +5,7 @@ Private/GPU integrations are outside this declared offline acceptance suite.
 """
 from pathlib import Path
 import argparse,hashlib,json,os,re,subprocess,sys
+from urllib.parse import urlsplit
 MEDIA=('workspace/video/aegis-final-demo-20260929.mp4',
        'workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4',
        'workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx')
@@ -80,6 +81,23 @@ def number_assertions(root):
             except (OSError,ValueError,KeyError,TypeError,IndexError):problems.append('unreadable claim: '+claim['claim_id'])
     return count,problems
 
+def readme_links(root):
+    text=(root/'README.md').read_text(encoding='utf-8')
+    targets=(re.findall(r'\]\(([^)]+)\)',text)
+             +re.findall(r'(?:src|href)="([^"]+)"',text)
+             +re.findall(r'git clone (https?://\S+)',text))
+    problems=[]
+    for target in targets:
+        if target.startswith('#'):continue
+        if target.startswith(('http://','https://')):
+            if '<' in target or '>' in target or not urlsplit(target).netloc:
+                problems.append('invalid README URL')
+            continue
+        local=(root/target.split('#')[0]).resolve()
+        if not local.is_relative_to(root) or not local.exists():
+            problems.append('missing README link target: '+target)
+    return problems
+
 def check(root):
     problems=[]
     try:
@@ -90,6 +108,7 @@ def check(root):
     for rel in (*REQUIRED,*MEDIA):
         if not (root/rel).is_file():problems.append('missing required asset: '+rel)
         if rel not in files:problems.append('asset absent from manifest: '+rel)
+    if (root/'README.md').is_file():problems.extend(readme_links(root))
     for rel,entry in files.items():
         p=(root/rel).resolve()
         if not p.is_relative_to(root):problems.append('outside inventory path: '+rel);continue

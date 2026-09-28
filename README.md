@@ -2,7 +2,7 @@
 
 <p align="center"><strong>红蓝对抗 · 模型自修补 · JEV 流量判官 · 递归自我改进</strong><br/>运行于 NVIDIA DGX Spark 的多智能体安全改进系统</p>
 
-<p align="center"><a href="https://github.com/<user>1995/aegis-dgx-spark/releases">演示与下载</a> · <a href="#核心优势">核心优势</a> · <a href="#系统架构">系统架构</a> · <a href="#快速开始">快速开始</a> · <a href="docs/ten-days.md">十日谈</a></p>
+<p align="center"><a href="https://github.com/okone1995/aegis-dgx-spark/releases">演示与下载</a> · <a href="#核心优势">核心优势</a> · <a href="#系统架构">系统架构</a> · <a href="#快速开始">快速开始</a> · <a href="docs/ten-days.md">十日谈</a></p>
 
 ## 项目是什么
 
@@ -49,7 +49,7 @@ FastAPI 与 SSE 将每轮红蓝对抗、JEV 判断、补丁 diff、门禁、复�
 | [四分钟完整演示](workspace/video/aegis-final-demo-20260929.mp4) | 保险安全需求 → 红蓝对抗 → JEV 判读 → 模型修补与复测 → RSI 经验回流 → Skills 调用 |
 | [44 秒真实 Skills 执行](workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4) | CLI 与实时大屏同屏，中文旁白，等待段标注 4× 加速 |
 | [9 页项目 PPT](workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx) | 项目价值、RSI、架构、JEV、实测成果与技能复用 |
-| [Release 下载](https://github.com/<user>1995/aegis-dgx-spark/releases) | 一次下载源码、演示材料和证据 |
+| [Release 下载](https://github.com/okone1995/aegis-dgx-spark/releases) | 一次下载源码、演示材料和证据 |
 
 ## 系统架构
 
@@ -187,7 +187,7 @@ aegis-dgx-spark/
 ### 1. 获取项目并安装依赖
 
 ```bash
-git clone https://github.com/<user>1995/aegis-dgx-spark.git
+git clone https://github.com/okone1995/aegis-dgx-spark.git
 cd aegis-dgx-spark
 python -m venv .venv
 ```
