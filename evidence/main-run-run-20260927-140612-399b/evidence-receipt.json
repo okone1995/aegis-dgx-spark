@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "run_id": "run-20260927-140612-399b",
+  "case_id": "sqli",
+  "finding_id": "F-001",
+  "state": {
+    "value": "succeeded",
+    "source": "run.json:state"
+  },
+  "pre_patch_attack": {
+    "flow_id": "FL-003",
+    "seq": 7,
+    "replay_of": "",
+    "source": "seq:7"
+  },
+  "post_patch_replays": [
+    {
+      "flow_id": "FL-004",
+      "seq": 24,
+      "replay_of": "FL-003",
+      "source": "seq:24"
+    },
+    {
+      "flow_id": "FL-005",
+      "seq": 26,
+      "replay_of": "FL-003",
+      "source": "seq:26"
+    }
+  ],
+  "deploy_seq": 20,
+  "business_before_patch": {
+    "value": true,
+    "source": "seq:5",
+    "flow_id": "",
+    "phase": "baseline",
+    "keyword": "图书馆"
+  },
+  "business_after_patch": {
+    "value": true,
+    "source": "seq:23",
+    "flow_id": "",
+    "phase": "verify",
+    "keyword": "不存在关键字xyz"
+  },
+  "patch_candidate": {
+    "sha256": "ac34f26f45e20589b3e124a8804040b1570d57eaa02b45bc68b043e6301e612a",
+    "orig_sha256": "4b7c0d2d2e9a7a03303eb1b9540a152ca8f1e352cbd234c203ce08111e1bcfd5",
+    "diff_len": 1135,
+    "diff_sha256": "d0d2d8fa71a525a43f628a1684a3bcd8b7cd365ef2c6d9bac8c205835d865d50",
+    "mode": "llm_guided",
+    "model": "qwen",
+    "provider": "qwen",
+    "template": "fix.patch.tpl",
+    "template_sha256": "00e18b39d6ec30609c7c57e8e1655462915f77d82c192b745751df5a79a09cdf",
+    "source": "seq:16"
+  },
+  "deployed_hash": {
+    "value": "ac34f26f45e20589b3e124a8804040b1570d57eaa02b45bc68b043e6301e612a",
+    "source": "seq:20"
+  },
+  "gates": {
+    "value": {
+      "diff_bounds": "PASS",
+      "backdoor": "PASS",
+      "llm_hetero": "PASS"
+    },
+    "pass": true,
+    "reasons": [],
+    "provider": "step",
+    "source": "seq:18"
+  },
+  "verification": {
+    "blocked": {
+      "value": true,
+      "source": "artifact:verification.json"
+    },
+    "auth_valid": {
+      "value": true,
+      "source": "artifact:verification.json"
+    },
+    "network_error": {
+      "value": false,
+      "source": "artifact:verification.json"
+    },
+    "exchanges": {
+      "value": 2,
+      "source": "artifact:verification.json"
+    },
+    "replay_hit": {
+      "value": 0,
+      "source": "artifact:verification.json"
+    },
+    "replay_total": {
+      "value": 2,
+      "source": "artifact:verification.json"
+    },
+    "business_pass": {
+      "value": true,
+      "source": "artifact:verification.json"
+    },
+    "marker_hit": {
+      "value": false,
+      "source": "artifact:verification.json"
+    },
+    "repair_outcome": {
+      "value": "verified",
+      "source": "artifact:verification.json"
+    }
+  },
+  "functional_tests": {
+    "value": {
+      "status": "passed",
+      "exit_code": 0,
+      "tail": "...........                                                              [100%]\n11 passed in 0.07s\n"
+    },
+    "source": "artifact:verification.json"
+  },
+  "learning": {
+    "value": 5,
+    "duplicates": 4,
+    "source": "seq:38"
+  },
+  "cleanup": {
+    "value": "restored",
+    "policy": "restore",
+    "restored_sha256": "4b7c0d2d2e9a7a03303eb1b9540a152ca8f1e352cbd234c203ce08111e1bcfd5",
+    "restore_matches_pre_patch_source": true,
+    "source": "seq:40"
+  },
+  "generated_at": "2026-09-27T14:07:44.761Z",
+  "note": "每项标源 seq 或工件;缺失一律 unknown,不默认 PASS;不内联密码或完整请求/响应。"
+}

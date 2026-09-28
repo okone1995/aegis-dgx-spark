@@ -1,0 +1,9 @@
+{"flow_id": "FL-001", "ts": "2026-09-27T14:06:13.160Z", "alerts": []}
+{"flow_id": "FL-002", "ts": "2026-09-27T14:06:13.256Z", "alerts": []}
+{"flow_id": "FL-003", "ts": "2026-09-27T14:06:13.370Z", "alerts": [{"id": "O-001", "class": "sqli", "endpoint": "http://127.0.0.1:8081/news/search", "confidence": 0.95, "reasoning": "rule:SQ-001"}]}
+{"flow_id": "FL-004", "ts": "2026-09-27T14:07:43.292Z", "alerts": [{"id": "O-001", "class": "sqli", "endpoint": "http://127.0.0.1:8081/news/search", "confidence": 0.95, "reasoning": "rule:SQ-001"}]}
+{"flow_id": "FL-005", "ts": "2026-09-27T14:07:43.407Z", "alerts": [{"id": "O-001", "class": "sqli", "endpoint": "http://127.0.0.1:8081/news/search", "confidence": 0.95, "reasoning": "rule:SQ-001"}]}
+{"flow_id": "FL-006", "ts": "2026-09-27T14:07:43.525Z", "alerts": []}
+{"flow_id": "FL-007", "ts": "2026-09-27T14:07:43.620Z", "alerts": []}
+{"flow_id": "FL-008", "ts": "2026-09-27T14:07:43.715Z", "alerts": []}
+{"flow_id": "FL-009", "ts": "2026-09-27T14:07:43.792Z", "alerts": []}

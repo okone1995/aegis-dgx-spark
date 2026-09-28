@@ -1,0 +1,66 @@
+# Aegis target profile —— 把"目标"从代码变成数据（T11/S1，fork 版）
+kind: php                    # 目标语言/运行时家族 → 决定语法门禁与部署工具
+name: edu-lite
+display: edu-lite 教学靶场（A 实例）
+
+paths:
+  root: target/edu-lite
+  canonical_sources:         # 修补层读写的"正本"（多文件时逐一列出）
+    - src/app.php
+  deploy_cmd: bash target/edu-lite/deploy.sh   # 部署命令（cwd=仓库根）
+  runtime_dir: target/edu-lite/runtime/a       # 实例运行时目录
+
+gates:
+  syntax: php -l {file}      # {file} 为待检文件占位
+  functional_test: python -m pytest target/edu-lite/tests/test_functional.py -q
+  functional_test_env:       # 功能测试需要的环境变量（{base}/{instance} 由引擎展开）
+    EDU_BASE: "{base}"
+    EDU_INSTANCE: "{instance}"
+  benign_traffic: python target/edu-lite/tools/benign_traffic.py
+
+auth:                        # 目标认证形态（换目标时这里是最常变的一项）
+  mode: form_login           # none | form_login
+  login_path: /login
+  user_field: username
+  pass_field: password
+  cookie: edu_session
+
+instances:
+  a:
+    base: http://127.0.0.1:8081
+    label: development
+    surface:            # 回放层实例表面参数（与历史 INSTANCE_CFG["a"] 逐字同源）
+      search_param: q
+      avatar_field: avatar
+      import_param: backup
+      sig_field: signature
+      avatar_url_field: avatar_url
+      dl_param: file
+      uid_param: uid
+      cookie: edu_session
+  b:
+    base: http://127.0.0.1:8082
+    label: evaluation-only   # 留存评估实例，生产流程拒用
+    surface:
+      search_param: keyword
+      avatar_field: picture
+      import_param: restore
+      sig_field: motto
+      avatar_url_field: pic_url
+      dl_param: path
+      uid_param: target
+      cookie: session_key
+
+# 语料与载荷适配（attacker 用）：edu-lite 的 ThinkPHP 形态教材关键词映射
+corpus:
+  keys:
+    sqli: [union, select, 注入, 报错]
+    xss_stored: [script, 存储, 弹幕]
+    idor: [越权, 水平, id]
+    lfi: [包含, 路径, 文件]
+    ssrf: [请求, 内网, url]
+    upload_bypass: [上传, 后缀, mime]
+    rce_deser: [反序列化, 命令执行]
+    brute_no_lock: [爆破, 锁定, 尝试]
+
+marker_semantics: error_echo    # edu-lite 回显 SQL 错误 ⇒ marker 判定依赖响应回显

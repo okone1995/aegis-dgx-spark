@@ -1,0 +1,406 @@
+{
+ "run_at": "2026-09-25T05:30:45+0000",
+ "device": "NVIDIA GB10",
+ "torch": "2.13.0+cu130",
+ "transformers": "5.17.0",
+ "peft": "0.21.0",
+ "model": {
+  "base": "/home/<user>/aegis/models/ms/models/Qwen--Qwen3.5-4B/snapshots/master",
+  "adapter": "models/judge_v1_adapter",
+  "dtype": "bf16",
+  "merged": true
+ },
+ "load_seconds": 50.5,
+ "samples": 40,
+ "warmup_excluded": 5,
+ "single_shot_ms": {
+  "mean": 81.2,
+  "median": 73.6,
+  "p95": 118.2,
+  "min": 67.1,
+  "max": 172.5
+ },
+ "throughput_1by1_per_second": 12.31,
+ "agreement_with_5090": {
+  "acc_on_subset": 0.95,
+  "subset_note": "n 小且取自 B held-out 前 N 条，仅作换机判读一致性检查，不得作为对外准确率数字（对外准确率只有 D7 全卷口径）",
+  "status": "ok",
+  "ref": "bench/train/results/d7_b/samples_b_clean.jsonl",
+  "ref_n_rows": 7266,
+  "n_joined": 40,
+  "n_skipped_unjoined": 0,
+  "max_abs_drift": 0.00029,
+  "mean_abs_drift": 2.5e-05,
+  "verdict_flips": 0,
+  "flip_sample_ids": [],
+  "ref_protocol": "5090 侧 eval_logit batch=32 + left padding；本机 batch=1。漂移含硬件与批形两个变量，不可归因为单一"
+ },
+ "rows": [
+  {
+   "sample_id": "74a6e4df31bd",
+   "class": "benign",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 1e-06,
+   "ms": 1246.0,
+   "prompt_tokens": 183
+  },
+  {
+   "sample_id": "0a82667f5e13",
+   "class": "benign",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 3e-06,
+   "ms": 76.6,
+   "prompt_tokens": 96
+  },
+  {
+   "sample_id": "3d57618ec522",
+   "class": "brute_no_lock",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.998675,
+   "ms": 86.1,
+   "prompt_tokens": 145
+  },
+  {
+   "sample_id": "82fe35cce566",
+   "class": "brute_no_lock",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.997817,
+   "ms": 69.7,
+   "prompt_tokens": 85
+  },
+  {
+   "sample_id": "884756434acd",
+   "class": "idor",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.998073,
+   "ms": 72.9,
+   "prompt_tokens": 106
+  },
+  {
+   "sample_id": "54e3594660b3",
+   "class": "idor",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.997527,
+   "ms": 68.0,
+   "prompt_tokens": 89
+  },
+  {
+   "sample_id": "32884c5f2d85",
+   "class": "lfi",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99977,
+   "ms": 172.5,
+   "prompt_tokens": 478
+  },
+  {
+   "sample_id": "2ea87ad4a774",
+   "class": "lfi",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99962,
+   "ms": 68.7,
+   "prompt_tokens": 79
+  },
+  {
+   "sample_id": "c6a6e0540c26",
+   "class": "nearmiss",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 3.5e-05,
+   "ms": 83.6,
+   "prompt_tokens": 157
+  },
+  {
+   "sample_id": "302d9c5a0616",
+   "class": "nearmiss",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 5.8e-05,
+   "ms": 68.0,
+   "prompt_tokens": 90
+  },
+  {
+   "sample_id": "2e5c0b35dec8",
+   "class": "rce_deser",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99929,
+   "ms": 85.0,
+   "prompt_tokens": 147
+  },
+  {
+   "sample_id": "da7d40789d5d",
+   "class": "rce_deser",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999196,
+   "ms": 80.9,
+   "prompt_tokens": 134
+  },
+  {
+   "sample_id": "9b91b5c8e5f0",
+   "class": "sqli",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999877,
+   "ms": 118.9,
+   "prompt_tokens": 307
+  },
+  {
+   "sample_id": "a946c51966b2",
+   "class": "sqli",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999842,
+   "ms": 73.3,
+   "prompt_tokens": 111
+  },
+  {
+   "sample_id": "8942b11a0e82",
+   "class": "ssrf",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999089,
+   "ms": 83.9,
+   "prompt_tokens": 150
+  },
+  {
+   "sample_id": "b07c6f6c9776",
+   "class": "ssrf",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99883,
+   "ms": 67.8,
+   "prompt_tokens": 96
+  },
+  {
+   "sample_id": "30d0c05bc4ce",
+   "class": "upload_bypass",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999089,
+   "ms": 88.7,
+   "prompt_tokens": 191
+  },
+  {
+   "sample_id": "f9c8fbeb9fb4",
+   "class": "upload_bypass",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999089,
+   "ms": 73.1,
+   "prompt_tokens": 123
+  },
+  {
+   "sample_id": "5cc027e82730",
+   "class": "xss_stored",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99962,
+   "ms": 72.7,
+   "prompt_tokens": 126
+  },
+  {
+   "sample_id": "f8261575fd8d",
+   "class": "xss_stored",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999512,
+   "ms": 69.7,
+   "prompt_tokens": 98
+  },
+  {
+   "sample_id": "bdbc1ca6dfe0",
+   "class": "benign",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 1e-06,
+   "ms": 86.5,
+   "prompt_tokens": 183
+  },
+  {
+   "sample_id": "8e52d593323e",
+   "class": "benign",
+   "gt": "benign",
+   "pred": "benign",
+   "p_attack": 5e-06,
+   "ms": 72.0,
+   "prompt_tokens": 97
+  },
+  {
+   "sample_id": "959c8c31361d",
+   "class": "brute_no_lock",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.998675,
+   "ms": 83.1,
+   "prompt_tokens": 145
+  },
+  {
+   "sample_id": "654457d4de9c",
+   "class": "brute_no_lock",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.997817,
+   "ms": 67.7,
+   "prompt_tokens": 85
+  },
+  {
+   "sample_id": "27e64546cb33",
+   "class": "idor",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99883,
+   "ms": 70.1,
+   "prompt_tokens": 106
+  },
+  {
+   "sample_id": "fbc16fae126e",
+   "class": "idor",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.998073,
+   "ms": 67.1,
+   "prompt_tokens": 89
+  },
+  {
+   "sample_id": "dad191f5f699",
+   "class": "lfi",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999821,
+   "ms": 118.2,
+   "prompt_tokens": 314
+  },
+  {
+   "sample_id": "301d13adfdb1",
+   "class": "lfi",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999665,
+   "ms": 68.9,
+   "prompt_tokens": 80
+  },
+  {
+   "sample_id": "5b2f4a1f1e97",
+   "class": "nearmiss",
+   "gt": "benign",
+   "pred": "attack",
+   "p_attack": 0.998073,
+   "ms": 81.8,
+   "prompt_tokens": 146
+  },
+  {
+   "sample_id": "7730c63a1eab",
+   "class": "nearmiss",
+   "gt": "benign",
+   "pred": "attack",
+   "p_attack": 0.998073,
+   "ms": 68.2,
+   "prompt_tokens": 79
+  },
+  {
+   "sample_id": "c878473ef46a",
+   "class": "rce_deser",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99929,
+   "ms": 81.8,
+   "prompt_tokens": 147
+  },
+  {
+   "sample_id": "6658b6d6d832",
+   "class": "rce_deser",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999196,
+   "ms": 81.9,
+   "prompt_tokens": 134
+  },
+  {
+   "sample_id": "194addc5dbc1",
+   "class": "sqli",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99986,
+   "ms": 85.3,
+   "prompt_tokens": 181
+  },
+  {
+   "sample_id": "4193de93a5d6",
+   "class": "sqli",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999739,
+   "ms": 70.9,
+   "prompt_tokens": 98
+  },
+  {
+   "sample_id": "836f39901765",
+   "class": "ssrf",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999089,
+   "ms": 83.0,
+   "prompt_tokens": 150
+  },
+  {
+   "sample_id": "fcc6ae29e01b",
+   "class": "ssrf",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99883,
+   "ms": 67.5,
+   "prompt_tokens": 96
+  },
+  {
+   "sample_id": "0d9e13d320e8",
+   "class": "upload_bypass",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99883,
+   "ms": 87.0,
+   "prompt_tokens": 191
+  },
+  {
+   "sample_id": "04044007aca8",
+   "class": "upload_bypass",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.99883,
+   "ms": 73.6,
+   "prompt_tokens": 123
+  },
+  {
+   "sample_id": "fa30697d0f05",
+   "class": "xss_stored",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999704,
+   "ms": 81.9,
+   "prompt_tokens": 134
+  },
+  {
+   "sample_id": "a0128ba24a65",
+   "class": "xss_stored",
+   "gt": "attack",
+   "pred": "attack",
+   "p_attack": 0.999665,
+   "ms": 71.0,
+   "prompt_tokens": 104
+  }
+ ],
+ "mem_available_gib_before_load": 15.74,
+ "caveats": [
+  "单发口径（batch=1），非批量；5090 的 18.5ms/条是批量口径，不可直接比较",
+  "Spark 统一内存：nvidia-smi 显存字段报 N/A，不得引用'显存'口径",
+  "本测的是 transformers bf16 合并权重前向，不是 GGUF/llama.cpp 量化路径——对外写'GGUF 单发时延'即为口径造假"
+ ]
+}

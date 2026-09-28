@@ -1,0 +1,20 @@
+skill: secaudit-run
+runner:
+  primary: pyrunner            # 编排器本身就是确定性引擎——它消费其他技能的工具
+  fallback: pyrunner
+entry:
+  engine: engine.runloop.main  # CLI: python -m engine.runloop --base ... --class ...
+  marathon: engine.marathon.main
+  blackboard: engine.blackboard.Blackboard
+  scope_gate: engine.scope.Scope
+  skills: [secaudit-recon, secaudit-attack, secaudit-detect, secaudit-patch, secaudit-verify, secaudit-report]
+cli: python -m engine.runloop --base http://127.0.0.1:8081 --instance a --class <cls> --runtime <dir>
+tools: [scope-gate, policy-gate, blackboard, http, git, llm:local-qwen, llm:step, subprocess]
+providers:
+  orchestration: deterministic  # 编排零 LLM；LLM 仅在子技能决策点
+output:
+  blackboard: workspace/（findings/alerts/flow/audit-log/rounds）
+  schema: engine.models.*
+headless:
+  cmd: step -p --mode json --no-session --append-system-prompt SKILL.md
+  append_system_prompt: SKILL.md

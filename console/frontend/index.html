@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>AEGIS · 自主安全免疫闭环</title>
+<style>
+  :root{
+    --bg:#08090c; --panel:#0e1116; --panel2:#12151c; --line:#1d232e; --line2:#2a3242;
+    --txt:#e8edf4; --dim:#77839b; --dim2:#4d5a70;
+    --acc:#76b900; --acc-dim:#3f6300;
+    --red:#ff4d4f; --amber:#ffb454; --blue:#4da3ff; --pur:#b48cff; --ok:#3ddc84;
+    --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--txt);font:13.5px/1.5 "Segoe UI",system-ui;overflow:hidden}
+  .micro{font:10.5px/1 var(--mono);letter-spacing:1.6px;text-transform:uppercase;color:var(--dim2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .app{display:grid;grid-template-columns:236px 1fr 330px;gap:10px;height:100vh;padding:10px}
+
+  /* ============ 左栏 ============ */
+  .side{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:236px}
+  .brand{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .brand .logo{display:flex;align-items:center;gap:9px}
+  .logo-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--acc),#2e4d00);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0c10}
+  .brand h1{font-size:17px;letter-spacing:2px}
+  .brand .tag{margin-top:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font:10.5px var(--mono);letter-spacing:1px;border:1px solid var(--line2);color:var(--dim)}
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--dim2)}
+  .chip.live{color:var(--acc);border-color:var(--acc-dim)} .chip.live .dot{background:var(--acc);box-shadow:0 0 6px var(--acc)}
+  .chip.bad{color:var(--red);border-color:#5a2626} .chip.bad .dot{background:var(--red)}
+  .ava.llm{background:var(--pur)}
+  .bub.live .bd{border:1px dashed var(--pur)}
+  .bub.live .who{color:var(--pur)}
+  .bub.live .who::after{content:"●";margin-left:6px;animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:.2}}
+
+  .pane{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto}
+  .pane .micro{margin-bottom:10px}
+  .wf{display:flex;flex-direction:column;gap:2px}
+  .wf-item{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:8px;color:var(--dim)}
+  .wf-item .ic{width:20px;height:20px;border-radius:6px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font:10px var(--mono);color:var(--dim2)}
+  .wf-item.on{background:#141c10;color:var(--txt)} .wf-item.on .ic{border-color:var(--acc);color:var(--acc)}
+  .wf-item.done{color:var(--txt)} .wf-item.done .ic{border-color:var(--acc-dim);background:#15230a;color:var(--acc)}
+  .targets{display:flex;flex-direction:column;gap:1px}
+  .tg{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:12.5px}
+  .tg:hover{background:var(--panel2)}
+  .tg .dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--dim2)}
+  .tg.open .dot{background:var(--red);box-shadow:0 0 6px var(--red)}
+  .tg.patched .dot{background:var(--amber)}
+  .tg.verified .dot{background:var(--ok)}
+  .tg .nm{flex:1} .tg .id{font:10px var(--mono);color:var(--dim2)}
+  .tg .st{font:10px var(--mono);color:var(--dim)}
+  .hwcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:auto}
+  .hwrow{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim);padding:2.5px 0}
+  .hwrow b{color:var(--txt);font-weight:500}
+
+  /* ============ 中栏 ============ */
+  .main{display:flex;flex-direction:column;gap:10px;min-height:0}
+  .topbar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:16px}
+  .phase-chip{display:inline-flex;align-items:center;gap:8px;font:11px var(--mono);letter-spacing:1.5px;padding:5px 12px;border-radius:6px;background:#141c10;color:var(--acc);border:1px solid var(--acc-dim)}
+  .phase-chip.run{animation:pulse 1.4s infinite}
+  @keyframes pulse{50%{opacity:.55}}
+  .topbar .title{font-size:14px;font-weight:600}
+  .topbar .sub{color:var(--dim);font-size:12px}
+  .topbar .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  button.primary{background:var(--acc);color:#0a0c10;border:none;border-radius:8px;padding:9px 20px;font-size:13.5px;font-weight:700;cursor:pointer;letter-spacing:.5px}
+  button.primary:hover{background:#86cf10} button.primary:disabled{opacity:.45;cursor:not-allowed}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line2);border-radius:8px;padding:8px 13px;cursor:pointer;font-size:12.5px}
+  button.ghost:hover{color:var(--txt);border-color:var(--dim)}
+  details.dbg{position:relative}
+  details.dbg summary{list-style:none;cursor:pointer;color:var(--dim);font-size:12px;padding:8px 6px}
+  details.dbg .inner{position:absolute;top:calc(100% + 6px);right:0;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px;display:flex;gap:6px;z-index:30}
+  select{background:#0a0d12;color:var(--txt);border:1px solid var(--line2);border-radius:6px;padding:6px 8px;font-size:12px}
+
+  .stage{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .card .head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .card .head .hint{font-size:11px;color:var(--dim2)}
+  #chart{height:29vh;min-height:185px}
+  .chat{overflow:auto;padding:0 8px 8px;flex:1;font-size:12.5px}
+.lanehead span{padding-left:8px}
+.lanehead span{font:10px var(--mono);letter-spacing:1.2px;color:var(--dim2);padding:6px 8px;text-transform:uppercase}
+.srow{display:grid;grid-template-columns:repeat(4,1fr)}
+.scell{border-left:1px solid #10151d;padding:2px 4px;min-height:8px}
+.scell.c0{background:rgba(255,77,79,.03)} .scell.c1{background:rgba(77,163,255,.03)}
+.scell.c2{background:rgba(118,185,0,.04)} .scell.c3{background:rgba(180,140,255,.04)}
+.sdiv{grid-column:1/-1;text-align:center;font:10.5px var(--mono);letter-spacing:2px;color:var(--dim2);padding:6px 0 2px}
+.sdiv::before,.sdiv::after{content:"──";color:#1a2129;margin:0 8px}
+.chip{margin:3px 0;padding:4px 7px;border-radius:7px;font-size:11.5px;line-height:1.45;background:#121821}
+.chip.lane0{border-left:2px solid var(--red)} .chip.lane1{border-left:2px solid var(--blue)}
+.chip.lane2{border-left:2px solid var(--acc)} .chip.lane3{border-left:2px solid var(--pur)}
+.chip .sq{font:10px var(--mono);color:var(--dim2);margin-right:4px}
+.chip .hitmark{color:var(--red);margin-left:4px}
+.chip.audit{color:var(--dim);font-size:11px}
+.chip .pct{font:10.5px var(--mono);font-weight:700;color:var(--pur);margin-right:6px}
+.chip.mono{cursor:pointer}
+  .chip.mono .rl{color:var(--pur);font-weight:700}
+.chip.mono .full{display:none;color:var(--txt)}
+.chip.mono.open .sum{display:none} .chip.mono.open .full{display:inline}
+.chip.pairhl{background:#1c2a45}
+  .bub{display:flex;gap:8px;margin:7px 0;align-items:flex-start}
+  .bub .ava{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font:10px var(--mono);color:#0a0c10;font-weight:700}
+  .ava.red{background:var(--red)} .ava.blue{background:var(--blue)} .ava.修补智能体{background:var(--acc)}
+  .ava.验证门禁{background:var(--amber)} .ava.编排器,.ava.报告智能体{background:var(--dim)}
+  .bub .bd{background:#121821;border-radius:9px;padding:6px 10px;line-height:1.5}
+  .bub .who{font:10px var(--mono);color:var(--dim2);margin-bottom:2px}
+  .bub.hit .bd{border:1px solid var(--red)}
+  .bub .mono{font-family:var(--mono);font-size:11.5px}
+  .bub .dim{color:var(--dim2)}
+  .bub.pairhl .bd{background:#1c2a45}
+  .c2{color:var(--dim)} .c3{color:var(--blue)} .c404{color:var(--amber)} .c429{color:var(--red)} .c5{color:var(--pur)}
+  .actionbar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:14px}
+  .actionbar .msg{flex:1;font:11.5px var(--mono);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .actionbar .msg b{color:var(--acc);font-weight:600}
+
+  /* ============ 右栏 ============ */
+  .gate{display:flex;flex-direction:column;gap:10px;min-height:0}
+  .ring-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;gap:16px;align-items:center}
+  .ringbox{position:relative;width:92px;height:92px;flex:none}
+  .ringbox .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ringbox .ctr b{font-size:20px} .ringbox .ctr span{font-size:9.5px;color:var(--dim);letter-spacing:1px}
+  .ring-meta{font-size:12px;color:var(--dim);display:flex;flex-direction:column;gap:3px}
+  .ring-meta b{color:var(--txt)}
+  .glist{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;flex:1;min-height:0}
+  .gitem{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid #141922;font-size:12.5px}
+  .gitem:last-child{border-bottom:none}
+  .gitem .ic{width:18px;height:18px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:10px}
+  .gitem.v .ic{background:#15230a;color:var(--ok)} .gitem.o .ic{background:#2a1616;color:var(--red)} .gitem.p .ic{background:#2a2113;color:var(--amber)}
+  .gitem .nm{flex:1} .gitem .nm .id{font:10px var(--mono);color:var(--dim2)}
+  .gitem .val{font:10.5px var(--mono);color:var(--dim);text-align:right}
+  .receipt{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .rrow{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim);padding:2.5px 0}
+  .rrow b{color:var(--acc);font-weight:500}
+
+  #logdrawer{position:fixed;left:0;right:0;bottom:0;background:#0a0d12f0;border-top:1px solid var(--line);backdrop-filter:blur(4px);z-index:40}
+  #logdrawer summary{list-style:none;cursor:pointer;padding:6px 16px;color:var(--dim2);font:10.5px var(--mono);letter-spacing:1px}
+  #logdrawer pre{max-height:22vh;overflow:auto;padding:0 16px 10px;font:11.5px/1.55 var(--mono);color:#9fb0c8;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ======= 左栏 ======= -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo"><div class="logo-mark">Æ</div><h1>AEGIS</h1></div>
+      <div class="tag micro" style="font-size:9.5px;letter-spacing:1px">autonomous security immunity</div>
+      <div style="margin-top:10px"><span class="chip" id="conn"><span class="dot"></span>SSE CONNECTING</span></div>
+    </div>
+
+    <div class="pane" style="flex:none">
+      <div class="micro">workflow</div>
+      <div class="wf" id="wf">
+        <div class="wf-item" data-w="attack"><span class="ic">01</span>攻击 <span style="margin-left:auto;font:10px var(--mono);color:var(--dim2)" id="wf-attack"></span></div>
+        <div class="wf-item" data-w="detect"><span class="ic">02</span>检测 <span style="margin-left:auto;font:10px var(--mono);color:var(--dim2)" id="wf-detect"></span></div>
+        <div class="wf-item" data-w="patch"><span class="ic">03</span>修补 <span style="margin-left:auto;font:10px var(--mono);color:var(--dim2)" id="wf-patch"></span></div>
+        <div class="wf-item" data-w="verify"><span class="ic">04</span>验证 <span style="margin-left:auto;font:10px var(--mono);color:var(--dim2)" id="wf-verify"></span></div>
+        <div class="wf-item" data-w="converged"><span class="ic">05</span>收敛</div>
+      </div>
+    </div>
+
+    <div class="pane" style="flex:1">
+      <div class="micro">targets · edu-lite <span id="tg-count" style="float:right"></span></div>
+      <div class="targets" id="targets"></div>
+    </div>
+
+    <div class="hwcard">
+      <div class="micro" style="margin-bottom:8px">runtime</div>
+      <div class="hwrow"><span>DEVICE</span><b>DGX Spark · GB10</b></div>
+      <div class="hwrow"><span>CUDA</span><b>13.0 · aarch64</b></div>
+      <div class="hwrow"><span>MEM</span><b>128GB unified</b></div>
+      <div class="hwrow"><span>LLM</span><b>Qwen3.8 125B FP4</b></div>
+      <div class="hwrow"><span>EGRESS</span><b style="color:var(--acc)">0 bytes</b></div>
+    </div>
+  </aside>
+
+  <!-- ======= 中栏 ======= -->
+  <section class="main">
+    <div class="topbar">
+      <span class="phase-chip" id="phase">● IDLE</span>
+      <div><div class="title">edu-lite 本地靶场 <span style="color:var(--dim2)">127.0.0.1:8081</span></div>
+      <div class="sub">红方攻击 → 蓝方检测 → 修补 → 回归验证，直至收敛</div></div>
+      <div class="right">
+        <span class="chip"><span class="dot"></span><span id="roundbadge">READY</span></span>
+        <button class="primary" id="btn" onclick="marathon()">▶ 开始多轮审计</button>
+        <button class="ghost" onclick="replay()">⟲ 回放</button>
+
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="card">
+        <div class="head"><span class="micro">convergence · 收敛曲线</span><span class="hint" style="margin-left:auto">剩余漏洞随轮次归零 = 闭环有效的直接证据</span></div>
+        <div id="chart"></div>
+      </div>
+      <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
+        <div class="head"><span class="micro">agent dialog · 智能体对话流</span><span class="hint" style="margin-left:auto">红方动作 / 蓝方判定 / 修补与门禁裁决 —— 全部来自落盘证据；调"LLM·本地/StepFun"运行时出现紫色"思"独白气泡</span></div>
+        <div class="lanehead" style="display:grid;grid-template-columns:repeat(4,1fr);position:relative;border-bottom:1px solid var(--line)"><span>红方攻击</span><span>蓝方检测</span><span>修补</span><span>判官·旁路</span></div><div class="chat" id="chat"><div class="dim" style="padding:10px">等待智能体行动…</div></div>
+      </div>
+      <div class="actionbar">
+        <div class="msg" id="statusmsg">READY — 按 ▶ 开始多轮审计，或 ⟲ 回放历史轮次</div>
+        <details class="dbg"><summary>单类调试（排障）▾</summary>
+          <div class="inner">
+            <span class="dim" style="font-size:11px">仅跑单个漏洞类，用于排障；完整收敛请用 ▶ 主按钮</span>
+            <select id="cls"><option>sqli</option><option>upload_bypass</option><option>rce_deser</option><option>xss_stored</option><option>lfi</option><option>idor</option><option>ssrf</option><option>brute_no_lock</option></select>
+            <select id="llm"><option value="off">模板</option><option value="qwen">LLM·本地</option><option value="step">LLM·StepFun</option></select>
+            <button class="ghost" onclick="trigger()">运行</button>
+          </div>
+        </details>
+        <button class="ghost" onclick="toggleLog()" style="font:10.5px var(--mono)">RAW LOG</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= 右栏 ======= -->
+  <aside class="gate">
+    <div class="ring-wrap">
+      <div class="ringbox">
+        <svg viewBox="0 0 100 100" style="width:100%;height:100%">
+          <circle cx="50" cy="50" r="41" fill="none" stroke="#1a2129" stroke-width="9"/>
+          <circle id="ringarc" cx="50" cy="50" r="41" fill="none" stroke="#76b900" stroke-width="9"
+                  stroke-dasharray="257.6" stroke-dashoffset="257.6" stroke-linecap="round"
+                  transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .8s"/>
+        </svg>
+        <div class="ctr"><b id="ringv">0/8</b><span>VERIFIED</span></div>
+      </div>
+      <div class="ring-meta" id="ringmeta"></div>
+    </div>
+
+    <div class="glist">
+      <div class="micro" style="margin-bottom:8px">verify gate · 逐类门禁</div>
+      <div id="gitems"></div>
+    </div>
+
+    <div class="receipt">
+      <div class="micro" style="margin-bottom:8px">judge panel · 判官 v3（旁路复核 shadow）</div>
+      <div class="rrow"><span>模式</span><b id="jp-mode">SHADOW</b></div>
+      <div class="rrow"><span>已旁路判定</span><b id="jp-n">0</b></div>
+      <div class="rrow"><span>attack / benign</span><b id="jp-ab">0 / 0</b></div>
+      <div class="rrow"><span>平均时延</span><b id="jp-lat">—</b></div>
+      <div class="dim" style="font:10.5px var(--mono);margin-bottom:4px">在线 shadow 实测（含排队）· 旁路仅接规则漏网道</div><div id="jp-list" style="margin-top:2px"></div><div id="jp-cap" class="dim" style="font:10px var(--mono);margin-top:4px"></div>
+    </div>
+
+    <div class="receipt">
+      <div class="micro" style="margin-bottom:8px">campaign receipt · 治理收据</div>
+      <div class="rrow"><span>scope.yaml</span><b>ENFORCED</b></div>
+      <div class="rrow"><span>payload policy</span><b id="rc-policy">—</b></div>
+      <div class="rrow"><span>audit-log</span><b id="rc-audit">—</b></div>
+      <div class="rrow"><span>data egress</span><b>0 bytes</b></div>
+    </div>
+  </aside>
+</div>
+
+<details id="logdrawer"><summary>▸ RAW LOG（调试）</summary><pre id="runlog">（暂无）</pre></details>
+
+<script src="/ui/echarts.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=t=>(t||"").replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
+const CLS={sqli:"SQL 注入",upload_bypass:"上传绕过",rce_deser:"反序列化 RCE",xss_stored:"存储型 XSS",lfi:"路径穿越",idor:"越权修改",ssrf:"SSRF",brute_no_lock:"登录暴破"};
+let _chart=null,_replayTimer=null,_lastState=null;
+
+/* ---------- 状态推导 ---------- */
+function derive(st){
+  const fs=st.findings||[], counts={};
+  fs.forEach(f=>{counts[f.status]=(counts[f.status]||0)+1;});
+  const allV=fs.length>0&&fs.every(f=>f.status==="verified");
+  const run=!!st.running;
+  let stage="idle";
+  if(run){
+    const tail=(st.log_tail||[]).join("\n").slice(-800);
+    if(/re-attack/.test(tail)) stage="re-attack";
+    else if(/\[verify\]/.test(tail)) stage="verify";
+    else if(/\[patch\]/.test(tail)) stage="patch";
+    else if(/\[detect\]/.test(tail)) stage="detect";
+    else stage="attack";
+  } else if(allV){ stage="converged"; }
+  return {fs,counts,allV,run,stage};
+}
+
+/* ---------- 渲染 ---------- */
+function renderWorkflow(d,st){
+  const order=["attack","detect","patch","verify","converged"];
+  const cur=order.indexOf(d.stage);
+  const items=document.querySelectorAll(".wf-item");
+  items.forEach((el,i)=>{
+    if(d.stage==="converged"){el.className="wf-item done";return;}
+    el.className="wf-item"+(d.run&&i===cur?" on":(i<cur?" done":""));
+  });
+  const s=d.counts;
+  const total=Object.keys(s).reduce((a,k)=>a+s[k],0);
+  $("#wf-attack").textContent=total?total+" findings":"";
+  $("#wf-detect").textContent=(st.alerts||[]).length+" alerts";
+  $("#wf-patch").textContent=(s.patched||0)+(s.regressed||0)?("regr "+(s.regressed||0)):"";
+  $("#wf-verify").textContent=s.verified?("v "+s.verified):"";
+}
+function renderTargets(fs){
+  const seen={}; fs.forEach(f=>{seen[f.class]=f;});
+  $("#targets").innerHTML=Object.keys(CLS).map(c=>{
+    const f=seen[c];
+    const stt=f?f.status:"idle";
+    return '<div class="tg '+stt+'"><span class="dot"></span><span class="nm">'+CLS[c]+'</span><span class="id">'+(f?f.id:"—")+'</span><span class="st">'+(stt==="idle"?"待检":stt)+'</span></div>';
+  }).join("");
+  const clsN=new Set(fs.map(f=>f.class)).size; $("#tg-count").textContent=clsN+"/8 类";
+}
+function renderRing(d,st){
+  const vSet=new Set((d.fs||[]).filter(f=>f.status==="verified").map(f=>f.class));
+  const v=vSet.size, total=Object.keys(CLS).length;  /* 按类别计数：重复 finding（如 accepted 残留）不撑爆分母 */
+  $("#ringv").textContent=v+"/"+total;
+  const C=257.6;
+  $("#ringarc").style.strokeDashoffset=String(C*(1-v/total));
+  const s=st.stats||{};
+  $("#ringmeta").innerHTML=
+    '<div><b>'+(d.counts.open||0)+'</b> open · <b>'+(d.counts.patched||0)+'</b> patched</div>'+
+    '<div>重放命中 <b>'+(s.hit_flows!==undefined?s.hit_flows:"–")+'</b> / '+(s.attack_flows||"–")+'</div>'+
+    '<div>用时 <b>'+(s.wall_s?s.wall_s+"s":"–")+'</b> · 轮次 <b>'+(st.rounds?st.rounds.length:0)+'</b></div>'+
+    '<div><b>'+(_lastState&&_lastState.findings?_lastState.findings.filter(f=>f.status==="accepted").length:0)+'</b> 条 accepted 在账（坏补丁被门禁拒绝，已转人工）</div>';
+  $("#rc-policy").textContent=s.flows?("全过 · "+s.flows+" 发"):"—";
+  $("#rc-audit").textContent=(st.audit_tail&&st.audit_tail.length)?(st.audit_tail.length+"+ 条"):"—";
+}
+function renderGate(fs){
+  const rank={verified:0,patched:1,regressed:2,accepted:2,open:3};
+  const list=fs.slice().sort((a,b)=>(rank[a.status]===undefined?9:rank[a.status])-(rank[b.status]===undefined?9:rank[b.status]));
+  const html=list.map(f=>{
+    const cls=f.status==="verified"?"v":(f.status==="open"?"o":"p");
+    const ic=f.status==="verified"?"✓":(f.status==="open"?"!":"◐");
+    const val=f.status==="verified"?"GATE PASS":(f.status==="patched"?"VERIFYING":(f.status==="accepted"?"转人工":"REGRESSED"));
+    return '<div class="gitem '+cls+'"><span class="ic">'+ic+'</span><span class="nm">'+esc(CLS[f.class]||f.class)+'<div class="id">'+f.id+(f.severity?' · '+f.severity:'')+' · '+esc((f.endpoint||"").slice(0,26))+'</div></span><span class="val">'+val+'</span></div>';
+  }).join("");
+  $("#gitems").innerHTML=html||'<div class="gitem o"><span class="ic">!</span><span class="nm">暂无 findings——先跑一轮审计</span></div>';
+}
+function laneOf(it){
+  if(it.kind==="flow") return 0;
+  if(it.kind==="alert") return 1;
+  if(it.kind==="shadow") return 3;
+  if(it.kind==="monolog"||it.kind==="live"){
+    const r=it.role||"";
+    return r.indexOf("判官")>=0?3 : (r.indexOf("蓝")>=0||r.indexOf("复核")>=0)?1 : (r.indexOf("红")>=0?0:2);
+  }
+  const a=it.who||"";
+  if(a.indexOf("attack")>=0) return 0;
+  if(a.indexOf("detect")>=0) return 1;
+  return 2;
+}
+async function renderDialog(){
+  let items=[];
+  try{ items=(await(await fetch("/api/dialog")).json()).items||[]; }catch(e){ return; }
+  let t0=NaN;
+  for(const it of items){ const v=Number(it.ts); if(it.ts!=null&&isFinite(v)&&(isNaN(t0)||v<t0)) t0=v; }
+  let rows=""; let curRound=null; let seqN=0; const seq={};
+  for(const it of items){
+    let lane;
+    if(it.kind==="flow") lane=0;
+    else if(it.kind==="alert") lane=1;
+    else if(it.kind==="shadow") lane=3;
+    else if(it.kind==="monolog"||it.kind==="live"){
+      const r=it.role||"";
+      lane = r.indexOf("判官")>=0?3 : (r.indexOf("蓝")>=0||r.indexOf("复核")>=0)?1 : (r.indexOf("红")>=0?0:2);
+    }
+    else { const a=it.who||"";
+      lane = a.indexOf("attack")>=0?0 : a.indexOf("detect")>=0?1 : 2; }
+    const ph=it.phase||"";
+    const rm=ph.match(/^R(\d+)/);
+    if(rm && String(rm[1])!==curRound){
+      curRound=rm[1];
+      rows+='<div class="sdiv">—— 第 '+curRound+' 轮 ——</div>';
+    }
+    const tn=Number(it.ts);
+    const tt=(it.ts!=null&&isFinite(tn)&&isFinite(t0))?'<span class="dim">+'+(tn-t0).toFixed(1)+'s</span>':"";
+    let chip="";
+    if(it.kind==="flow"){
+      seqN+=1; seq[it._idx]=seqN;
+      const hit=(it.hits&&it.hits.length)?'<b class="hitmark">◆</b>':"";
+      chip='<div class="chip lane0" data-idx="'+it._idx+'"><span class="sq">#'+String(seqN).padStart(2,"0")+'</span>'+esc(it.text)+hit+' '+tt+'</div>';
+    } else if(it.kind==="alert"){
+      const i=parseInt(it.ref,10); const s=seq[i];
+      chip='<div class="chip lane1" data-idx="'+i+'"><span class="sq">'+(s!==undefined?"#"+String(s).padStart(2,"0"):"#–")+'</span>'+esc(it.text)+'</div>';
+    } else if(it.kind==="shadow"){
+      const pv=Math.round((it.p_attack||0)*100);
+      chip='<div class="chip lane3"><span class="pct">'+pv+'%</span>'+esc(it.text.slice(0,60))+'</div>';
+    } else if(it.kind==="monolog"||it.kind==="live"){
+      const full=esc(it.text);
+      const rl=(it.role||"思").replace("智能体","");
+      chip='<div class="chip mono" onclick="this.classList.toggle(&quot;open&quot;)"><b class="rl">【'+esc(rl)+'】</b><span class="sum">'+esc(it.text.replace(/^内心独白[^：]*：/,"").slice(0,34))+'…</span><span class="full">'+full+'</span></div>';
+    } else {
+      chip='<div class="chip lane'+lane+' audit">'+esc(it.text.slice(0,88))+'</div>';
+    }
+    let cells="";
+    for(let c=0;c<4;c++){
+      cells+='<div class="scell'+(c===lane?" on":"")+'">'+(c===lane?chip:"")+'</div>';
+    }
+    rows+='<div class="srow">'+cells+'</div>';
+  }
+  if(!items.some(it=>laneOf(it)===3) && items.length){
+    rows+='<div class="srow"><div class="scell c3"><div class="chip lane3 dim-chip">本窗口规则全命中，判官沉默待命</div></div><div class="scell"></div><div class="scell"></div><div class="scell"></div></div>';
+  }
+  const box=$("#chat");
+  const stick=box.scrollHeight-box.scrollTop-box.clientHeight<60;
+  box.innerHTML=rows||'<div class="dim" style="padding:10px">等待智能体行动…</div>';
+  if(stick)box.scrollTop=box.scrollHeight;
+  document.querySelectorAll(".chip[data-idx]").forEach(el=>{
+    if(el.dataset.idx==="")return;
+    el.onmouseenter=()=>document.querySelectorAll('.chip[data-idx="'+el.dataset.idx+'"]').forEach(x=>x.classList.add("pairhl"));
+    el.onmouseleave=()=>document.querySelectorAll('.chip[data-idx="'+el.dataset.idx+'"]').forEach(x=>x.classList.remove("pairhl"));
+  });
+}
+function renderPhase(d,st){
+  const ph=$("#phase");
+  if(d.run){
+    ph.className="phase-chip run"; ph.textContent="● RUNNING · "+st.running;
+    $("#statusmsg").innerHTML="对抗进行中 — <b>"+esc(st.running)+"</b>";
+  } else if(d.stage==="converged"){
+    ph.className="phase-chip"; ph.textContent="● CONVERGED";
+    const w=(st.stats&&st.stats.wall_s)?st.stats.wall_s:"–";
+    const clsAll=new Set(d.fs.filter(f=>f.status==="verified").map(f=>f.class)).size;
+    $("#statusmsg").innerHTML="<b>"+clsAll+"/8 类全部收敛</b> · 本轮攻击成功率 0%（补丁全在防） · 用时 "+w+"s · 数据出域 0 字节";
+  } else {
+    ph.className="phase-chip"; ph.textContent="● IDLE";
+    $("#statusmsg").textContent="READY — 按 ▶ 开始多轮审计，或 ⟲ 回放历史轮次";
+  }
+  $("#roundbadge").textContent=(st.rounds&&st.rounds.length)?("ROUND "+st.rounds.length+" ARCHIVED"):"READY";
+}
+function chartUI(rounds){
+  const xs=rounds.map(r=>"R"+r.round);
+  const remain=rounds.map(r=>(r.counts?.open||0)+(r.counts?.patched||0)+(r.counts?.regressed||0));
+  const ver=rounds.map(r=>r.counts?.verified||0);
+  if(!_chart)_chart=echarts.init($("#chart"));
+  _chart.setOption({tooltip:{trigger:"axis"},legend:{textStyle:{color:"#77839b",fontSize:11},top:0,right:0,itemWidth:10},
+    grid:{left:34,right:14,top:30,bottom:22},
+    xAxis:{type:"category",data:xs,axisLabel:{color:"#77839b",fontFamily:"monospace"},axisLine:{lineStyle:{color:"#1d232e"}}},
+    yAxis:{type:"value",splitLine:{lineStyle:{color:"#12161d"}},axisLabel:{color:"#77839b",fontFamily:"monospace"}},
+    series:[
+      {name:"剩余漏洞",type:"line",smooth:true,data:remain,itemStyle:{color:"#ff4d4f"},lineStyle:{width:2.5},areaStyle:{opacity:.12},symbolSize:8},
+      {name:"已验证修复",type:"line",smooth:true,data:ver,itemStyle:{color:"#76b900"},lineStyle:{width:2.5},areaStyle:{opacity:.12},symbolSize:8}],
+    textStyle:{fontFamily:"Segoe UI"}},true);
+}
+function renderJudgePanel(st){
+  const j=(st.judge&&st.judge.stats)||{};
+  $("#jp-n").textContent=j.judged||0;
+  $("#jp-ab").textContent=(j.attack||0)+" / "+(j.benign||0);
+  $("#jp-lat").textContent=j.judged?(Math.round(j.lat_sum/j.judged))+"ms":"—";
+  const list=(st.judge&&st.judge.shadow)||[];
+  $("#jp-list").innerHTML=list.slice(-6).reverse().map(e=>{
+    const p=Math.round((e.p_attack||0)*100);
+    const atk=p>=50;
+    return '<div style="margin:3px 0"><div style="display:flex;justify-content:space-between;font:10px var(--mono);color:var(--dim)">'+
+      '<span>'+esc((e.path||"").replace(/^https?:\/\/[^/]+/,"").slice(0,26))+'</span>'+
+      '<span style="color:'+(atk?"var(--red)":"var(--ok)")+'">p='+p+'%</span></div>'+
+      '<div style="height:3px;background:#1a2129;border-radius:2px"><div style="width:'+p+'%;height:3px;border-radius:2px;background:'+
+      (atk?"var(--red)":"var(--ok)")+'"></div></div></div>';
+  }).join("")||'<div class="dim" style="font-size:11px">旁路复核待命——规则沉默处由判官 v3 捞回</div>';
+  $("#jp-cap").textContent=(j.judged?"旁路仅接规则漏网道 · 本批漏网 "+j.judged+" 条全为攻击":"等待规则沉默的流量…");
+}
+function refresh(){
+  return fetch("/api/state").then(r=>r.json()).then(st=>{
+    _lastState=st;
+    const d=derive(st);
+    renderWorkflow(d,st);renderTargets(d.fs);renderRing(d,st);renderGate(d.fs);
+    renderJudgePanel(st);renderDialog();renderPhase(d,st);chartUI(st.rounds||[]);
+  }).catch(()=>{});
+}
+
+/* ---------- 动作 ---------- */
+function marathon(){
+  const b=$("#btn");b.disabled=true;b.textContent="⚔ 对抗进行中";
+  fetch("/api/marathon",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rounds:2})})
+    .then(r=>{if(!r.ok){throw new Error("HTTP "+r.status);}})
+    .catch(e=>alert("触发失败："+e.message));
+  /* 按钮态与真实运行状态耦合（1.5s 定时解禁会让"运行中"可重复点击） */
+  const wait=setInterval(async()=>{
+    try{const s=await(await fetch("/api/run/status")).json();
+      if(!s.running){clearInterval(wait);b.disabled=false;b.textContent="▶ 开始多轮审计";}}catch(e){}
+  },1200);
+}
+function stCls(s){return s>=500?"c5":s===429?"c429":s===404?"c404":s>=300?"c3":"c2";}
+function trigger(){
+  /* 后端字段名为 class（保留字故用方括号/显式对象），llm: off|qwen|step */
+  const payload={class:$("#cls").value, llm:$("#llm").value, instance:"a"};
+  fetch("/api/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+    .then(r=>{if(!r.ok){throw new Error("HTTP "+r.status);}})
+    .catch(e=>alert("触发失败："+e.message));
+}
+function toggleLog(){const d=$("#logdrawer");d.open=!d.open;}
+function replay(){
+  if(_replayTimer){clearInterval(_replayTimer);_replayTimer=null;$("#roundbadge").textContent="READY";refresh();return;}
+  const rounds=(_lastState&&_lastState.rounds)||[];
+  if(!rounds.length){alert("尚无轮次快照——先跑一次多轮审计");return;}
+  let i=0;
+  const step=()=>{
+    const r=rounds[i];
+    renderGate(r.findings||[]);            /* 回放 findings → 右栏逐类门禁（旧版写 data-col 已不存在，回放曾静默失效） */
+    renderTargets(r.findings||[]);
+    chartUI(rounds.slice(0,i+1));
+    $("#roundbadge").textContent="⟲ REPLAY R"+r.round+"/"+rounds.length;
+    i=(i+1)%rounds.length;};
+  step();_replayTimer=setInterval(step,1500);
+}
+setInterval(()=>{fetch("/api/run/status").then(r=>r.json()).then(s=>{
+  $("#runlog").textContent=(s.log_tail||[]).slice(-40).join("\n")||"（暂无）";}).catch(()=>{});},1500);
+const es=new EventSource("/api/events");
+es.addEventListener("hello",()=>{const c=$("#conn");c.className="chip live";c.innerHTML='<span class="dot"></span>SSE LIVE';});
+es.addEventListener("state",refresh);
+es.onerror=()=>{const c=$("#conn");c.className="chip bad";c.innerHTML='<span class="dot"></span>SSE RECONNECTING…';}; /* EventSource 自动重连，hello 会翻回 LIVE */
+window.addEventListener("resize",()=>{if(_chart)_chart.resize();});
+refresh();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+ "24de_succeeded": {
+  "run_id": "run-20260926-152228-24de",
+  "kind": "succeeded",
+  "state": "succeeded",
+  "event_count": 41,
+  "file_sha12": {
+   "run.json": "4a081689be0f",
+   "events.jsonl": "f243951d92e7",
+   "artifacts.json": "ac79cb0c9d57"
+  }
+ },
+ "943c_failed": {
+  "run_id": "run-20260926-151849-943c",
+  "kind": "failed",
+  "state": "failed",
+  "event_count": 6,
+  "file_sha12": {
+   "run.json": "62450eb20f26",
+   "events.jsonl": "bc4c200e95b0",
+   "artifacts.json": "82b29e12babe"
+  }
+ },
+ "f527_rejected": {
+  "run_id": "run-20260926-103919-f527",
+  "kind": "failed",
+  "state": "failed",
+  "event_count": 21,
+  "file_sha12": {
+   "run.json": "e3a6627a2e78",
+   "events.jsonl": "c7f81948b699",
+   "artifacts.json": "273f789d3852"
+  }
+ },
+ "e4fb_partial": {
+  "run_id": "run-20260926-113020-e4fb",
+  "kind": "partial",
+  "state": "partial",
+  "event_count": 41,
+  "file_sha12": {
+   "run.json": "3c754973f879",
+   "events.jsonl": "82ff15015bc9",
+   "artifacts.json": "5c2d599e0555"
+  }
+ }
+}

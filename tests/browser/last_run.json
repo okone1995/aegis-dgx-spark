@@ -1,0 +1,797 @@
+{
+  "schema": "aegis.browser.replay_switch/1",
+  "startedAt": "2026-09-26T17:57:43.503Z",
+  "finishedAt": "2026-09-26T17:58:08.974Z",
+  "target": {
+    "url": "http://127.0.0.1:8822/demo",
+    "repoRoot": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis",
+    "outDir": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser"
+  },
+  "constants": {
+    "RUN_OK": "run-20260926-175602-a784",
+    "RUN_FAIL": "run-20260926-151849-943c",
+    "SCAN_INTERVAL_MS": 3000,
+    "POST_SCANS_WAIT_MS": 8000,
+    "REPLAY_SPEED": "4"
+  },
+  "subjectUnderTest": {
+    "file": "demo/index.html",
+    "sha256AtStart": "54d3c83539b103be96f03c01cd5f7f41034a0cc94bc41a74fa028818d3d72320",
+    "mtimeAtStart": "2026-09-26T16:35:43.396Z",
+    "bytesAtStart": 103003,
+    "gitHead": "a7568f97531cd824c3f51382d0df7498c5e23765",
+    "demoIndexDirtyVsHead": "(clean vs HEAD)",
+    "note": "前端正被另一子代理并发修改,故记录改前/改后哈希;两次不同即视为本轮可能观察到修复前后两种行为。"
+  },
+  "environment": {
+    "browser": {
+      "exe": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "port": 9333,
+      "reusedExistingInstance": false,
+      "userDataDir": "C:\\Users\\<user>\\AppData\\Local\\Temp\\aegis-cdp",
+      "browser": "Chrome/154.0.8037.57",
+      "protocolVersion": "1.3",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "launchFlags": [
+        "--headless=new",
+        "--remote-debugging-port=9333",
+        "--user-data-dir=C:\\Users\\<user>\\AppData\\Local\\Temp\\aegis-cdp",
+        "--window-size=1920,1080",
+        "--disable-gpu",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "about:blank"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "A",
+      "name": "首屏 idle 基线(1920×1080)",
+      "at": "2026-09-26T17:57:45.812Z",
+      "viewport": "1920x1080",
+      "scanCycle": "detected",
+      "renderWaitMs": 1200,
+      "expectation": "idle 静态背景:顶栏 run_id=24de、相位 ● CONVERGED · 成功(历史);LIVE 按钮可见可点(本轮不点);回放条与选择器隐藏",
+      "observedText": {
+        "viewbar": {
+          "text": "视角 仅看最近 run(背景)待命 · 最近运行 run-20260926-175602-a784(state=succeeded)仅作背景信息:未播放该轮事件,故红蓝/判官/门禁/收敛环计数为空或 0;点 ⟲ 彩排回放 可完整重放该轮⟲ 彩排回放 可选任意历史轮",
+          "cls": "vbar"
+        },
+        "phase": "● CONVERGED · 背景(历史成功轮,未播放事件)",
+        "run_id": "run-20260926-175602-a784",
+        "case_id": "sqli",
+        "clean": "已恢复",
+        "wall": "1m28s",
+        "shots": "0",
+        "block": "0",
+        "veri": "0/0",
+        "stagebar": "预检基线攻击分类修补审查部署验证学习收尾",
+        "judge": {
+          "p_attack": "—",
+          "mode": "SHADOW",
+          "n": "0",
+          "attack": "0",
+          "benign": "0",
+          "abstain": "0",
+          "lat": "—",
+          "state": "在线 · shadow 旁路"
+        },
+        "conv": {
+          "rv": "0/0",
+          "open": "0",
+          "patched": "0",
+          "hits": "–",
+          "atk": "–",
+          "wall": "1m28s",
+          "finVisible": false
+        },
+        "risk": {
+          "pattack": "— 无判官裁决(缺 p_attack,不折算为良性/低风险)",
+          "exploit": "— 尚未复验(未收到 verification.completed)",
+          "impact": "unknown —— 上游事件/快照未提供 severity,不默认低风险",
+          "state": "— 本轮无 finding 记录"
+        },
+        "feedTail": [
+          "待命 —— 本页尚未播放任何事件;上方的 run 仅为背景。点 ⟲ 彩排回放 重放某一轮,或 ▶ LIVE 对抗 跑一轮。"
+        ],
+        "spotlight": {
+          "role": "STANDBY",
+          "name": "系统待命",
+          "act": "按 ▶ LIVE 对抗 启动红蓝对抗闭环;页面打开时会自动跟随进行中的任务"
+        },
+        "controls": {
+          "btnLive": {
+            "x": 1632,
+            "y": 7,
+            "w": 147,
+            "h": 43,
+            "visible": true,
+            "fullyInViewport": true,
+            "disabled": false
+          },
+          "btnReplay": {
+            "x": 1798,
+            "y": 9,
+            "w": 102,
+            "h": 40,
+            "visible": true,
+            "fullyInViewport": true,
+            "disabled": false
+          },
+          "replaybarShown": false,
+          "pickerShown": false
+        },
+        "lexical": {
+          "mode": "idle",
+          "view": "ambient",
+          "viewRunId": null,
+          "staticRunId": "run-20260926-175602-a784",
+          "replayRunId": null,
+          "replayIndex": 0,
+          "replayLength": 0,
+          "replaySpeed": 1
+        }
+      },
+      "checks": {
+        "顶栏 run_id = 最新终态 run(24de)": true,
+        "相位 = CONVERGED · 成功(历史)": true,
+        "LIVE 按钮可见且未禁用": true,
+        "run 选择器入口(#btn-replay)可见可点": true,
+        "回放条在 idle 隐藏": true,
+        "选择器面板在 idle 关闭": true,
+        "事件流区域已挂载(idle 下可能是占位行)": true
+      },
+      "screenshot": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\01_idle_1920.png",
+      "screenshotBytes": 199271,
+      "verdict": "PASS",
+      "failedChecks": [],
+      "note": "与期望一致",
+      "subjectRevisionAtRecord": {
+        "sha256_16": "54d3c83539b103be",
+        "mtime": "2026-09-26T16:35:43.396Z",
+        "bytes": 103003
+      }
+    },
+    {
+      "id": "B",
+      "name": "回放失败轮 943c 后等 8000ms(≥2 次扫描)",
+      "at": "2026-09-26T17:57:57.629Z",
+      "viewport": "1920x1080",
+      "expectation": "回放 943c 结束后顶栏 run_id 与相位应与事件流尾帧同源(run_id=943c / ● FAILED · 回放 或等价失败文案),不得被 24de 覆盖",
+      "replaySpeed": {
+        "slider": "4",
+        "applied": {
+          "ok": true,
+          "sliderValue": "4",
+          "internalSpeed": 4
+        }
+      },
+      "replayEnd": {
+        "mode": "idle",
+        "i": 6,
+        "len": 6,
+        "showing": true,
+        "elapsedMs": 2788
+      },
+      "postScansWaitMs": 8000,
+      "replayedRunId": "run-20260926-151849-943c",
+      "topbarTimeline": {
+        "note": "rpDone 后 250ms 采样;changes = 顶栏 run/相位/_staticRunId 变化点",
+        "durationMs": 8000,
+        "intervalMs": 250,
+        "sampleCount": 31,
+        "first": {
+          "tMs": 0,
+          "run": "run-20260926-151849-943c",
+          "phase": "● FAILED · 回放",
+          "mode": "idle",
+          "staticRunId": null
+        },
+        "last": {
+          "tMs": 7872,
+          "run": "run-20260926-151849-943c",
+          "phase": "● FAILED · 回放",
+          "mode": "idle",
+          "staticRunId": null
+        },
+        "changes": [
+          {
+            "tMs": 0,
+            "run": "run-20260926-151849-943c",
+            "phase": "● FAILED · 回放",
+            "mode": "idle",
+            "staticRunId": null
+          }
+        ]
+      },
+      "pickerEnter": {
+        "pickerRows": 22,
+        "rowClicked": "run-20260926-151849-943c · sqlifailed2026-09-26 15:18:49",
+        "clickTarget": {
+          "tag": "SPAN",
+          "id": "",
+          "cls": "rid",
+          "text": "run-20260926-151849-943c · sqli",
+          "insideLiveButton": false
+        }
+      },
+      "observedText": {
+        "duringReplay": {
+          "phase": "● REPLAY · 回放中",
+          "run_id": "run-20260926-151849-943c",
+          "rpPos": "1 / 6",
+          "lexical": {
+            "mode": "replay",
+            "view": "replay",
+            "viewRunId": "run-20260926-151849-943c",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-151849-943c",
+            "replayIndex": 1,
+            "replayLength": 6,
+            "replaySpeed": 4
+          },
+          "replaybarShown": true
+        },
+        "atReplayEnd": {
+          "phase": "● FAILED · 回放",
+          "run_id": "run-20260926-151849-943c",
+          "rpPos": "6 / 6",
+          "spotlight": {
+            "role": "ORCHESTRATOR",
+            "name": "编排器",
+            "act": "回放结束——该轮事件里没有门禁裁决记录,不对门禁结果下结论"
+          },
+          "lexical": {
+            "mode": "idle",
+            "view": "frozen",
+            "viewRunId": "run-20260926-151849-943c",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-151849-943c",
+            "replayIndex": 6,
+            "replayLength": 6,
+            "replaySpeed": 4
+          },
+          "feedTail": [
+            "+0s阶段收尾 开始",
+            "+0s收尾·恢复靶场已恢复供下一次演示",
+            "✕ 回放:该轮 RUN 失败 · preflight_php_missing: PHP_BIN unset & php not on PATH"
+          ],
+          "viewbar": {
+            "text": "视角 历史回放已结束(冻结)冻结在 run-20260926-151849-943c 的尾帧(state=failed) · 身份/相位/摘要/门禁不再被后台扫描改写点回放条 ✕ 退出 返回背景",
+            "cls": "vbar frozen"
+          }
+        },
+        "afterScans": {
+          "phase": "● FAILED · 回放",
+          "run_id": "run-20260926-151849-943c",
+          "case_id": "sqli",
+          "wall": "0s",
+          "viewbar": {
+            "text": "视角 历史回放已结束(冻结)冻结在 run-20260926-151849-943c 的尾帧(state=failed) · 身份/相位/摘要/门禁不再被后台扫描改写后台已刷新:最新 run=run-20260926-175602-a784(本帧仍冻结在上一个 run)",
+            "cls": "vbar frozen"
+          },
+          "veri": "0/0",
+          "stagebar": "预检基线攻击分类修补审查部署验证学习收尾",
+          "judge": {
+            "p_attack": "—",
+            "mode": "SHADOW",
+            "n": "0",
+            "attack": "0",
+            "benign": "0",
+            "abstain": "0",
+            "lat": "—",
+            "state": "未调用(本轮未启用)"
+          },
+          "conv": {
+            "rv": "0/0",
+            "open": "0",
+            "patched": "0",
+            "hits": "–",
+            "atk": "–",
+            "wall": "0s",
+            "finVisible": false
+          },
+          "risk": {
+            "pattack": "— 无判官裁决(缺 p_attack,不折算为良性/低风险)",
+            "exploit": "— 尚未复验(未收到 verification.completed)",
+            "impact": "unknown —— 上游事件/快照未提供 severity,不默认低风险",
+            "state": "— 本轮无 finding 记录"
+          },
+          "feedTail": [
+            "+0s阶段收尾 开始",
+            "+0s收尾·恢复靶场已恢复供下一次演示",
+            "✕ 回放:该轮 RUN 失败 · preflight_php_missing: PHP_BIN unset & php not on PATH"
+          ],
+          "feedCount": 6,
+          "spotlight": {
+            "role": "ORCHESTRATOR",
+            "name": "编排器",
+            "act": "回放结束——该轮事件里没有门禁裁决记录,不对门禁结果下结论"
+          },
+          "errbar": {
+            "text": "",
+            "cls": ""
+          },
+          "lexical": {
+            "mode": "idle",
+            "view": "frozen",
+            "viewRunId": "run-20260926-151849-943c",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-151849-943c",
+            "replayIndex": 6,
+            "replayLength": 6,
+            "replaySpeed": 4
+          },
+          "replaybarShown": true
+        }
+      },
+      "eventStreamTail": {
+        "seq": 6,
+        "type": "run.failed",
+        "status": "failed",
+        "summary": "failed: repair=None judge=not_invoked learn=not_run cleanup=restored flows=0",
+        "error": "preflight_php_missing: PHP_BIN unset & php not on PATH"
+      },
+      "sameSourceAfterScans": true,
+      "sameSourceAtReplayEnd_400ms": true,
+      "topbarOverwrittenBy": null,
+      "overwriteSeenAtMs": null,
+      "feedTailCarriesReplayedRunError": true,
+      "feedTailWordingAsRendered": [
+        "+0s阶段收尾 开始",
+        "+0s收尾·恢复靶场已恢复供下一次演示",
+        "✕ 回放:该轮 RUN 失败 · preflight_php_missing: PHP_BIN unset & php not on PATH"
+      ],
+      "screenshot": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\02_replay_943c_after_scans.png",
+      "screenshotBytes": 222545,
+      "verdict": "PASS",
+      "note": "回放结束后顶栏仍指向被回放 run(run-20260926-151849-943c),未被最近成功轮覆盖",
+      "subjectRevisionAtRecord": {
+        "sha256_16": "54d3c83539b103be",
+        "mtime": "2026-09-26T16:35:43.396Z",
+        "bytes": 103003
+      }
+    },
+    {
+      "id": "C",
+      "name": "回放成功轮 24de 后等 8000ms(≥2 次扫描)",
+      "at": "2026-09-26T17:58:06.677Z",
+      "viewport": "1920x1080",
+      "expectation": "回放 24de 结束后顶栏 run_id 应仍为 24de;相位应为回放口径(含「· 回放」),不应被 idle 静态背景重渲染成「(历史)」",
+      "replaySpeed": {
+        "slider": "4",
+        "applied": {
+          "ok": true,
+          "sliderValue": "4",
+          "internalSpeed": 4
+        }
+      },
+      "replayEnd": {
+        "mode": "idle",
+        "i": 6,
+        "len": 6,
+        "showing": true,
+        "elapsedMs": 1
+      },
+      "postScansWaitMs": 8000,
+      "replayedRunId": "run-20260926-175602-a784",
+      "topbarTimeline": {
+        "note": "rpDone 后 250ms 采样;changes = 顶栏 run/相位/_staticRunId 变化点",
+        "durationMs": 8000,
+        "intervalMs": 250,
+        "sampleCount": 31,
+        "first": {
+          "tMs": 1,
+          "run": "run-20260926-175602-a784",
+          "phase": "● REPLAY · 回放中",
+          "mode": "replay",
+          "staticRunId": null
+        },
+        "last": {
+          "tMs": 7886,
+          "run": "run-20260926-175602-a784",
+          "phase": "● REPLAY · 回放中",
+          "mode": "replay",
+          "staticRunId": null
+        },
+        "changes": [
+          {
+            "tMs": 1,
+            "run": "run-20260926-175602-a784",
+            "phase": "● REPLAY · 回放中",
+            "mode": "replay",
+            "staticRunId": null
+          }
+        ]
+      },
+      "pickerEnter": {
+        "pickerRows": 22,
+        "rowClicked": "run-20260926-175602-a784 · sqlisucceeded2026-09-26 17:56:02",
+        "clickTarget": {
+          "tag": "SPAN",
+          "id": "",
+          "cls": "rid",
+          "text": "run-20260926-175602-a784 · sqli",
+          "insideLiveButton": false
+        }
+      },
+      "observedText": {
+        "duringReplay": {
+          "phase": "● FAILED · 回放",
+          "run_id": "run-20260926-151849-943c",
+          "rpPos": "6 / 6",
+          "lexical": {
+            "mode": "idle",
+            "view": "frozen",
+            "viewRunId": "run-20260926-151849-943c",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-151849-943c",
+            "replayIndex": 6,
+            "replayLength": 6,
+            "replaySpeed": 4
+          }
+        },
+        "atReplayEnd": {
+          "phase": "● REPLAY · 回放中",
+          "run_id": "run-20260926-175602-a784",
+          "spotlight": {
+            "role": "ORCHESTRATOR",
+            "name": "编排器",
+            "act": "编排器启动红蓝对抗闭环"
+          },
+          "lexical": {
+            "mode": "replay",
+            "view": "replay",
+            "viewRunId": "run-20260926-175602-a784",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-175602-a784",
+            "replayIndex": 2,
+            "replayLength": 41,
+            "replaySpeed": 4
+          },
+          "viewbar": {
+            "text": "视角 历史回放已结束(冻结)冻结在 run-20260926-151849-943c 的尾帧(state=failed) · 身份/相位/摘要/门禁不再被后台扫描改写后台已刷新:最新 run=run-20260926-175602-a784(本帧仍冻结在上一个 run)",
+            "cls": "vbar frozen"
+          }
+        },
+        "afterScans": {
+          "phase": "● REPLAY · 回放中",
+          "run_id": "run-20260926-175602-a784",
+          "wall": "1m28s",
+          "veri": "0/1",
+          "viewbar": {
+            "text": "视角 历史回放已结束(冻结)冻结在 run-20260926-151849-943c 的尾帧(state=failed) · 身份/相位/摘要/门禁不再被后台扫描改写后台已刷新:最新 run=run-20260926-175602-a784(本帧仍冻结在上一个 run)",
+            "cls": "vbar frozen"
+          },
+          "stagebar": "预检基线攻击分类修补审查部署验证学习收尾",
+          "judge": {
+            "p_attack": "100%",
+            "mode": "SHADOW",
+            "n": "3",
+            "attack": "2",
+            "benign": "1",
+            "abstain": "0",
+            "lat": "109ms",
+            "state": "在线 · shadow 旁路"
+          },
+          "conv": {
+            "rv": "0/1",
+            "open": "0",
+            "patched": "1",
+            "hits": "–",
+            "atk": "–",
+            "wall": "1m28s",
+            "finVisible": false
+          },
+          "risk": {
+            "pattack": "100% · attackp_attack 为倾向分数,非校准概率与风险等级 · 来源 judge.completed · /news/search?q=%27%20UNION%20SELECT%201%2Cusername%2Cpassword%20FROM%20users--%20",
+            "exploit": "— 尚未复验(未收到 verification.completed)",
+            "impact": "high来源 detection.completed 载荷(案例/漏洞配置)",
+            "state": "待复核(补丁已部署,复验未完成)"
+          },
+          "feedTail": [
+            "+87s业务·复测[复测] 图书馆 → 通过",
+            "+87s业务·复测[复测] 不存在关键字xyz → 通过",
+            "+87s蓝方·检出检出 SQL 注入 @ http://127.0.0.1:8081/news/search?q=%27%20UNION%20SELECT%201%2Cusername%2Cpassword%20FROM%20users--%20 · rule:SQ-001"
+          ],
+          "feedCount": 24,
+          "lexical": {
+            "mode": "replay",
+            "view": "replay",
+            "viewRunId": "run-20260926-175602-a784",
+            "staticRunId": null,
+            "replayRunId": "run-20260926-175602-a784",
+            "replayIndex": 24,
+            "replayLength": 41,
+            "replaySpeed": 4
+          }
+        }
+      },
+      "eventStreamTail": {
+        "seq": 41,
+        "type": "run.finished",
+        "status": "ok",
+        "summary": ""
+      },
+      "runIdSameAsReplayed": true,
+      "staticRerenderObserved_lexical": false,
+      "phaseFlipEntry": null,
+      "screenshot": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\03_replay_24de_after_scans.png",
+      "screenshotBytes": 355743,
+      "verdict": "PASS",
+      "note": "run_id 与相位均为回放口径,本次采样未观察到静态背景重渲染",
+      "subjectRevisionAtRecord": {
+        "sha256_16": "54d3c83539b103be",
+        "mtime": "2026-09-26T16:35:43.396Z",
+        "bytes": 103003
+      }
+    },
+    {
+      "id": "D",
+      "name": "1366×768 重载后首屏关键控件",
+      "at": "2026-09-26T17:58:08.361Z",
+      "viewport": "1366x768",
+      "scanCycle": "detected",
+      "renderWaitMs": 1200,
+      "expectation": "1366×768 下 LIVE 按钮、run 选择器入口(#btn-replay)仍可见且在视口内、未禁用;回放条在 idle 应隐藏;无横向溢出",
+      "observedText": {
+        "topbar": {
+          "phase": "● CONVERGED · 背景(历史成功轮,未播放事件)",
+          "run": "run-20260926-175602-a784",
+          "case_id": "sqli",
+          "models": "qwen · judge_v3_adapter",
+          "clean": "已恢复",
+          "conn": "FEED · 待机",
+          "wall": "1m28s",
+          "shots": "0",
+          "block": "0",
+          "veri": "0/0"
+        },
+        "stagebar": "预检基线攻击分类修补审查部署验证学习收尾",
+        "overflow": {
+          "scrollW": 1366,
+          "scrollH": 768,
+          "hOverflow": false
+        },
+        "viewbar": {
+          "text": "视角 仅看最近 run(背景)待命 · 最近运行 run-20260926-175602-a784(state=succeeded)仅作背景信息:未播放该轮事件,故红蓝/判官/门禁/收敛环计数为空或 0;点 ⟲ 彩排回放 可完整重放该轮⟲ 彩排回放 可选任意历史轮",
+          "cls": "vbar"
+        },
+        "controls": {
+          "btnLive": {
+            "x": 1147,
+            "y": 9,
+            "w": 111,
+            "h": 39,
+            "visible": true,
+            "fullyInViewport": true,
+            "disabled": false
+          },
+          "btnReplay": {
+            "x": 1270,
+            "y": 10,
+            "w": 84,
+            "h": 37,
+            "visible": true,
+            "fullyInViewport": true,
+            "disabled": false
+          },
+          "replaybar": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0,
+            "visible": false,
+            "fullyInViewport": true,
+            "disabled": false
+          },
+          "replaybarShown": false,
+          "pickerShown": false
+        },
+        "lexical": {
+          "mode": "idle",
+          "view": "ambient",
+          "viewRunId": null,
+          "staticRunId": "run-20260926-175602-a784",
+          "replayRunId": null,
+          "replayIndex": 0,
+          "replayLength": 0,
+          "replaySpeed": 1
+        }
+      },
+      "checks": {
+        "LIVE 按钮可见且在视口内": true,
+        "LIVE 按钮可用(未禁用)——本轮未点击": true,
+        "run 选择器入口(#btn-replay)可见且在视口内": true,
+        "run 选择器入口可用(未禁用)": true,
+        "回放条在 idle 隐藏(与 1920 一致)": true,
+        "无横向溢出(1366 宽)": true
+      },
+      "pickerOpenAttempt": {
+        "ok": true,
+        "click": {
+          "selector": "#btn-replay",
+          "x": 1312,
+          "y": 29,
+          "w": 84,
+          "h": 37,
+          "visible": true,
+          "disabled": false,
+          "text": "⟲ 彩排回放",
+          "elementAtPoint": {
+            "tag": "BUTTON",
+            "id": "btn-replay",
+            "cls": "ghost hot",
+            "text": "⟲ 彩排回放",
+            "insideLiveButton": false
+          }
+        },
+        "after": {
+          "shown": true,
+          "rows": 22
+        }
+      },
+      "screenshot": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\04_idle_1366.png",
+      "screenshotBytes": 156570,
+      "verdict": "PASS",
+      "failedChecks": [],
+      "note": "与期望一致;选择器真点测试通过",
+      "subjectRevisionAtRecord": {
+        "sha256_16": "54d3c83539b103be",
+        "mtime": "2026-09-26T16:35:43.396Z",
+        "bytes": 103003
+      }
+    }
+  ],
+  "retries": [],
+  "screenshots": [
+    {
+      "step": "A",
+      "path": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\01_idle_1920.png",
+      "bytes": 199271
+    },
+    {
+      "step": "B",
+      "path": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\02_replay_943c_after_scans.png",
+      "bytes": 222545
+    },
+    {
+      "step": "C",
+      "path": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\03_replay_24de_after_scans.png",
+      "bytes": 355743
+    },
+    {
+      "step": "D",
+      "path": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\.zwork\\browser\\04_idle_1366.png",
+      "bytes": 156570
+    }
+  ],
+  "pageConsoleErrors": [],
+  "frontendConcurrentEdit": {
+    "sha256AtStart": "54d3c83539b103be96f03c01cd5f7f41034a0cc94bc41a74fa028818d3d72320",
+    "sha256AtEnd": "54d3c83539b103be96f03c01cd5f7f41034a0cc94bc41a74fa028818d3d72320",
+    "mtimeAtEnd": "2026-09-26T16:35:43.396Z",
+    "changedDuringRun": false
+  },
+  "onlyGetRequests": {
+    "noNonGetObserved": true,
+    "nonGet": [],
+    "summary": {
+      "total": 20,
+      "byMethod": {
+        "GET": 20
+      },
+      "sampleUrls": [
+        "http://127.0.0.1:8822/demo",
+        "http://127.0.0.1:8822/api/demo/models",
+        "http://127.0.0.1:8822/api/demo/runs",
+        "http://127.0.0.1:8822/api/demo/runs/run-20260926-175602-a784",
+        "http://127.0.0.1:8822/favicon.ico",
+        "http://127.0.0.1:8822/api/demo/runs/run-20260926-151849-943c/events?after=0&limit=200",
+        "http://127.0.0.1:8822/api/demo/runs/run-20260926-151849-943c",
+        "http://127.0.0.1:8822/api/demo/runs/run-20260926-175602-a784/events?after=0&limit=200"
+      ]
+    }
+  },
+  "fatalError": null,
+  "groundTruth": {
+    "runOk": {
+      "status": 200,
+      "eventCount": 41,
+      "lastEvent": {
+        "seq": 41,
+        "type": "run.finished",
+        "status": "ok",
+        "summary": ""
+      }
+    },
+    "runFail": {
+      "status": 200,
+      "eventCount": 6,
+      "lastEvent": {
+        "seq": 6,
+        "type": "run.failed",
+        "status": "failed",
+        "summary": "failed: repair=None judge=not_invoked learn=not_run cleanup=restored flows=0",
+        "error": "preflight_php_missing: PHP_BIN unset & php not on PATH"
+      }
+    }
+  },
+  "runtimeFunctionProbe": {
+    "allFunctionCount": 1115,
+    "replayRelated": [
+      "BarProp",
+      "GPURenderPassEncoder",
+      "GPURenderPipeline",
+      "SVGFEMorphologyElement",
+      "USBIsochronousInTransferPacket",
+      "USBIsochronousOutTransferPacket",
+      "WebGLShaderPrecisionFormat",
+      "XRPlane",
+      "XRPlaneSet",
+      "XRPose",
+      "XRProjectionLayer",
+      "XRViewerPose",
+      "_rpTick",
+      "closePicker",
+      "enterReplay",
+      "openRunPicker",
+      "pickRun",
+      "renderPicker",
+      "rpDone",
+      "rpSetSpeed",
+      "rpStep",
+      "rpToggle",
+      "showDirectoryPicker",
+      "showOpenFilePicker",
+      "showSaveFilePicker",
+      "stopReplay"
+    ],
+    "runRelated": [
+      "StaticRange",
+      "cancelRun",
+      "finishRun",
+      "followRun",
+      "loadRunRaw",
+      "loadStatic",
+      "openRunPicker",
+      "pickRun",
+      "scanRuns"
+    ],
+    "probeExpectations": {
+      "openRunPicker": "function",
+      "pickRun": "function",
+      "rpDone": "function",
+      "rpToggle": "function",
+      "rpStep": "function",
+      "rpSetSpeed": "function",
+      "scanRuns": "function",
+      "loadStatic": "function",
+      "startLive": "function"
+    }
+  },
+  "browserClose": {
+    "browserClosed": true,
+    "closeMethod": "CDP Browser.close",
+    "error": null,
+    "exitCode": 0
+  },
+  "summary": {
+    "verdicts": {
+      "A": "PASS",
+      "B": "PASS",
+      "C": "PASS",
+      "D": "PASS"
+    },
+    "defectReproduced_stepB": false,
+    "screenshotCount": 4,
+    "screenshotBytes": [
+      199271,
+      222545,
+      355743,
+      156570
+    ],
+    "note": "PASS/FAIL 是对「应有正确行为」的判定,不是对演示效果的背书;UNVERIFIED = 未取得可用证据。"
+  }
+}

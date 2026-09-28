@@ -1,0 +1,18 @@
+skill: secaudit-recon
+runner:
+  primary: pyrunner            # A2 起：step（经 Step Code + 30005 垫片）；回退 pyrunner
+  fallback: pyrunner
+entry:
+  engine: engine.replay        # admin_session / fire —— 真实执行器
+  scope_gate: engine.scope.Scope.check_url
+  manifest: plugins/*/plugin.yaml
+cli: null                       # 无独立 CLI；经 engine.runloop 编排调用
+tools: [http, files, scope-gate]
+providers:
+  llm: local-qwen               # 仅页面语义理解（可选；默认确定性爬取）
+output:
+  artifact: surface.json
+  schema: [{endpoint, method, params[], plugin_classes[]}]
+headless:
+  cmd: step -p --mode json --no-session --append-system-prompt SKILL.md
+  append_system_prompt: SKILL.md

@@ -1,0 +1,61 @@
+operator env loaded:
+  engine root : C:\Users\<user>\.zcode\workspace\default\aegis-fork
+  target      : c-demo-target
+  gate set    : True
+  scopes: scope_hunt.json / scope_evolve.json (pin computed at load time)
+=== 5a-0 refuse candidate WITHOUT hard evidence ===
+{"status": "error", "code": "review_refused", "detail": "sqli-1289a8d51afe evidence_state='untried' ⇒ 无命中证据不得入库（fail-closed）"}
+exit=2
+=== 5a approve candidate WITH hard evidence ===
+{"candidate_id": "sqli-120757b197fe", "evidence_state": "confirmed", "markers_hit": ["CREATE TABLE"], "review_state": "approved", "reviewer": "operator-集成负责人", "status": "ok"}
+exit=0
+=== 5b apply dry-run ===
+{"status": "ok", "dry_run": true, "would_write": 1, "candidates": ["sqli-120757b197fe"], "plugins_dir": "targets/c-demo-target/plugins"}
+exit=0
+=== 5c apply --apply ===
+{"status": "ok", "dry_run": false, "returncode": 0, "stdout_tail": ["  rows=21 approved=1 eligible(approved+confirmed)=1 skipped_unconfirmed=0", "  wrote C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis-fork\\targets\\c-demo-target\\plugins\\sqli\\payloads\\attack\\90_poc_120757b197fe.txt", "1 written"], "plugins_dir": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis-fork\\targets\\c-demo-target\\plugins"}
+exit=0
+=== 5d verify-written ===
+{
+ "status": "ok",
+ "written": 1,
+ "hits": 1,
+ "results": [
+  {
+   "payload": "90_poc_120757b197fe.txt",
+   "status": 200,
+   "markers_hit": [
+    "CREATE TABLE"
+   ],
+   "hit": true,
+   "provenance": {
+    "candidate_id": "sqli-120757b197fe",
+    "class": "sqli",
+    "intent": "attack",
+    "source": "menu",
+    "parent": "ladder",
+    "transform_id": "exfil_targeted:rot=0",
+    "reason": "hunt ladder step=exfil_targeted:rot=0",
+    "evidence": {
+     "origin_run": "",
+     "origin_flow": "",
+     "markers_hit": [
+      "CREATE TABLE"
+     ],
+     "status": 200,
+     "method": "GET",
+     "path": "/reports/exception-queue?warehouse=…",
+     "response_excerpt": "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<meta name=\"robots\" content=\"noindex, nofollow\">\n<title>Depot report &middot; demo-target Waybill Desk</title>\n<link rel=\"stylesheet\" href=\"/assets/demo-target.css\">\n</head>\n<body>\n<div class=\"shell\">\n<header class=\"masthead\">\n  <div class=\"wordmark\"><span class=\"mark\">D</span>demo-target<span class=\"unit\">waybill desk</span></div>\n  <div class=\"buildtag\">synthetic build range-c1</div>\n</header>\n<nav class=\"rail\"><a href=\"/dashboard\">Dashboard</a><a href=\"/waybills\">Waybil",
+     "captured_at": "2026-09-27T11:51:56.163Z"
+    },
+    "reviewer": "operator-集成负责人",
+    "review_note": "",
+    "reviewed_at": "2026-09-27T11:53:12.694Z",
+    "written_at": "2026-09-27T11:53:12Z",
+    "queue": "dataset\\review_queue\\poc_candidates.jsonl",
+    "queue_sha256": "eee6b384c25fed41d82bf39ff8ef7f11ca9e1279cd7810a6ad86f8ecbb7ed1f3"
+   }
+  }
+ ]
+}
+exit=0

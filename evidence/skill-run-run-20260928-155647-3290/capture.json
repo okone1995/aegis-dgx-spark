@@ -1,0 +1,249 @@
+{
+  "mode": "real subprocess execution with live dashboard",
+  "result": {
+    "run_id": "run-20260928-155647-3290",
+    "accepted_t": 4.422,
+    "terminal_t": 94.265,
+    "verdict": {
+      "claim": "verified_restored",
+      "cleanup": "restored",
+      "degraded_reasons": [],
+      "evidence_sha256": "d85765748bcabbed3bf07c1935836c9c98a531ce2fab92d47b6fa4ec6c1c930d",
+      "judge_status": "ok",
+      "learning_counts": {
+        "duplicates": 4,
+        "new_candidates": 5
+      },
+      "learning_status": "queued",
+      "patch_mode": "llm_guided",
+      "proof": {
+        "attack_blocked": true,
+        "authorized_replay_without_network_error": true,
+        "candidate_deployed_hash_matches": true,
+        "cleanup_proven": true,
+        "final_run_succeeded": true,
+        "functional_tests_passed": true,
+        "judge_available": true,
+        "learning_stage_completed": true,
+        "normal_business_passed": true,
+        "patch_mode_recorded": true,
+        "pre_post_attack_linked": true,
+        "receipt_hash_matches": true,
+        "receipt_schema_and_finding": true,
+        "registered_case": true,
+        "repair_verified": true,
+        "run_id_matches": true,
+        "three_review_gates_pass": true
+      },
+      "reasons": [],
+      "repair_outcome": "verified",
+      "run_id": "run-20260928-155647-3290",
+      "stage": "cleanup",
+      "state": "succeeded",
+      "terminal": true
+    },
+    "finished": true
+  },
+  "events": [
+    {
+      "t": 0.0,
+      "kind": "stage",
+      "text": "读取 SKILL.md：selftest → start → status → verdict"
+    },
+    {
+      "t": 0.0,
+      "kind": "out",
+      "text": "操作员已在调用前配置：登记靶场 / 哈希固定的授权范围 / 仅 repair_restore"
+    },
+    {
+      "t": 2.0,
+      "kind": "command",
+      "text": "$ python scripts/aegis_skill.py selftest --scope <operator-scope.json>"
+    },
+    {
+      "t": 2.172,
+      "kind": "out",
+      "text": "{\n  \"allowed_operations\": [\n    \"repair_restore\"\n  ],\n  \"case_id\": \"sqli\",\n  \"console_reachable\": true,\n  \"runtime_health_checked\": false,\n  \"status\": \"ok\",\n  \"target_id\": \"edu-lite-a\"\n}"
+    },
+    {
+      "t": 4.281,
+      "kind": "command",
+      "text": "$ python scripts/aegis_skill.py start --scope <operator-scope.json> --request-id film-skill-20260928-235641 --cleanup restore"
+    },
+    {
+      "t": 4.422,
+      "kind": "out",
+      "text": "{\n  \"created\": true,\n  \"request_id\": \"film-skill-20260928-235641\",\n  \"run_id\": \"run-20260928-155647-3290\",\n  \"state\": \"queued\",\n  \"status\": \"accepted\"\n}"
+    },
+    {
+      "t": 4.562,
+      "kind": "stage",
+      "text": "后台实时阶段：preflight | running"
+    },
+    {
+      "t": 5.625,
+      "kind": "stage",
+      "text": "后台实时阶段：patch | running"
+    },
+    {
+      "t": 75.015,
+      "kind": "stage",
+      "text": "后台实时阶段：review | running"
+    },
+    {
+      "t": 92.14,
+      "kind": "stage",
+      "text": "后台实时阶段：verify | running"
+    },
+    {
+      "t": 93.203,
+      "kind": "stage",
+      "text": "后台实时阶段：cleanup | running"
+    },
+    {
+      "t": 94.265,
+      "kind": "stage",
+      "text": "后台实时阶段：cleanup | succeeded"
+    },
+    {
+      "t": 94.265,
+      "kind": "command",
+      "text": "$ python scripts/aegis_skill.py status --run-id run-20260928-155647-3290"
+    },
+    {
+      "t": 94.406,
+      "kind": "out",
+      "text": "{\n  \"cleanup\": \"restored\",\n  \"degraded_reasons\": [],\n  \"judge_status\": \"ok\",\n  \"learning_status\": \"queued\",\n  \"repair_outcome\": \"verified\",\n  \"run_id\": \"run-20260928-155647-3290\",\n  \"stage\": \"cleanup\",\n  \"state\": \"succeeded\",\n  \"terminal\": true\n}"
+    },
+    {
+      "t": 97.406,
+      "kind": "command",
+      "text": "$ python scripts/aegis_skill.py verdict --run-id run-20260928-155647-3290"
+    },
+    {
+      "t": 97.64,
+      "kind": "out",
+      "text": "{\n  \"claim\": \"verified_restored\",\n  \"cleanup\": \"restored\",\n  \"degraded_reasons\": [],\n  \"evidence_sha256\": \"d85765748bcabbed3bf07c1935836c9c98a531ce2fab92d47b6fa4ec6c1c930d\",\n  \"judge_status\": \"ok\",\n  \"learning_counts\": {\n    \"duplicates\": 4,\n    \"new_candidates\": 5\n  },\n  \"learning_status\": \"queued\",\n  \"patch_mode\": \"llm_guided\",\n  \"proof\": {\n    \"attack_blocked\": true,\n    \"authorized_replay_without_network_error\": true,\n    \"candidate_deployed_hash_matches\": true,\n    \"cleanup_proven\": true,\n    \"final_run_succeeded\": true,\n    \"functional_tests_passed\": true,\n    \"judge_available\": true,\n    \"learning_stage_completed\": true,\n    \"normal_business_passed\": true,\n    \"patch_mode_recorded\": true,\n    \"pre_post_attack_linked\": true,\n    \"receipt_hash_matches\": true,\n    \"receipt_schema_and_finding\": true,\n    \"registered_case\": true,\n    \"repair_verified\": true,\n    \"run_id_matches\": true,\n    \"three_review_gates_pass\": true\n  },\n  \"reasons\": [],\n  \"repair_outcome\": \"verified\",\n  \"run_id\": \"run-20260928-155647-3290\",\n  \"stage\": \"cleanup\",\n  \"state\": \"succeeded\",\n  \"terminal\": true\n}"
+    },
+    {
+      "t": 97.64,
+      "kind": "stage",
+      "text": "真实收据核验通过；默认恢复原始代码；新样本仅进入候选队列。"
+    }
+  ],
+  "commands": [
+    {
+      "args": [
+        "selftest",
+        "--scope",
+        "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\workspace\\video\\skills-live\\operator-scope.local.json"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "allowed_operations": [
+          "repair_restore"
+        ],
+        "case_id": "sqli",
+        "console_reachable": true,
+        "runtime_health_checked": false,
+        "status": "ok",
+        "target_id": "edu-lite-a"
+      },
+      "stderr": "",
+      "t": 2.172000000020489
+    },
+    {
+      "args": [
+        "start",
+        "--scope",
+        "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\workspace\\video\\skills-live\\operator-scope.local.json",
+        "--request-id",
+        "film-skill-20260928-235641",
+        "--cleanup",
+        "restore"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "created": true,
+        "request_id": "film-skill-20260928-235641",
+        "run_id": "run-20260928-155647-3290",
+        "state": "queued",
+        "status": "accepted"
+      },
+      "stderr": "",
+      "t": 4.422000000020489
+    },
+    {
+      "args": [
+        "status",
+        "--run-id",
+        "run-20260928-155647-3290"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "cleanup": "restored",
+        "degraded_reasons": [],
+        "judge_status": "ok",
+        "learning_status": "queued",
+        "repair_outcome": "verified",
+        "run_id": "run-20260928-155647-3290",
+        "stage": "cleanup",
+        "state": "succeeded",
+        "terminal": true
+      },
+      "stderr": "",
+      "t": 94.40600000007544
+    },
+    {
+      "args": [
+        "verdict",
+        "--run-id",
+        "run-20260928-155647-3290"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "claim": "verified_restored",
+        "cleanup": "restored",
+        "degraded_reasons": [],
+        "evidence_sha256": "d85765748bcabbed3bf07c1935836c9c98a531ce2fab92d47b6fa4ec6c1c930d",
+        "judge_status": "ok",
+        "learning_counts": {
+          "duplicates": 4,
+          "new_candidates": 5
+        },
+        "learning_status": "queued",
+        "patch_mode": "llm_guided",
+        "proof": {
+          "attack_blocked": true,
+          "authorized_replay_without_network_error": true,
+          "candidate_deployed_hash_matches": true,
+          "cleanup_proven": true,
+          "final_run_succeeded": true,
+          "functional_tests_passed": true,
+          "judge_available": true,
+          "learning_stage_completed": true,
+          "normal_business_passed": true,
+          "patch_mode_recorded": true,
+          "pre_post_attack_linked": true,
+          "receipt_hash_matches": true,
+          "receipt_schema_and_finding": true,
+          "registered_case": true,
+          "repair_verified": true,
+          "run_id_matches": true,
+          "three_review_gates_pass": true
+        },
+        "reasons": [],
+        "repair_outcome": "verified",
+        "run_id": "run-20260928-155647-3290",
+        "stage": "cleanup",
+        "state": "succeeded",
+        "terminal": true
+      },
+      "stderr": "",
+      "t": 97.64000000001397
+    }
+  ],
+  "skill_sha256": "1b3e8fd7bce67c78df69257891d31a48ffd734a0f2c7a05624493b0db96c707c",
+  "scope_sha256": "df91ba095e2a0066b0b92f23d22dab06049178417734c3c5e5332bcb01ba3bf5",
+  "source_preexisting_runs": 44
+}

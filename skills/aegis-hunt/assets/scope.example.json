@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "target_id": "edu-lite-a",
+  "case_id": "sqli",
+  "target_base": "http://127.0.0.1:8081",
+  "source_root": "target/edu-lite",
+  "path": "/news/search",
+  "param": "q",
+  "vclass": "sqli",
+  "max_requests": 40,
+  "max_seconds": 120
+}

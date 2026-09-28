@@ -1,0 +1,2212 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>AEGIS · 多智能体安全作战大屏</title>
+<style>
+  :root{
+    --bg:#05070a; --panel:#0b0f15; --panel2:#101722; --line:#1b2331; --line2:#2a3547;
+    --txt:#eaf0f8; --dim:#8b98ae; --dim2:#525f76;
+    --acc:#76b900; --acc-dim:#3f6300; --acc-bg:#0f1806;
+    --red:#ff4d4f; --red-dim:#5a2224; --red-bg:#180a0b;
+    --blue:#4da3ff; --blue-dim:#1d3a5c; --blue-bg:#0a1220;
+    --amber:#ffb454; --pur:#b48cff; --ok:#3ddc84;
+    --biz:#39d0c3; --biz-dim:#14454a; --biz-bg:#0a1a1c;
+    --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--txt);font:14px/1.55 "Segoe UI",system-ui;overflow:hidden}
+  .micro{font:10.5px/1 var(--mono);letter-spacing:1.8px;text-transform:uppercase;color:var(--dim2)}
+
+  /* ===== 顶部指挥条 ===== */
+  .top{height:58px;display:flex;align-items:center;gap:20px;padding:0 20px;
+    background:linear-gradient(180deg,#0c1119,#080b10);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--acc),#2e4d00);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#05070a}
+  .brand h1{font-size:21px;letter-spacing:4px}
+  .brand .sub{font-size:10.5px;color:var(--dim2);letter-spacing:2px}
+  .phase-chip{display:inline-flex;align-items:center;gap:8px;font:12px var(--mono);letter-spacing:2px;
+    padding:7px 16px;border-radius:7px;background:var(--acc-bg);color:var(--acc);border:1px solid var(--acc-dim);white-space:nowrap}
+  .phase-chip.run{animation:pulse 1.3s infinite}
+  .phase-chip.done{background:#0f2008;color:var(--ok);border-color:#1d4d22}
+  .phase-chip.warn{background:#1d160a;color:var(--amber);border-color:#4a3a1a}
+  .phase-chip.bad{background:var(--red-bg);color:var(--red);border-color:var(--red-dim)}
+  .top .spacer{flex:1}
+  .stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25}
+  .stat b{font:700 19px var(--mono);color:var(--txt)}
+  .stat span{font:10px var(--mono);letter-spacing:1.5px;color:var(--dim2)}
+  button{font-family:inherit}
+  button.primary{background:var(--acc);color:#05070a;border:none;border-radius:8px;padding:11px 26px;
+    font-size:15px;font-weight:800;cursor:pointer;letter-spacing:1px}
+  button.primary:hover{background:#88d400}
+  button.primary:disabled{opacity:.4;cursor:not-allowed}
+  button.ghost{background:transparent;color:var(--dim);border:1px solid var(--line2);border-radius:8px;
+    padding:10px 16px;cursor:pointer;font-size:13px}
+  button.ghost:hover{color:var(--txt);border-color:var(--dim)}
+  button.ghost:disabled{opacity:.4;cursor:not-allowed}
+  button.ghost.hot{color:var(--amber);border-color:#4a3a1a}
+  /* 常驻 RUN 元信息(§7-1:run_id/案例/模型/恢复状态) */
+  .runmeta{display:flex;flex-direction:column;gap:2px;font:10px var(--mono);color:var(--dim2);
+    letter-spacing:.5px;max-width:340px;overflow:hidden;white-space:nowrap}
+  .runmeta b{color:var(--dim);font-weight:500}
+  /* SSE 连接状态条(A10) */
+  .conn{font:10px var(--mono);letter-spacing:1.5px;color:var(--dim2);padding:5px 10px;
+    border:1px solid var(--line);border-radius:7px;white-space:nowrap}
+  .conn.ok{color:var(--ok);border-color:#1d4d22}
+  .conn.err{color:var(--amber);border-color:#4a3a1a;animation:pulse 1s infinite}
+
+  /* ===== 主网格 ===== */
+  .grid{display:grid;grid-template-columns:300px 1fr 330px;gap:12px;height:calc(100vh - 58px - 30px);padding:12px}
+  .col{display:flex;flex-direction:column;gap:12px;min-height:0}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;
+    display:flex;flex-direction:column;min-height:0}
+  .card .micro{margin-bottom:10px}
+
+  /* ===== 左栏:红方 / 蓝方 / 运行时 ===== */
+  .fcard{border-top:3px solid var(--red);flex:1}
+  .fcard.blue{border-top-color:var(--blue)}
+  .fhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .fava{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+    font-size:20px;flex:none}
+  .fava.red{background:var(--red-bg);border:1px solid var(--red-dim)}
+  .fava.blue{background:var(--blue-bg);border:1px solid var(--blue-dim)}
+  .fhead .nm{font-size:16px;font-weight:700}
+  .fhead .rl{font:10px var(--mono);color:var(--dim2);letter-spacing:1px}
+  .fhead .cnt{margin-left:auto;text-align:right;line-height:1.2}
+  .fhead .cnt b{font:800 26px var(--mono)}
+  .fhead.red .cnt b{color:var(--red)} .fhead.blue .cnt b{color:var(--blue)}
+  .fhead .cnt span{font:9.5px var(--mono);color:var(--dim2);letter-spacing:1px;display:block}
+  .fsaid{flex:1;overflow:auto;font-size:13px;color:var(--dim);padding-right:4px}
+  .fsaid .line{padding:4px 0;border-bottom:1px dashed #141b26;animation:fadein .5s}
+  .fsaid .line b{color:var(--txt);font-weight:600}
+  .fsaid .line.hit b{color:var(--red)}
+  .fsaid .line.win b{color:var(--acc)}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+
+  .runtime{flex:none}
+  .rtrow{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim);padding:3.5px 0}
+  .rtrow b{color:var(--txt);font-weight:500}
+  .rtrow b.grn{color:var(--acc)}
+
+  /* ===== 中栏:舞台 ===== */
+  .stagecol{display:flex;flex-direction:column;gap:12px;min-height:0}
+  .spotlight{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px 26px;flex:none;position:relative;overflow:hidden;min-height:196px;
+    display:flex;gap:22px;align-items:flex-start;transition:box-shadow .5s}
+  .spotlight.active-red{box-shadow:0 0 0 1px var(--red-dim),0 0 42px -8px rgba(255,77,79,.4)}
+  .spotlight.active-blue{box-shadow:0 0 0 1px var(--blue-dim),0 0 42px -8px rgba(77,163,255,.4)}
+  .spotlight.active-grn{box-shadow:0 0 0 1px var(--acc-dim),0 0 42px -8px rgba(118,185,0,.4)}
+  .spotlight.active-amb{box-shadow:0 0 0 1px #4a3a1a,0 0 42px -8px rgba(255,180,84,.4)}
+  .spotlight.active-pur{box-shadow:0 0 0 1px #3d2a5c,0 0 42px -8px rgba(180,140,255,.4)}
+  .spotlight::before{content:"";position:absolute;inset:0;background:radial-gradient(
+    ellipse 60% 130% at 20% 50%,rgba(255,255,255,.045),transparent);pointer-events:none}
+  .spot-ava{width:74px;height:74px;border-radius:19px;flex:none;display:flex;align-items:center;
+    justify-content:center;font-size:36px;position:relative}
+  .spot-ava .pulse{position:absolute;inset:-6px;border-radius:22px;border:2px solid;
+    animation:avaPulse 1.6s infinite;opacity:0}
+  @keyframes avaPulse{0%{transform:scale(.94);opacity:.7}100%{transform:scale(1.12);opacity:0}}
+  .t-red .spot-ava{background:var(--red-bg);border:1px solid var(--red-dim)} .t-red .pulse{border-color:var(--red)}
+  .t-blue .spot-ava{background:var(--blue-bg);border:1px solid var(--blue-dim)} .t-blue .pulse{border-color:var(--blue)}
+  .t-grn .spot-ava{background:var(--acc-bg);border:1px solid var(--acc-dim)} .t-grn .pulse{border-color:var(--acc)}
+  .t-amb .spot-ava{background:#1d160a;border:1px solid #4a3a1a} .t-amb .pulse{border-color:var(--amber)}
+  .t-pur .spot-ava{background:#170f26;border:1px solid #3d2a5c} .t-pur .pulse{border-color:var(--pur)}
+  .spot-main{flex:1;min-width:0}
+  .spot-role{font:11px var(--mono);letter-spacing:2.5px;text-transform:uppercase;color:var(--dim2);margin-bottom:2px}
+  .spot-name{font-size:27px;font-weight:800;letter-spacing:1px;margin-bottom:6px}
+  .t-red .spot-name{color:var(--red)} .t-blue .spot-name{color:var(--blue)} .t-grn .spot-name{color:var(--acc)}
+  .t-amb .spot-name{color:var(--amber)} .t-pur .spot-name{color:var(--pur)} .t-idle .spot-name{color:var(--dim)}
+  .spot-act{font-size:16.5px;color:var(--txt);min-height:26px;font-weight:500}
+  .think{margin-top:12px;background:#0d1420;border:1px solid #1e2a3d;border-left:3px solid var(--pur);
+    border-radius:10px;padding:12px 16px;max-height:150px;overflow:auto;animation:fadein .4s}
+  .think .th-hd{font:10.5px var(--mono);color:var(--pur);letter-spacing:2px;margin-bottom:6px;
+    display:flex;align-items:center;gap:8px}
+  .think .th-hd::after{content:"●";animation:pulse 1s infinite}
+  .think pre{font:12.5px/1.7 var(--mono);color:#c4d2e8;white-space:pre-wrap;word-break:break-word}
+  .spot-side{width:170px;flex:none;display:flex;flex-direction:column;gap:8px;justify-content:center}
+  .badge{font:11px var(--mono);padding:7px 10px;border-radius:8px;background:#0e141d;
+    border:1px solid var(--line);color:var(--dim);letter-spacing:.5px}
+  .badge b{color:var(--txt);float:right}
+
+  /* 阶段条(10 阶段,替换旧轮次带) */
+  .stagebar{display:flex;gap:4px;flex:none}
+  .sstage{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 2px;
+    text-align:center;font:9.5px var(--mono);letter-spacing:.4px;color:var(--dim2);
+    transition:all .4s;overflow:hidden;white-space:nowrap}
+  .sstage.done{color:var(--acc);border-color:#1d4d22;background:#0c1607}
+  .sstage.cur{color:var(--amber);border-color:#4a3a1a;background:#171106;box-shadow:0 0 14px -6px rgba(255,180,84,.5)}
+
+  /* 事件流 */
+  .feedcard{flex:1;min-height:0}
+  .feedwrap{flex:1;overflow:auto;padding:2px 6px 6px 0}
+  .ev{display:flex;gap:12px;align-items:flex-start;padding:6px 0;animation:fadein .4s;cursor:pointer}
+  .ev .t{font:10.5px var(--mono);color:var(--dim2);width:56px;flex:none;padding-top:5px;text-align:right}
+  .ev .tag{font:9.5px var(--mono);letter-spacing:1px;padding:4px 9px;border-radius:6px;flex:none;
+    margin-top:1px;min-width:74px;text-align:center}
+  .ev.red .tag{background:var(--red-bg);color:var(--red);border:1px solid var(--red-dim)}
+  .ev.blue .tag{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-dim)}
+  .ev.grn .tag{background:var(--acc-bg);color:var(--acc);border:1px solid var(--acc-dim)}
+  .ev.amb .tag{background:#1d160a;color:var(--amber);border:1px solid #4a3a1a}
+  .ev.pur .tag{background:#170f26;color:var(--pur);border:1px solid #3d2a5c}
+  .ev.biz .tag{background:var(--biz-bg);color:var(--biz);border:1px solid var(--biz-dim)}
+  .ev.dim .tag{background:#0e141d;color:var(--dim2);border:1px solid var(--line)}
+  .ev .tx{font-size:13.5px;color:var(--dim);padding-top:2px}
+  .ev .tx b{color:var(--txt);font-weight:600}
+  .ev.red .tx b{color:var(--red)} .ev.blue .tx b{color:var(--blue)} .ev.grn .tx b{color:var(--acc)}
+  .ev.amb .tx b{color:var(--amber)} .ev.pur .tx b{color:var(--pur)} .ev.biz .tx b{color:var(--biz)}
+  .ev:hover{background:#0d141d;border-radius:8px}
+  .finbanner{padding:12px 14px;border-radius:10px;font-size:15px;font-weight:700;margin:8px 0;animation:fadein .5s}
+  .finbanner.ok{background:#0f2008;border:1px solid #1d4d22;color:var(--ok)}
+  .finbanner.warn{background:#1d160a;border:1px solid #4a3a1a;color:var(--amber)}
+  .finbanner.bad{background:var(--red-bg);border:1px solid var(--red-dim);color:var(--red)}
+
+  /* ===== 右栏:判官 / 门禁 / 收据 ===== */
+  .judgecard{border-top:3px solid var(--pur)}
+  .judge-top{display:flex;gap:16px;align-items:center}
+  .gauge{position:relative;width:110px;height:110px;flex:none}
+  .gauge .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .gauge .ctr b{font:800 24px var(--mono)}
+  .gauge .ctr span{font:9px var(--mono);color:var(--dim2);letter-spacing:1.5px}
+  .jmeta{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--dim)}
+  .jmeta b{color:var(--txt)}
+  .jst.ok{color:var(--ok)} .jst.bad{color:var(--red)} .jst.warn{color:var(--amber)} .jst.dim{color:var(--dim)}
+  .jverdict{margin-top:11px;background:#0d1220;border:1px solid #1e2a3d;border-radius:10px;padding:10px 14px;
+    animation:fadein .4s}
+  .jverdict .vh{display:flex;justify-content:space-between;font:11px var(--mono);margin-bottom:7px}
+  .jverdict .vh .vd{font-weight:700;letter-spacing:1px}
+  .jbar{height:8px;border-radius:5px;background:#151d29;overflow:hidden;display:flex}
+  .jbar .pa{background:linear-gradient(90deg,#8c1f21,var(--red));transition:width .9s}
+  .jbar .pb{background:linear-gradient(90deg,#0f5130,var(--ok));transition:width .9s}
+  .jverdict .jnote{font:10.5px var(--mono);color:var(--dim2);margin-top:6px}
+  .jlog{margin-top:10px;overflow:auto;flex:1;min-height:30px}
+  .jrow{display:flex;align-items:center;gap:8px;padding:4.5px 0;font:11px var(--mono);
+    color:var(--dim);border-bottom:1px dashed #131a25;animation:fadein .4s}
+  .jrow .p{margin-left:auto;font-weight:700}
+  .jrow .p.atk{color:var(--red)} .jrow .p.ben{color:var(--ok)} .jrow .p.abs{color:var(--amber)}
+
+  /* 门禁 */
+  .gates{flex:1;overflow:auto}
+  .gitem{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #121924;font-size:13px}
+  .gitem:last-child{border-bottom:none}
+  .gitem .ic{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;
+    justify-content:center;font-size:12px;font-weight:800}
+  .gitem.v .ic{background:#0f2008;color:var(--ok);border:1px solid #1d4d22}
+  .gitem.o .ic{background:var(--red-bg);color:var(--red);border:1px solid var(--red-dim)}
+  .gitem.p .ic{background:#1d160a;color:var(--amber);border:1px solid #4a3a1a}
+  .gitem .nm{flex:1;line-height:1.3}
+  .gitem .nm .id{font:10px var(--mono);color:var(--dim2)}
+  .gitem .val{font:10.5px var(--mono);color:var(--dim)}
+  .gitem.v .val{color:var(--ok);font-weight:700}
+  .gsum{font:12px var(--mono);color:var(--dim);padding:8px 2px;line-height:1.8}
+  .gsum b{color:var(--txt)}
+  /* 三关门禁逐项(§7-10/C4):diff_bounds / backdoor / llm_hetero 各自 PASS/FAIL/未知 */
+  .g3row{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+  .g3{display:inline-flex;align-items:center;gap:4px;font:9.5px var(--mono);letter-spacing:.3px;
+    padding:3px 7px;border-radius:6px;background:#0e141d;border:1px solid var(--line);color:var(--dim2)}
+  .g3 b{font-weight:700}
+  .g3.ok{color:var(--ok);border-color:#1d4d22;background:#0c1607}
+  .g3.bad{color:var(--red);border-color:var(--red-dim);background:var(--red-bg)}
+  .g3.unk{color:var(--dim2);border-color:var(--line);background:#0e141d}
+  .grsn{margin-top:6px;font:10.5px/1.5 var(--mono);color:var(--amber);word-break:break-word}
+  .grsn .rsntx{padding:2px 0}
+
+  /* 风险面板(§6.2):基于证据的修复优先级 —— 四要素 + 缺证据显示 unknown */
+  .rk-row{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;padding:5.5px 0;
+    border-bottom:1px dashed #131a25}
+  .rk-row:last-of-type{border-bottom:none}
+  .rk-k{width:62px;flex:none;color:var(--dim2);font:10.5px var(--mono);padding-top:2px}
+  .rk-v{flex:1;min-width:0;color:var(--txt);line-height:1.45;word-break:break-word}
+  .rk-v.unk{color:var(--dim);font:11.5px var(--mono)}
+  .rk-v.ok{color:var(--ok)} .rk-v.bad{color:var(--red)} .rk-v.warn{color:var(--amber)}
+  .rk-src{display:block;font:9.5px var(--mono);color:var(--dim2);letter-spacing:.2px}
+  .rk-note{font:10.5px/1.6 var(--mono);color:var(--dim2);margin-top:9px;
+    border-top:1px solid #131a25;padding-top:8px}
+
+  /* 历史学习成果(§6.4):候选队列 + 历史训练版本同卷材料 */
+  .hm-sec{font:10.5px/1.6 var(--mono);color:var(--dim2);margin:6px 0 2px}
+  .hm-note{font:10.5px/1.6 var(--mono);color:var(--dim2);margin-top:6px}
+  .hm-list{max-height:170px;overflow:auto;padding-right:4px}
+  .hm-row{border-top:1px dashed #131a25;padding:7px 0}
+  .hm-id{font:11.5px var(--mono);color:var(--txt);font-weight:600;word-break:break-all}
+  .hm-ds{font:10px var(--mono);color:var(--dim2);word-break:break-all}
+  .hm-paths{margin-top:4px;display:flex;flex-direction:column;gap:2px}
+  .hm-path{font:10px var(--mono);color:var(--blue);cursor:pointer;word-break:break-all;
+    width:fit-content;border-bottom:1px dotted var(--blue-dim)}
+  .hm-path:hover{color:#8cc6ff}
+  .hm-path .hm-tag{color:var(--dim2)}
+
+  /* 右栏在窄视口/多卡时纵向可滚,避免遮挡或裁切(§7-11) */
+  .colR{overflow-y:auto;overflow-x:hidden}
+  .colR>.card{flex-shrink:0!important}
+
+  /* 收敛环 */
+  .conv{flex:none}
+  .convrow{display:flex;gap:16px;align-items:center}
+  .ring{position:relative;width:104px;height:104px;flex:none}
+  .ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .ctr b{font-size:26px;font-weight:800}
+  .ring .ctr span{font:9px var(--mono);color:var(--dim2);letter-spacing:1.5px}
+  .convmeta{flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--dim)}
+  .convmeta b{color:var(--txt)}
+  .convmeta .fin{color:var(--acc);font-weight:700;letter-spacing:1px}
+  .dot8{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+  .dot8 i{width:11px;height:11px;border-radius:3px;background:#1a2230;border:1px solid var(--line)}
+  .dot8 i.on{background:var(--acc);border-color:var(--acc);box-shadow:0 0 8px rgba(118,185,0,.5)}
+  .dot8 i.hot{background:var(--red);border-color:var(--red)}
+
+  .receipt{flex:none}
+  /* T10-S2/S3:逐流三列并排(规则 / JEV / 复核真值) —— 分歧保留、不合并 */
+  .jtable{margin-top:7px;border-top:1px solid var(--line);padding-top:6px}
+  .jhead,.jrow{display:grid;grid-template-columns:58px 1fr 1.25fr 0.85fr;gap:5px;font:10.5px var(--mono);
+    padding:2px 0;align-items:center}
+  .jhead{color:var(--dim2);letter-spacing:.5px}
+  .jrow{color:var(--dim);border-left:2px solid transparent;padding-left:4px}
+  .jrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .jrow.dis{border-left-color:var(--red);background:rgba(255,92,92,.07);color:#ffc9c9}
+  .jlegend{margin-top:4px;font:10px var(--mono);color:var(--dim2);line-height:1.5}
+  .twoline{margin-top:6px;font:10.5px var(--mono);color:var(--dim2);line-height:1.55}
+  .twoline b{color:var(--acc)}
+  /* T10-S3(UI):三层指标行 */
+  .lyr{font:10.5px var(--mono);color:var(--dim);line-height:1.5;margin-top:3px}
+  .lyr b{color:var(--txt)}
+  .rrow{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--dim);padding:3px 0}
+  .rrow b{color:var(--acc);font-weight:500}
+
+  /* ===== 回放控制条 ===== */
+  #replaybar{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:50;
+    display:none;align-items:center;gap:14px;background:#0d131cf2;border:1px solid var(--line2);
+    border-radius:14px;padding:10px 18px;backdrop-filter:blur(6px);box-shadow:0 8px 32px rgba(0,0,0,.6)}
+  #replaybar.show{display:flex}
+  #replaybar .lbl{font:11px var(--mono);letter-spacing:2px;color:var(--amber)}
+  #replaybar input[type=range]{width:150px;accent-color:var(--amber)}
+  #replaybar .pos{font:12px var(--mono);color:var(--dim);min-width:86px;text-align:center}
+
+  /* 回放角标 */
+  .modebadge{position:fixed;top:66px;right:14px;z-index:45;font:11px var(--mono);letter-spacing:2px;
+    padding:6px 14px;border-radius:8px;background:#1d160a;color:var(--amber);border:1px solid #4a3a1a;
+    display:none;animation:pulse 2s infinite}
+  .modebadge.show{display:block}
+
+  /* ===== 页面视角声明(S1) =====
+     四种视角互相排斥,必须写在屏幕上而不是只存在于 JS 变量里:
+     顶栏/摘要/门禁归哪一个 run、哪些计数是「本轮」、哪些只是背景,都在这一条里交代。 */
+  .vbar{height:30px;display:flex;align-items:center;gap:14px;padding:0 20px;font:11px var(--mono);
+    letter-spacing:.4px;border-bottom:1px solid var(--line);background:#0a0e14;color:var(--dim);
+    white-space:nowrap;overflow:hidden}
+  .vbar .vlbl{flex:none;color:var(--dim2);letter-spacing:1.8px}
+  .vbar .vmain{overflow:hidden;text-overflow:ellipsis}
+  .vbar .vhint{margin-left:auto;flex:none;color:var(--amber)}
+  .vbar.live .vlbl{color:var(--acc)}
+  .vbar.replay,.vbar.frozen{background:#1a1409;border-bottom-color:#4a3a1a;color:var(--amber)}
+  .vbar.replay .vlbl,.vbar.frozen .vlbl{color:var(--amber)}
+  .vbar.frozen .vmain{color:#ffd79a}
+  .vbar.frozen .vhint{animation:pulse 2s infinite}
+
+  /* ===== 错误条(§7-4:所有请求失败可见) ===== */
+  #errbar{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:99;display:none;
+    background:var(--red-bg);color:var(--red);border:1px solid var(--red-dim);border-radius:9px;
+    padding:9px 18px;font:12.5px var(--mono);max-width:70vw;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+  #errbar.show{display:block;animation:fadein .3s}
+  #errbar.info{background:#0f1806;color:var(--acc);border-color:var(--acc-dim)}
+
+  /* ===== 详情抽屉(§7-10/A17:响应体/diff 按文本呈现) ===== */
+  /* C5 修复(≤1560px 覆盖右栏):宽度收敛为单一变量 --dw,窄视口改小;
+     抽屉打开时用 body.drawer-open 把右栏(风险面板)整体左推,而不是盖住它。 */
+  :root{--dw:440px}
+  #drawer{position:fixed;top:58px;right:0;bottom:0;width:var(--dw);max-width:92vw;z-index:80;
+    background:#0b0f15f5;border-left:1px solid var(--line2);display:flex;flex-direction:column;
+    transform:translateX(102%);transition:transform .3s;backdrop-filter:blur(8px)}
+  #drawer.show{transform:none}
+  .colR{transition:transform .3s}
+  body.drawer-open .colR{transform:translateX(calc(-1 * var(--dw)))}
+  #drawer .dw-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 16px;border-bottom:1px solid var(--line)}
+  #drawer .dw-hd span{font:12px var(--mono);color:var(--amber);letter-spacing:1px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #drawer .dw-hd button{padding:6px 10px;font-size:12px}
+  #drawer pre{flex:1;overflow:auto;margin:0;padding:14px 16px;font:11.5px/1.7 var(--mono);
+    color:#c4d2e8;white-space:pre-wrap;word-break:break-word}
+
+  /* ===== RUN 选择器(回放入口) ===== */
+  #runpicker{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;
+    background:rgba(3,5,8,.72)}
+  #runpicker.show{display:flex}
+  #runpicker .pk{width:640px;max-width:92vw;max-height:70vh;background:var(--panel2);
+    border:1px solid var(--line2);border-radius:14px;display:flex;flex-direction:column;
+    box-shadow:0 18px 60px rgba(0,0,0,.7)}
+  #runpicker .pk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-bottom:1px solid var(--line);font:12px var(--mono);letter-spacing:2px;color:var(--amber)}
+  #runpicker .pk-hd button{padding:6px 10px;font-size:12px}
+  #runpicker .pk-list{overflow:auto;padding:8px}
+  .pk-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:9px;cursor:pointer;
+    border:1px solid transparent}
+  .pk-row:hover{background:#131c2a;border-color:var(--line2)}
+  .pk-row .rid{font:12px var(--mono);color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pk-row .rc{font:10px var(--mono);letter-spacing:1px;padding:3px 8px;border-radius:6px;
+    border:1px solid var(--line2);color:var(--dim);text-transform:uppercase}
+  .pk-row .rc.ok{color:var(--ok);border-color:#1d4d22}
+  .pk-row .rc.bad{color:var(--red);border-color:var(--red-dim)}
+  .pk-row .rc.warn{color:var(--amber);border-color:#4a3a1a}
+  .pk-row .rtime{font:10px var(--mono);color:var(--dim2);white-space:nowrap}
+
+  /* 窄视口(1366×768 兼容) */
+  @media(max-width:1560px){
+    :root{--dw:340px}
+    .brand .sub{display:none}
+    .runmeta{font-size:9px;max-width:250px}
+    .top{gap:12px;padding:0 12px}
+    button.primary{padding:10px 14px;font-size:13px}
+    button.ghost{padding:9px 10px;font-size:12px}
+    .stat b{font-size:16px}
+    .phase-chip{padding:6px 10px;font-size:11px}
+    .rk-v{font-size:11.5px}
+    .hm-list{max-height:132px}
+  }
+</style>
+</head>
+<body>
+<!-- ===== 顶部指挥条 ===== -->
+<header class="top">
+  <div class="brand">
+    <div class="logo-mark">Æ</div>
+    <div><h1>AEGIS</h1><div class="sub">多智能体安全作战大屏 · autonomous immunity</div></div>
+  </div>
+  <span class="phase-chip" id="phase">● STANDBY</span>
+  <div class="runmeta" id="runmeta">
+    <div>RUN <b id="rm-run">—</b> · 案例 <b id="rm-case">—</b></div>
+    <div>模型 <b id="rm-models">—</b> · 恢复 <b id="rm-clean">—</b></div>
+  </div>
+  <span class="conn" id="conn">FEED · 待机</span>
+  <div class="spacer"></div>
+  <div class="stat"><b id="t-wall">—</b><span>耗时</span></div>
+  <div class="stat"><b id="t-shots">0</b><span>红方发射</span></div>
+  <div class="stat"><b id="t-block">0</b><span>蓝方规则检出</span></div>
+  <div class="stat"><b id="t-veri" style="color:var(--acc)">0/0</b><span>VERIFIED</span></div>
+  <button class="primary" id="btn-live" onclick="startLive()">▶ LIVE 对抗</button>
+  <button class="ghost hot" id="btn-cancel" onclick="cancelRun()" style="display:none">■ 中止</button>
+  <button class="ghost hot" id="btn-replay" onclick="openRunPicker()">⟲ 彩排回放</button>
+</header>
+<!-- ===== 页面视角声明(S1):屏幕这一帧到底是谁的画面 ===== -->
+<div class="vbar" id="viewbar"></div>
+
+<div class="grid">
+
+  <!-- ===== 左栏 ===== -->
+  <aside class="col">
+    <div class="card fcard" id="card-red">
+      <div class="fhead red">
+        <div class="fava red">🗡️</div>
+        <div><div class="nm">红方攻击智能体</div><div class="rl">RED · secaudit-attack</div></div>
+        <div class="cnt"><b id="red-cnt">0</b><span>命中</span></div>
+      </div>
+      <div class="fsaid" id="red-said"><div class="line">待命——尚未发射</div></div>
+    </div>
+
+    <div class="card fcard blue" id="card-blue">
+      <div class="fhead blue">
+        <div class="fava blue">🛡️</div>
+        <div><div class="nm">蓝方检测智能体</div><div class="rl">BLUE · 四层检测栈</div></div>
+        <div class="cnt"><b id="blue-cnt">0</b><span>检出</span></div>
+      </div>
+      <div class="fsaid" id="blue-said"><div class="line">待命——四层栈静默</div></div>
+    </div>
+
+    <div class="card runtime">
+      <div class="micro">runtime · <span id="rt-boundary">边界待读取</span></div>
+      <div class="rtrow"><span>DEVICE</span><b id="rt-device">—</b></div>
+      <div class="rtrow"><span>LLM</span><b id="rt-llm">—</b></div>
+      <div class="rtrow"><span>JUDGE</span><b id="rt-judge">—</b></div>
+      <div class="rtrow"><span>EGRESS</span><b id="rt-egress">—</b></div>
+      <div class="rtrow"><span>学习候选</span><b id="rt-learn">—</b></div>
+    </div>
+  </aside>
+
+  <!-- ===== 中栏:舞台 ===== -->
+  <section class="stagecol">
+    <div class="spotlight t-idle" id="spot">
+      <div class="spot-ava" id="spot-ava">⏻<span class="pulse"></span></div>
+      <div class="spot-main">
+        <div class="spot-role" id="spot-role">STANDBY</div>
+        <div class="spot-name" id="spot-name">系统待命</div>
+        <div class="spot-act" id="spot-act">按 ▶ LIVE 对抗 启动红蓝对抗闭环;页面打开时会自动跟随进行中的任务</div>
+        <div class="think" id="think" style="display:none">
+          <div class="th-hd" id="think-hd">THINKING</div>
+          <pre id="think-txt"></pre>
+        </div>
+      </div>
+      <div class="spot-side" id="spot-side"></div>
+    </div>
+
+    <div class="stagebar" id="stagebar"></div>
+
+    <div class="card feedcard">
+      <div class="micro">battle feed · 对抗事件流 · 点行看详情</div>
+      <div class="feedwrap" id="feed"><div style="color:var(--dim2);padding:8px 0">等待事件……</div></div>
+    </div>
+  </section>
+
+  <!-- ===== 右栏 ===== -->
+  <aside class="col colR">
+    <div class="card judgecard">
+      <div class="micro">judge · 判官模型 v3 · 在线逐流判读(交换后)</div>
+      <div class="judge-top">
+        <div class="gauge">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#151d29" stroke-width="9"/>
+            <circle id="jarc" cx="50" cy="50" r="40" fill="none" stroke="#b48cff" stroke-width="9"
+              stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round"
+              transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .9s,stroke .4s"/>
+          </svg>
+          <div class="ctr"><b id="jv-p" style="color:var(--pur)">—</b><span>P(ATTACK)</span></div>
+        </div>
+        <div class="jmeta">
+          <div>模式 <b id="j-mode">ONLINE</b> · 判定 <b id="j-n">0</b> 条 · 选中流 <b id="j-sel">—</b></div>
+          <div>全轮 attack <b id="j-a">0</b> / benign <b id="j-b">0</b> / abstain <b id="j-s">0</b></div>
+          <div>平均时延 <b id="j-lat">—</b> · 与复核真值不一致 <b id="j-diff">0</b> 条 · 状态 <b id="j-state" class="jst dim">待命</b></div>
+          <div class="twoline">① <b>JEV 研判</b>：只看这一条交换(含响应)，判“攻/正常/弃权”，<b>不决定是否修补</b><br>
+            ② <b>漏洞修复验证</b>：见下方三门禁与复测 —— 真实重放证明漏洞、真实回归证明修复</div>
+        </div>
+      </div>
+      <div class="jverdict" id="jverdict" style="display:none">
+        <div class="vh"><span id="jv-path">—</span><span class="vd" id="jv-verdict">—</span></div>
+        <div class="jbar"><div class="pa" id="jv-pa" style="width:0"></div><div class="pb" id="jv-pb" style="width:100%"></div></div>
+        <div class="jnote" id="jv-note">—</div>
+      </div>
+      <div class="jtable" id="j-table">逐流三列(规则/JEV/复核真值)待本轮事件……</div>
+      <div class="jlog" id="jlog"></div>
+    </div>
+
+    <div class="card" style="flex:1;min-height:170px">
+      <div class="micro">verify gate · 逐类门禁 · 三关逐项</div>
+      <div class="gates" id="gates"><div style="color:var(--dim2);font-size:12px;padding:6px 0">暂无 findings——先跑一轮</div></div>
+    </div>
+
+    <!-- §6.2 风险面板:四要素全部来自已有真值,缺证据显示 unknown/—,不默认低风险 -->
+    <div class="card" id="riskcard">
+      <div class="micro">risk · 证据驱动的修复优先级</div>
+      <div class="rk-row"><span class="rk-k">攻击倾向</span><span class="rk-v unk" id="risk-pattack">—</span></div>
+      <div class="rk-row"><span class="rk-k">利用结果</span><span class="rk-v unk" id="risk-exploit">—</span></div>
+      <div class="rk-row"><span class="rk-k">影响等级</span><span class="rk-v unk" id="risk-impact">—</span></div>
+      <div class="rk-row"><span class="rk-k">当前状态</span><span class="rk-v unk" id="risk-state">—</span></div>
+      <div class="rk-note" id="risk-note">基于证据的修复优先级 · 由攻击倾向/利用结果/影响等级/当前状态四项证据人工判读,不是 JEV 学出的风险分数;缺证据显示 unknown(不折算为低风险)。</div>
+    </div>
+
+    <div class="card conv">
+      <div class="micro">convergence · 收敛态势</div>
+      <div class="convrow">
+        <div class="ring">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%">
+            <circle cx="50" cy="50" r="41" fill="none" stroke="#151d29" stroke-width="9"/>
+            <circle id="rarc" cx="50" cy="50" r="41" fill="none" stroke="#76b900" stroke-width="9"
+              stroke-dasharray="257.6" stroke-dashoffset="257.6" stroke-linecap="round"
+              transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .9s"/>
+          </svg>
+          <div class="ctr"><b id="rv">0/0</b><span>VERIFIED</span></div>
+        </div>
+        <div class="convmeta">
+          <div><b id="cv-open">0</b> open · <b id="cv-patched">0</b> patched</div>
+          <div>重放命中 <b id="cv-hits">–</b> / <b id="cv-atk">–</b></div>
+          <div>用时 <b id="cv-wall">–</b></div>
+          <div class="dot8" id="dot8"></div>
+          <div class="fin" id="cv-fin" style="display:none">◆ 收敛 · 漏洞清零</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card receipt">
+      <div class="micro">campaign receipt · 治理收据</div>
+      <div class="rrow"><span>scope.yaml 白名单</span><b>ENFORCED</b></div>
+      <div class="rrow"><span>patch 模式</span><b id="rc-policy">—</b></div>
+      <div class="rrow"><span>事件审计</span><b id="rc-audit">—</b></div>
+      <div class="rrow"><span>data egress</span><b id="rc-egress">—</b></div>
+      <!-- T10-S2:四步证据收据(数据源:工件 evidence-receipt.json;每项带源 seq/工件,缺则 unknown) -->
+      <div class="micro" style="margin-top:9px">four-step evidence · 补前 / 补后四步</div>
+      <div class="rrow" id="ev-1"><span>① 补前命中</span><b>—</b></div>
+      <div class="rrow" id="ev-2"><span>② 实际 diff</span><b>—</b></div>
+      <div class="rrow" id="ev-3"><span>③ 审查门禁</span><b>—</b></div>
+      <div class="rrow" id="ev-4"><span>④ 补后复测</span><b>—</b></div>
+      <div class="hm-sec" id="ev-src">来源 GET artifacts/evidence-receipt · 每项标源 seq/工件,缺失显示 unknown</div>
+      <!-- T10-S4:受约束自适应探针的 lineage(未启用时不落盘 ⇒ 显“未启用”) -->
+      <div class="micro" style="margin-top:9px">second move · 受限二次探针</div>
+      <div class="lyr" id="probe-line">未启用</div>
+      <div class="jlegend" id="probe-src">来源 GET artifacts/probe-lineage · 模型只选母弹与预制变换,最多 2 条合法变体</div>
+    </div>
+
+    <!-- §6.4 历史学习成果:本轮候选队列 + 此前训练版本在同卷上的材料路径(不内联指标) -->
+    <div class="card" id="histmodels">
+      <div class="micro">learning · 学习成果与历史版本</div>
+      <div class="rtrow"><span>本轮候选样本</span><b id="hm-count">—</b></div>
+      <div class="hm-note" id="hm-time">本轮新样本仅入候选队列(未训练);下列为历史训练版本,评估数据来自仓内结果文件。</div>
+      <!-- T10-S3(UI):三层指标(数字由服务端 /api/demo/models 读文件提供,页面不硬编码) -->
+      <div class="micro" style="margin-top:9px">metrics · 三层口径(不得互引)</div>
+      <div class="lyr" id="m-l1">① 本轮逐流(在线)：—</div>
+      <div class="lyr" id="m-l2">② 同分布离线：—</div>
+      <div class="lyr" id="m-l3">③ 真外部分布：—</div>
+      <div class="jlegend" id="m-weak">小样本弱项(如实披露)：—</div>
+      <div class="jlegend" id="m-src">来源 GET /api/demo/models → metrics_three_layers</div>
+      <div class="hm-list" id="hm-list"><div class="hm-sec">历史版本清单待 /api/demo/models 返回……</div></div>
+      <div class="hm-sec" id="hm-src">来源 GET /api/demo/models · 点击路径可复制;本页只列路径,不内联指标数字</div>
+    </div>
+  </aside>
+</div>
+
+<div id="replaybar">
+  <span class="lbl">⟲ REPLAY</span>
+  <button class="ghost" id="rp-toggle" onclick="rpToggle()">⏸ 暂停</button>
+  <button class="ghost" onclick="rpStep()">⏭ 单步</button>
+  <span style="font:11px var(--mono);color:var(--dim2)">速度</span>
+  <input type="range" min="0.25" max="4" step="0.25" value="1" id="rp-speed" oninput="rpSetSpeed(this.value)">
+  <span class="pos" id="rp-pos">0 / 0</span>
+  <button class="ghost" onclick="stopReplay()">✕ 退出</button>
+</div>
+<div class="modebadge" id="modebadge">⟲ REPLAY · 彩排回放 · 真实历史数据</div>
+<div id="errbar"></div>
+<div id="runpicker">
+  <div class="pk">
+    <div class="pk-hd"><span>选择要回放的 RUN</span><button class="ghost" onclick="closePicker()">✕ 关闭</button></div>
+    <div class="pk-list" id="pk-list"></div>
+  </div>
+</div>
+<div id="drawer">
+  <div class="dw-hd"><span id="dw-title">事件详情</span><button class="ghost" onclick="drawerClose()">✕ 关闭</button></div>
+  <pre id="dw-body"></pre>
+</div>
+<script>
+"use strict";
+/* ================= AEGIS 作战大屏(数据层全换版) =================
+   三模式状态机:
+   idle   —— 待机;周期扫描 GET /api/demo/runs,发现非终态 run 自动跟随(A09)
+   follow —— 跟随一个 run:SSE /api/demo/runs/{id}/stream + 2s 轮询 events 兜底(A10);
+             (run_id, seq) 去重游标,seq 严格递增;服务端 state 进终态自动回 idle(修死锁)
+   replay —— 冻结选定历史 run 的全量 events 从零累计播放;播放期零写请求(A14)
+   事件 schema = engine/demo_contracts.DemoEvent(type/stage/actor/flow_id/seq/payload);
+   不再解析任何中文日志文本推导状态(契约 §4.2 规则 2)。 */
+
+/* ---------- 工具 ---------- */
+const $=s=>document.querySelector(s);
+/* A17:esc 覆盖 < > & " ' —— 单引号必须一并转义,防属性上下文逃逸 */
+const esc=t=>(t==null?"":String(t)).replace(/[<>&"']/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;","'":"&#39;"}[c]));
+const CLS={sqli:"SQL 注入",upload_bypass:"上传绕过",rce_deser:"反序列化 RCE",xss_stored:"存储型 XSS",lfi:"路径穿越",idor:"越权修改",ssrf:"SSRF",brute_no_lock:"登录暴破"};
+const STAGES=[["preflight","预检"],["baseline","基线"],["attack","攻击"],["classify","分类"],["patch","修补"],
+  ["review","审查"],["deploy","部署"],["verify","验证"],["learn","学习"],["cleanup","收尾"]];
+/* §7-10/C4 门禁三关固定键(与 engine/demo_case._gate_view 同拼写,不得改名) */
+const GATE_KEYS=["diff_bounds","backdoor","llm_hetero"];
+const GATE_ZH={diff_bounds:"改动边界",backdoor:"后门扫描",llm_hetero:"异构复核"};
+const TERMINAL_STATES=["succeeded","partial","failed","cancelled","interrupted"];
+const DEFAULT_CASE="sqli"; /* 演示默认案例;案例集由 T2 定义,POST 400 时提示 */
+function clsLabel(c){return CLS[c]||String(c||"未知类");}
+function stageZh(k){const f=STAGES.find(s=>s[0]===k);return f?f[1]:(k||"—");}
+function cleanLabel(st){
+  if(st==="restored")return "已恢复";
+  if(st==="running")return "恢复中";
+  if(st==="failed")return "恢复失败";
+  if(st==="retained")return "保留现场";
+  if(st==="pending")return "待恢复";
+  return "—";
+}
+function stopReason(run){
+  const e=(run&&run.error)||"";
+  /* 后端 update(error=...) 落字符串;兼容对象形态以防 T2 变体 */
+  if(typeof e==="string")return e;
+  return String((e&&e.stop_reason)||(e&&e.message)||(run&&run.stop_reason)||"");
+}
+/* D7:终局原因优先取事件载荷里的 error(后端 run.failed 落 error="review_rejected: …"),
+   其次 stop_reason,最后才退回 summary —— 原实现只读 summary,真正的失败根因不上屏。 */
+function termReason(p,ev){
+  const s=(p&&(p.error||p.stop_reason));
+  return String(s||(ev&&ev.summary)||"");
+}
+/* D6:真载荷的 patch 键是 diff / diff_sha256|sha256 / artifact / template,
+   不是 candidate_id / diff_stats —— 从真载荷派生可核对的 diff 摘要(增/删行数 + 摘要哈希),
+   屏幕上看得到 diff 量级,而不是只剩「已生成 · qwen」。 */
+function diffSummary(p){
+  const out=[];
+  const d=typeof p.diff==="string"?p.diff:"";
+  if(d){
+    let add=0,del=0;
+    d.split("\n").forEach(function(l){
+      if(l.charAt(0)==="+"&&l.slice(0,3)!=="+++")add++;
+      else if(l.charAt(0)==="-"&&l.slice(0,3)!=="---")del++;
+    });
+    out.push("diff +"+add+"/-"+del+" 行");
+  }
+  const sha=String(p.diff_sha256||p.sha256||"");
+  if(sha)out.push("sha "+sha.slice(0,12));
+  if(p.template)out.push("模板 "+String(p.template));
+  if(p.diff_stats)out.push(String(p.diff_stats));
+  return out;
+}
+function fmtDur(sec){if(sec==null)return "—";if(sec<60)return sec+"s";return Math.floor(sec/60)+"m"+String(sec%60).padStart(2,"0")+"s";}
+function wallOf(s){
+  if(!s)return null;
+  const t0=Date.parse(s.started_at||s.created_at||"");
+  if(!isFinite(t0))return null;
+  const t1=s.ended_at?Date.parse(s.ended_at):Date.now();
+  if(!isFinite(t1))return null;
+  return Math.max(0,Math.round((t1-t0)/1000));
+}
+
+/* ---------- 角色(聚光灯)定义 ---------- */
+const ROLES={
+  red:  {cls:"t-red",  emo:"🗡️", role:"RED · ATTACK AGENT",   name:"红方攻击智能体"},
+  blue: {cls:"t-blue", emo:"🛡️", role:"BLUE · DETECT STACK",  name:"蓝方检测智能体"},
+  patch:{cls:"t-grn",  emo:"🧬", role:"GREEN · PATCH AGENT",  name:"修补智能体"},
+  verify:{cls:"t-amb", emo:"⚖️", role:"VERIFY GATE",          name:"验证门禁"},
+  judge:{cls:"t-pur",  emo:"🧠", role:"JUDGE v3 · SHADOW",    name:"判官模型 v3"},
+  run:  {cls:"t-idle", emo:"⚙️", role:"ORCHESTRATOR",         name:"编排器"},
+  idle: {cls:"t-idle", emo:"⏻",  role:"STANDBY",              name:"系统待命"},
+};
+let _thinkTimer=null;
+function spotlight(roleKey,act,side){
+  const r=ROLES[roleKey]||ROLES.idle;
+  const glows={red:"active-red",blue:"active-blue",patch:"active-grn",verify:"active-amb",judge:"active-pur"};
+  const sp=$("#spot");
+  sp.className="spotlight "+r.cls+(glows[roleKey]?(" "+glows[roleKey]):"");
+  $("#spot-ava").innerHTML=r.emo+'<span class="pulse"></span>';
+  $("#spot-role").textContent=r.role;
+  $("#spot-name").textContent=r.name;
+  if(act!==undefined)$("#spot-act").innerHTML=act;
+  $("#spot-side").innerHTML=side||"";
+}
+function hideThink(){if(_thinkTimer){clearInterval(_thinkTimer);_thinkTimer=null;}
+  $("#think").style.display="none";$("#think-txt").textContent="";}
+/* 打字机独白:live=true 时持续滚动 */
+function showThink(roleLabel,text,live){
+  const t=$("#think");
+  t.style.display="block";
+  $("#think-hd").textContent="CHAIN-OF-THOUGHT · "+roleLabel+(live?" · THINKING":"");
+  const pre=$("#think-txt");
+  if(live){
+    if(_thinkTimer)clearInterval(_thinkTimer);
+    let shown=Math.max(0,pre.textContent.length-1);
+    _thinkTimer=setInterval(()=>{
+      shown=Math.min(text.length,shown+7);
+      pre.textContent=text.slice(0,shown);
+      t.scrollTop=t.scrollHeight;
+      if(shown>=text.length){clearInterval(_thinkTimer);_thinkTimer=null;}
+    },40);
+  }else{
+    pre.textContent=text;
+    t.scrollTop=t.scrollHeight;
+  }
+}
+
+/* ---------- 事件流 ---------- */
+let _feedT0=null,_lastFeedCount=-1;
+function feedAdd(cls,tag,html,tRel,seq){
+  const box=$("#feed");
+  if(_lastFeedCount===0)box.innerHTML="";
+  _lastFeedCount++;
+  const d=document.createElement("div");
+  d.className="ev "+cls;
+  if(seq!=null)d.dataset.seq=String(seq);
+  d.innerHTML='<span class="t">'+(tRel!=null?("+"+tRel+"s"):"")+'</span><span class="tag">'+tag+'</span><div class="tx">'+html+'</div>';
+  box.appendChild(d);
+  const stick=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+  if(stick)box.scrollTop=box.scrollHeight;
+  if(box.children.length>400)box.removeChild(box.firstChild);
+}
+function feedBanner(html,cls){
+  const box=$("#feed");
+  if(_lastFeedCount===0)box.innerHTML="";
+  _lastFeedCount++;
+  const d=document.createElement("div");
+  d.className="finbanner "+(cls||"");
+  d.innerHTML=html;
+  box.appendChild(d);
+  box.scrollTop=box.scrollHeight;
+}
+/* 红蓝侧栏语录 */
+function sideSay(side,html,hit){
+  const box=$(side==="red"?"#red-said":"#blue-said");
+  if(box.children.length===1&&box.firstChild.textContent.indexOf("待命")===0)box.innerHTML="";
+  const d=document.createElement("div");
+  d.className="line"+(hit?(side==="red"?" hit":" win"):"");
+  d.innerHTML=html;
+  box.appendChild(d);
+  const stick=box.scrollHeight-box.scrollTop-box.clientHeight<50;
+  if(stick)box.scrollTop=box.scrollHeight;
+  if(box.children.length>60)box.removeChild(box.firstChild);
+}
+function _bump(id){const el=$("#"+id);if(!el)return;el.textContent=String((parseInt(el.textContent,10)||0)+1);}
+function _set(id,v){const el=$("#"+id);if(el)el.textContent=v;}
+
+/* ---------- 错误条 / 连接状态条 ---------- */
+let _errT=null;
+function showErr(msg,kind){
+  const b=$("#errbar");
+  b.textContent=msg;
+  b.className="show "+(kind==="info"?"info":"");
+  clearTimeout(_errT);
+  if(kind!=="sticky")_errT=setTimeout(()=>{b.className="";},5000);
+}
+function showConn(st){
+  const c=$("#conn");
+  if(st==="ok"){c.className="conn ok";c.textContent="FEED · 已连接";}
+  else if(st==="err"){c.className="conn err";c.textContent="FEED · 重连中…";}
+  else if(st==="idle"){c.className="conn";c.textContent="FEED · 待机";}
+  else{c.className="conn";c.textContent="FEED · 连接中";}
+}
+
+/* ---------- 详情抽屉(A17:响应体/diff 一律 textContent,禁止 HTML 直插) ---------- */
+function drawerOpen(ev){
+  $("#dw-title").textContent=String(ev.type||"event")+" · #"+String(ev.seq!=null?ev.seq:"—")+(ev.flow_id?(" · "+ev.flow_id):"");
+  const payload=ev.payload||{};
+  const diff=typeof payload.diff==="string"?payload.diff:"";
+  const other=diff?Object.assign({},payload):payload;
+  if(diff)delete other.diff;
+  const lines=[
+    "stage   : "+String(ev.stage||"—"),
+    "actor   : "+String(ev.actor||"—"),
+    "status  : "+String(ev.status||"—"),
+    "summary : "+String(ev.summary||"—"),
+    "ts      : "+String(ev.ts||"—"),
+    "flow    : "+String(ev.flow_id||"—")+"    finding: "+String(ev.finding_id||"—"),
+    "",
+  ];
+  if(diff)lines.push("── 实际代码差异(纯文本)──",diff,"");
+  lines.push("── payload(响应体 / 裁决明细,纯文本呈现)──",JSON.stringify(other,null,2));
+  $("#dw-body").textContent=lines.join("\n");
+  $("#drawer").classList.add("show");
+  // C5:抽屉打开时推开右栏(风险面板),避免 ≤1560px 下被盖住
+  document.body.classList.add("drawer-open");
+}
+function drawerClose(){$("#drawer").classList.remove("show");document.body.classList.remove("drawer-open");}
+
+/* ---------- 事件缓存(抽屉数据源;点行查看) ---------- */
+let _evCache=new Map();
+document.getElementById("feed").addEventListener("click",function(e){
+  const row=e.target.closest(".ev");
+  if(!row||row.dataset.seq==null||row.dataset.seq==="")return;
+  const ev=_evCache.get(Number(row.dataset.seq));
+  if(ev)drawerOpen(ev);
+});
+
+/* ---------- 判官面板 ---------- */
+function judgeVerdict(p,pthRaw){
+  /* MF1 修复:p_attack 缺失 = 不可用/未调用,表盘必须显 — 而不是 0%。
+     旧写法 (Number(p.p_attack)||0) 会把缺字段当 0 → 屏幕上宣称 BENIGN。 */
+  const hasP=p.p_attack!=null&&isFinite(Number(p.p_attack));
+  const pr=hasP?Math.round(Number(p.p_attack)*100):null;
+  const verdict=String(p.verdict||"");
+  const abstain=verdict==="abstain";
+  const atk=hasP&&!abstain&&(verdict==="attack"||pr>=50);
+  $("#jv-p").textContent=hasP?(pr+"%"):"—";
+  $("#jv-p").style.color=!hasP?"var(--dim)":(abstain?"var(--amber)":(atk?"var(--red)":"var(--ok)"));
+  $("#jarc").style.strokeDashoffset=hasP?String(251.3*(1-pr/100)):"251.3";
+  $("#jarc").style.stroke=!hasP?"#5a6577":(abstain?"#ffb454":(atk?"#ff4d4f":"#3ddc84"));
+  $("#jverdict").style.display="block";
+  $("#jv-path").textContent=String(pthRaw||"—").slice(0,30);
+  $("#jv-verdict").textContent=!hasP?"— 无裁决":(abstain?"⏸ ABSTAIN":(atk?"⚠ ATTACK":"✓ BENIGN"));
+  $("#jv-verdict").style.color=!hasP?"var(--dim)":(abstain?"var(--amber)":(atk?"var(--red)":"var(--ok)"));
+  $("#jv-pa").style.width=(hasP?pr:0)+"%";$("#jv-pb").style.width="0%";
+  $("#jv-note").textContent=!hasP
+    ?("判官未给出裁决("+(p.judge_status||"unavailable")+")—— 不得当作良性")
+    :(abstain&&p.raw_verdict!=null
+      ?("raw_verdict "+p.raw_verdict+" · 落入悬置带(protocol v1),不计入攻击/良性")
+      :("protocol "+(p.protocol_id||"—")+" · 模型 "+(p.model_version||"—")));
+  const row=document.createElement("div");
+  row.className="jrow";
+  row.innerHTML='<span>'+esc(String(pthRaw||"—").slice(0,22))+'</span>'+
+    '<span class="p '+(hasP?(abstain?"abs":atk?"atk":"ben"):"abs")+'">'+(hasP?pr+"%":"—")+'</span>';
+  const log=$("#jlog");log.insertBefore(row,log.firstChild);
+  while(log.children.length>14)log.removeChild(log.lastChild);
+}
+/* §7-8 判官四态:unavailable / not_invoked / 排队计算中 / ok(含 partial) */
+function judgePanelState(st){
+  const el=$("#j-state");
+  if(st==="unavailable"){el.textContent="服务不可用";el.className="jst bad";}
+  else if(st==="not_invoked"){el.textContent="未调用(本轮未启用)";el.className="jst dim";}
+  else if(st==="partial"){el.textContent="部分裁决不可用";el.className="jst warn";}
+  else if(st==="ok"){el.textContent="在线逐流判读(串行) · 交换后";el.className="jst ok";}
+  else if(_mode==="follow"){el.textContent="排队 / 计算中";el.className="jst dim";}
+  else{el.textContent="待命";el.className="jst dim";}
+}
+let _jstats={n:0,attack:0,benign:0,abstain:0,lat_sum:0};
+function renderJudgeStats(){
+  _set("j-n",_jstats.n);_set("j-a",_jstats.attack);_set("j-b",_jstats.benign);_set("j-s",_jstats.abstain);
+  _set("j-lat",_jstats.n?(Math.round(_jstats.lat_sum/_jstats.n)+"ms"):"—");
+}
+
+/* ---------- 门禁 + 收敛环(§7-5/§7-7:total 从服务端快照取,0 显示 0) ---------- */
+let _findings={};
+let _snap=null,_models={};
+/* D2:后端 run.summary 是**字符串**(如 "succeeded: repair=verified judge=ok learn=queued
+   cleanup=restored flows=9"),不是对象。凡按对象读 sm.verified / challenges_total / open /
+   hit_flows / attack_flows / finding.severity 都取不到值(undefined)——先判形状,只读真存在的
+   字段,不把 undefined 折算成 0;文本型 summary 原样上屏(见 renderGates 空态),
+   不拆解成字段(不凭空造结构),也不与它自己声明的 flows 数静默矛盾。 */
+function snapSum(){const s=_snap&&_snap.summary;return (s&&typeof s==="object")?s:null;}
+function snapSumText(){const s=_snap&&_snap.summary;return (typeof s==="string"&&s)?s:"";}
+function snapTotal(){
+  const sm=snapSum();
+  if(sm&&sm.challenges_total!=null)return Number(sm.challenges_total)||0;
+  if(sm&&sm.total!=null)return Number(sm.total)||0;
+  /* 无结构化 summary 时分母 = 本轮案例数(单案例 = 1,计划 §7.8),不是 run.summary 里的流量数 */
+  return Object.keys(_findings).length;
+}
+/* §7-10/C4:三关小格 —— PASS 绿 / FAIL 红 / 未知灰(缺项或异常值一律 unknown,不得默认 PASS) */
+function gateCellsHtml(f){
+  const list=(f&&Array.isArray(f.gates))?f.gates:[];
+  return GATE_KEYS.map(function(k){
+    const g=list.find(function(x){return x&&String(x.gate||"")===k;});
+    const raw=g?String(g.result||"").toUpperCase():"";
+    const cls=raw==="PASS"?"ok":(raw==="FAIL"?"bad":"unk");
+    const txt=raw==="PASS"?"PASS":(raw==="FAIL"?"FAIL":"未知");
+    return '<i class="g3 '+cls+'" title="'+esc(k+" · "+(raw||"unknown"))+'" data-gate="'+esc(k)+'">'+
+      esc(GATE_ZH[k]||k)+' <b>'+esc(txt)+'</b></i>';
+  }).join("");
+}
+function _rsnLine(t){const d=document.createElement("div");d.className="rsntx";d.textContent=t;return d;}
+function renderGates(){
+  const box=$("#gates");
+  const ids=Object.keys(_findings);
+  if(!ids.length){
+    const sm=snapSum();
+    if(sm&&(sm.verified!=null||sm.open!=null||sm.patched!=null)){
+      box.innerHTML='<div class="gsum">快照汇总:verified <b>'+esc(String(sm.verified!=null?sm.verified:0))+
+        '</b> · patched <b>'+esc(String(sm.patched!=null?sm.patched:0))+
+        '</b> · open <b>'+esc(String(sm.open!=null?sm.open:0))+'</b></div>';
+    }else if(snapSumText()){
+      /* D2:summary 是文本时如实照登(含它自己声明的 flows=…),不假装读到了对象字段 */
+      box.innerHTML='<div class="gsum">该 run 的 summary(后端为文本,原样显示):<b>'+
+        esc(snapSumText())+'</b></div>';
+    }else{
+      box.innerHTML='<div style="color:var(--dim2);font-size:12px;padding:6px 0">暂无 findings——先跑一轮</div>';
+    }
+    return;
+  }
+  box.innerHTML=ids.map(fid=>{
+    const f=_findings[fid];
+    const st=String(f.status||"");
+    const cls=st==="verified"?"v":st==="open"?"o":"p";
+    const ic=st==="verified"?"✓":st==="open"?"!":"◐";
+    const val=st==="verified"?"GATE PASS":st==="open"?"OPEN":esc(st.toUpperCase()||"—");
+    return '<div class="gitem '+cls+'" data-fid="'+esc(fid)+'"><span class="ic">'+ic+
+      '</span><span class="nm">'+esc(clsLabel(f.class))+
+      '<div class="id">'+esc(f.id||fid)+(f.severity?(" · "+esc(f.severity)):"")+'</div>'+
+      '<div class="g3row">'+gateCellsHtml(f)+'</div>'+
+      '<div class="grsn"></div></span><span class="val">'+val+'</span></div>';
+  }).join("");
+  /* 被否决时上屏 reasons 前两条(A17:恶意 diff/响应文本只能 textContent,不得进 innerHTML) */
+  Array.prototype.forEach.call(box.querySelectorAll(".gitem"),function(el){
+    const f=_findings[el.dataset.fid];
+    if(!f)return;
+    const rs=Array.isArray(f.reasons)?f.reasons:[];
+    if(!rs.length)return;
+    const host=el.querySelector(".grsn");
+    if(!host)return;
+    if(f.pass!==true)host.appendChild(_rsnLine("门禁否决 · PASS 未成立"));
+    rs.slice(0,2).forEach(function(t,i){host.appendChild(_rsnLine("否决原因 "+(i+1)+" · "+String(t)));});
+    if(rs.length>2)host.appendChild(_rsnLine("其余 "+(rs.length-2)+" 条否决原因见事件抽屉"));
+  });
+}
+function renderConv(){
+  const total=snapTotal();
+  const cnt={};
+  Object.keys(_findings).forEach(fid=>{const st=_findings[fid].status;cnt[st]=(cnt[st]||0)+1;});
+  let v=cnt.verified||0;
+  const sm=snapSum();
+  if(!Object.keys(_findings).length&&sm&&sm.verified!=null)v=Number(sm.verified)||0;
+  $("#rv").textContent=v+"/"+total;
+  _set("t-veri",v+"/"+total);
+  $("#rarc").style.strokeDashoffset=String(257.6*(total>0?(1-v/total):1));
+  _set("cv-open",String((cnt.open||0)+(cnt.rejected||0)+(cnt.inconclusive||0)));
+  _set("cv-patched",String((cnt.patched||0)+(cnt.regressed||0)));
+  if(sm&&sm.hit_flows!=null)_set("cv-hits",String(sm.hit_flows));
+  if(sm&&sm.attack_flows!=null)_set("cv-atk",String(sm.attack_flows));
+  _set("cv-wall",fmtDur(wallOf(_snap)));
+  $("#dot8").innerHTML=Object.keys(_findings).slice(0,16).map(fid=>{
+    const st=_findings[fid].status;
+    return '<i class="'+(st==="verified"?"on":st==="open"?"hot":"")+'"></i>';
+  }).join("");
+  const fin=$("#cv-fin");
+  if(total>0&&v>=total&&v>0){fin.style.display="block";fin.textContent="◆ "+v+"/"+total+" 收敛 · 漏洞清零";}
+  else{fin.style.display="none";}
+}
+/* D4(诚实红线):终局结论文案必须由该轮**真实门禁数据**推导。
+   原文案在回放结束(LIVE 收敛同款)固定写「这轮真实数据里,每个补丁都过了改动范围/危险模式/
+   模型复核三门禁」,而同轮门禁有 FAIL(pass=false)时与同一屏门禁三项 PASS/FAIL 直接矛盾。
+   规则:无门禁记录 → 不下结论;有否决 → 如实说被否决项与原因;全部通过 → 才说全过。 */
+function gateVerdictText(){
+  const judged=Object.keys(_findings).map(fid=>_findings[fid])
+    .filter(f=>f&&Array.isArray(f.gates)&&f.gates.length);
+  if(!judged.length)return "该轮事件里没有门禁裁决记录,不对门禁结果下结论";
+  const rej=judged.filter(f=>f.pass!==true);
+  if(rej.length){
+    const bad=[];
+    rej.forEach(f=>f.gates.forEach(g=>{
+      if(String(g.result||"").toUpperCase()!=="PASS")bad.push(GATE_ZH[String(g.gate)]||String(g.gate));
+    }));
+    const why=rej.map(f=>(f.reasons&&f.reasons[0])?String(f.reasons[0]):"").filter(Boolean)[0]||"";
+    return "该轮 "+judged.length+" 项门禁裁决里 <b style=\"color:var(--red)\">"+rej.length+
+      " 项被否决</b>"+(bad.length?("(否决项:"+esc(bad.join("/"))+")"):"")+
+      (why?(" · "+esc(why)):"")+" —— 被否决的候选不进部署链";
+  }
+  const replayed=(_risk&&_risk.seen_verify&&String(_risk.repair)==="verified");
+  return "该轮 "+judged.length+" 项门禁裁决:改动范围/危险模式/模型复核全部通过"+
+    (replayed?"，并做了重放复测":"(本轮未收到 verification.completed,不声称已复测)");
+}
+
+/* ---------- §6.2 风险面板(基于证据的修复优先级) ----------
+   四要素全部从已有真值派生,缺证据 = unknown(不得折算为低风险):
+     攻击倾向 = judge.completed.p_attack(倾向分数,不是已校准的攻击概率)
+     利用结果 = verification.completed.blocked / repair_outcome(与上行分开) */
+let _risk={p_attack:null,verdict:"",path:"",blocked:null,repair:"",seen_verify:false};
+function _rset(id,cls,txt){const el=$("#"+id);if(!el)return;el.className="rk-v "+cls;el.textContent=txt;}
+function _rsrc(id,txt){
+  const el=$("#"+id);if(!el)return;
+  const s=document.createElement("span");s.className="rk-src";s.textContent=txt;el.appendChild(s);
+}
+function riskFinding(){const ids=Object.keys(_findings);return ids.length?_findings[ids[0]]:null;}
+/* 影响等级 = 案例/漏洞 severity;载荷与快照都没有时返回空(上层写 unknown) */
+function riskSeverity(f){
+  const sm=snapSum();
+  const cands=[[f&&f.severity,"detection.completed 载荷"],
+    [(sm&&sm.finding&&sm.finding.severity),"run 快照"]];
+  for(let i=0;i<cands.length;i++){
+    const v=cands[i][0];
+    if(v!=null&&String(v).trim()!=="")return {val:String(v),src:cands[i][1]};
+  }
+  return {val:"",src:""};
+}
+/* ---------------- T10-S2:四步证据收据 ----------------
+   数据源优先用工件 evidence-receipt.json(逐项标源 seq/工件);拿不到就在屏上写
+   “未提供/unknown”—— 不得用“看起来像通过”的默认值抰过去。
+   四步:①补前命中 ②实际 diff ③审查门禁 ④补后复测(重放 + 业务 + hash 对账)。 */
+function _evV(v){return (v===null||v===undefined||v==="")?"unknown":String(v);}
+function _evSrc(o){return o&&o.source?String(o.source):"unknown";}
+function _evSha(s){s=String(s||"");return s&&s!=="unknown"?s.slice(0,12):"unknown";}
+function renderEvidenceReceipt(rec){
+  const put=(id,html)=>{const el=$("#"+id);if(el)el.innerHTML=html;};
+  const srcEl=$("#ev-src");
+  if(!rec||typeof rec!=="object"){
+    ["ev-1","ev-2","ev-3","ev-4"].forEach((id,i)=>put(id,
+      ["① 补前命中","② 实际 diff","③ 审查门禁","④ 补后复测"][i]+"|"+'<b class="dimv">未提供</b>'));
+    if(srcEl)srcEl.textContent="该轮无 evidence-receipt 工件(旧轮次或未生成)"+
+      ((_rp&&_rp.receiptErr)?(" · 取数失败原因: "+_rp.receiptErr):"")+" —— 不展示任何推断值";
+    return;
+  }
+  const pre=rec.pre_patch_attack||{}, patch=rec.patch_candidate||{},
+        gates=rec.gates||{}, ver=rec.verification||{}, clean=rec.cleanup||{};
+  /* ① 补前命中 */
+  const preTxt=(pre.flow_id?esc(String(pre.flow_id)):"unknown")+
+    (pre.seq!=null?(" · seq "+esc(String(pre.seq))):"")+" · "+esc(_evSrc(pre));
+  put("ev-1","① 补前命中|"+'<b>'+preTxt+'</b>');
+  /* ② 实际 diff(候选 hash 与 diff 量级,不内联全文) */
+  const patchTxt="sha "+_evSha(patch.sha256)+" · diff_len "+_evV(patch.diff_len)+
+    " · "+_evV(patch.mode)+" · "+_evV(patch.model)+" · "+esc(_evSrc(patch));
+  put("ev-2","② 实际 diff|"+'<b>'+patchTxt+'</b>');
+  /* ③ 审查门禁:逐项 PASS/FAIL/unknown;pass!==true 时不得写成通过 */
+  const gv=gates.value&&typeof gates.value==="object"?gates.value:{};
+  const gTxt=["diff_bounds","backdoor","llm_hetero"].map(k=>k+"="+_evV(gv[k])).join(" ")+
+    " · pass="+_evV(gates.pass)+
+    ((gates.reasons&&gates.reasons.length)?(" · reasons="+esc(JSON.stringify(gates.reasons).slice(0,60))):"")+
+    " · "+esc(_evSrc(gates));
+  put("ev-3","③ 审查门禁|"+'<b'+(gates.pass===true?"":' class="dimv"')+'>'+gTxt+'</b>');
+  /* ④ 补后复测:重放命中/总数 + 业务 + 候选与部署 hash 对账 + 恢复 */
+  const rep=(rec.post_patch_replays||[]).length;
+  const hashOk=(String(patch.sha256||"")&&String(patch.sha256)!=="unknown"&&
+               String((rec.deployed_hash||{}).value||"")===String(patch.sha256));
+  const v4Txt="重放 "+_evV(ver.replay_hit&&ver.replay_hit.value)+"/"+_evV(ver.replay_total&&ver.replay_total.value)+
+    " · 业务 "+_evV(ver.business_pass&&ver.business_pass.value)+
+    " · blocked "+_evV(ver.blocked&&ver.blocked.value)+
+    " · 候选≡部署 "+(hashOk?"yes":"unknown/no")+
+    " · 恢复 "+_evV(clean.value)+" "+esc(_evSrc(clean));
+  put("ev-4","④ 补后复测|"+'<b>'+v4Txt+'</b>');
+  if(srcEl)srcEl.textContent="来源 GET artifacts/evidence-receipt · 复测流 "+rep+
+    " 条 · 工件生成于 "+esc(_evV(rec.generated_at));
+}
+async function loadEvidenceReceipt(runId){
+  const tk=viewToken();
+  let rec=null;
+  try{
+    const r=await fetch("/api/demo/runs/"+encodeURIComponent(runId)+"/artifacts/evidence-receipt");
+    if(r.ok)rec=await r.json();
+  }catch(e){rec=null;}
+  if(!tokenValid(tk))return;      /* S1:晚到响应不得改写已冻结/回放中的画面 */
+  renderEvidenceReceipt(rec);
+}
+
+/* ---------------- T10-S2/S3:选中流表盘 + 逐流三列 ----------------
+   两个纪律:①表盘盯**选中流**(默认 finding 对应的补前攻击流),不再拿“最后一条流”
+   当本轮风险 —— 否则成功轮会停在良性搜索的 0%;②三列并排把**分歧留在屏上**,
+   不用真值标签去“修正”判官输出(真值只作为对照列展示)。 */
+let _jrows=[],_fmap={};
+function _selFlow(){
+  const rec=_rp&&_rp.receipt;
+  const rid=rec&&rec.pre_patch_attack&&rec.pre_patch_attack.flow_id;
+  if(rid&&_jrows.some(r=>r.flow_id===rid))return String(rid);
+  const hit=_jrows.find(r=>{const f=_fmap[r.flow_id];return f&&f.matched;});
+  if(hit)return hit.flow_id;
+  const atk=_jrows.find(r=>r.verdict==="attack");
+  if(atk)return atk.flow_id;
+  return _jrows.length?_jrows[_jrows.length-1].flow_id:"";
+}
+function renderJudgePanel(){
+  const sel=_selFlow();
+  const row=_jrows.find(r=>r.flow_id===sel)||null;
+  _set("j-sel",sel?sel:"—");
+  const hasP=!!row&&row.p_attack!=null;
+  const pr=hasP?Math.round(row.p_attack*100):null;
+  const g=$("#jv-p");
+  if(g){
+    g.textContent=hasP?(pr+"%"):"—";
+    g.style.color=!hasP?"var(--dim)":(row.verdict==="abstain"?"var(--amber)":(row.verdict==="attack"?"var(--red)":"var(--ok)"));
+  }
+  const arc=$("#jarc");
+  if(arc){arc.style.strokeDashoffset=String(251.3*(1-(hasP?row.p_attack:0)));
+    arc.style.stroke=!hasP?"#b48cff":(row.verdict==="abstain"?"#f0b429":(row.verdict==="attack"?"#ff5c5c":"#3ddc84"));}
+  const vd=$("#jv-verdict");
+  if(vd){vd.textContent=row?String(row.verdict||"—").toUpperCase():"—";
+    vd.className="vd"+(row?(row.verdict==="abstain"?" abstain":(row.verdict==="attack"?" atk":" ben")):"");}
+  const vp=$("#jv-path");
+  if(vp)vp.textContent=String((row&&row.path)||"—").slice(0,30);
+  const pa=$("#jv-pa"),pb=$("#jv-pb");
+  if(pa)pa.style.width=(hasP?pr:0)+"%";
+  if(pb)pb.style.width="0%";
+  const diff=_jrows.filter(r=>{const f=_fmap[r.flow_id];
+    if(!f||!f.intent_label)return false;
+    return (f.intent_label==="attack")!==(r.verdict==="attack");});
+  _set("j-diff",diff.length);
+  const note=$("#jv-note");
+  if(note)note.textContent="表盘盯**选中流** "+sel+(row?(" · p_attack "+(hasP?pr+"%":"—")+" · "+row.verdict):" · 无裁决")+
+    " · 默认钉住 finding 对应的攻击流,不取最后一条流";
+  const tbl=$("#j-table");
+  if(tbl){
+    const rows=_jrows.map(r=>{
+      const f=_fmap[r.flow_id]||{};
+      const truth=f.intent_label?String(f.intent_label):"unknown";
+      const ruleTxt=f.matched?("命中 "+(f.cls||"")):"未命中";
+      const jvTxt=(r.p_attack!=null?(Math.round(r.p_attack*100)+"% "):"")+String(r.verdict||"—");
+      const dis=truth!=="unknown"&&((truth==="attack")!==(r.verdict==="attack"));
+      return '<div class="jrow'+(dis?" dis":"")+'"><span>'+esc(r.flow_id||"—")+'</span><span>'+esc(ruleTxt)+
+        '</span><span>'+esc(jvTxt)+'</span><span>'+esc(truth)+'</span></div>';
+    });
+    tbl.innerHTML='<div class="jhead"><span>flow</span><span>规则</span><span>JEV</span><span>复核真值</span></div>'+
+      (rows.length?rows.join(""):'<div class="jrow"><span>—</span><span>—</span><span>—</span><span>—</span></div>')+
+      '<div class="jlegend">不一致 '+diff.length+' 条 —— 红框保留分歧,不合并、不用真值修正判官输出 · 真值取自事件明文 intent_label(非判官输出) · 真值映射已归 '+Object.keys(_fmap).length+' 条流</div>';
+  }
+}
+
+/* ---------------- T10-S3:三层指标上屏 ----------------
+   ① 本轮逐流 = 本页现算(事件流) ② 同分布离线 = 服务端从结果文件读 ③ 真外部分布 = 未采集。
+   三层不得互引;②里的离线口径是 0.2-0.8,而线上协议是 0.4-0.6。 */
+function _jstatsDiffCount(){
+  let d=0;
+  for(const r of _jrows){const f=_fmap[r.flow_id];
+    if(!f||!f.intent_label)continue;
+    if((f.intent_label==="attack")!==(r.verdict==="attack"))d++;}
+  return d;
+}
+function renderMetrics(m){
+  const L=(m&&m.layers)||{};
+  const off=L.offline_same_distribution||{};
+  const ext=L.external_distribution||{};
+  const ds=(m&&m.dataset)||{};
+  const e1=$("#m-l1");
+  if(e1){
+    e1.innerHTML="① 本轮逐流(在线)｜n="+_jstats.n+" · attack "+_jstats.attack+" / benign "+_jstats.benign+
+      " / abstain "+_jstats.abstain+" · 与真值不一致 <b>"+_jstatsDiffCount()+"</b> · 线上带 0.40-0.60"+
+      (_models&&_models.judge&&_models.judge.protocol_id?(" ("+esc(String(_models.judge.protocol_id))+")"):"");
+  }
+  const e2=$("#m-l2");
+  if(e2){
+    if(off.unavailable||off.n==null){
+      e2.innerHTML="② 同分布离线｜未提供(缺 "+esc(String(off.source||"结果文件"))+")";
+    }else{
+      e2.innerHTML="② 同分布离线｜n="+off.n+" · acc <b>"+off.acc+"</b> · precision "+off.precision+
+        " · recall "+off.recall+" · TP/FP/FN/TN "+off.tp+"/"+off.fp+"/"+off.fn+"/"+off.tn+
+        " · 弃权 "+(off.abstain_ratio!=null?(off.abstain_ratio*100).toFixed(2)+"%":"—")+
+        " · 离线带 "+esc(JSON.stringify(off.band))+" · 与①<b>不得互引</b>";
+    }
+  }
+  const e3=$("#m-l3");
+  if(e3){
+    e3.innerHTML="③ 真外部分布｜<b>"+esc(String(ext.status||"未采集"))+"</b>"+
+      (ext.why?(" · "+esc(String(ext.why))):"")+" ⇒ 不声称泛化";
+  }
+  const wk=$("#m-weak");
+  if(wk){
+    const items=(m&&m.small_sample_weak&&m.small_sample_weak.items)||[];
+    wk.textContent=items.length
+      ? ("小样本弱项(如实披露):"+items.map(x=>x.class+" n="+x.n+" acc="+x.acc).join(" · ")+
+         " —— 样本量极小,不作泛化结论")
+      : "小样本弱项(如实披露):未提供";
+  }
+  const src=$("#m-src");
+  if(src){
+    src.textContent=(m?("来源 "+(off.source||"—")+" · 数据集 train "+ds.train_n+" / holdout "+ds.holdout_n+
+      (ds.families?(" · 家族 train "+ds.families.train+" / holdout "+ds.families.holdout+" / 跨侧重叠 "+ds.families.cross_split_overlap):"")+
+      (ds.b_family_overlap!=null?(" · 与留存 B 家族重叠 "+ds.b_family_overlap):""))
+      : "来源 GET /api/demo/models → metrics_three_layers");
+  }
+}
+
+function renderProbeLineage(lin){
+  const el=$("#probe-line"), src=$("#probe-src");
+  if(!el)return;
+  if(!lin||lin.enabled===false||lin.enabled==null){
+    el.innerHTML="未启用"+(lin&&lin.reason?(" ("+esc(String(lin.reason))+")"):"")+
+      " —— 扩展演示用 AEGIS_PROBE=on 开启;本轮主链不含二次探针";
+    if(src)src.textContent="探针未运行:无 probe-lineage 工件";
+    return;
+  }
+  const vs=lin.variants||[];
+  const head="model_calls="+_evV(lin.model_calls)+" · 变体 "+vs.length+" 条 · 命中 <b>"+(lin.any_hit?"是":"否")+"</b>"+
+    " · 耗时 "+_evV(lin.elapsed_s)+"s/预算 "+_evV(lin.budget_s)+"s";
+  const rows=vs.map(v=>(esc(_evV(v.parent))+" × "+esc(_evV(v.transform_id))+
+    " · "+esc(_evV(v.source))+" · "+esc(String(v.policy).slice(0,26))+
+    (v.fired?(" · 发射 "+esc(_evV(v.flow_id))+" → "+esc(_evV(v.outcome))):" · 未发射")+
+    (v.replay_of?(" · replay_of "+esc(String(v.replay_of))):""))).join("<br>");
+  el.innerHTML=head+(rows?("<br>"+rows):"")+
+    (lin.any_hit?"<br><b>命中 ⇒ 本轮修复结果转 regressed(受限变体命中不等于所有攻击失效)</b>":"");
+  if(src)src.textContent="来源 GET artifacts/probe-lineage · "+
+    (lin.plan_error?("模型选招异常,已回退确定性: "+esc(String(lin.plan_error))):"模型选招 + 预制变换菜单");
+}
+async function loadProbeLineage(runId){
+  const tk=viewToken();
+  let lin=null;
+  try{
+    const r=await fetch("/api/demo/runs/"+encodeURIComponent(runId)+"/artifacts/probe-lineage");
+    if(r.ok)lin=await r.json();
+  }catch(e){lin=null;}
+  if(!tokenValid(tk))return;
+  renderProbeLineage(lin);
+}
+
+function renderRisk(){
+  if(!$("#riskcard"))return;
+  const hasP=_risk.p_attack!=null&&isFinite(Number(_risk.p_attack));
+  const pr=hasP?Math.round(Number(_risk.p_attack)*100):null;
+  const vd=String(_risk.verdict||"");
+  if(!hasP){
+    _rset("risk-pattack","unk","— 无判官裁决(缺 p_attack,不折算为良性/低风险)");
+  }else{
+    _rset("risk-pattack",vd==="abstain"?"warn":((vd==="attack"||pr>=50)?"bad":"ok"),
+      pr+"% · "+(vd||"—")+(vd==="abstain"?"(悬置,不计入攻击/良性)":""));
+    _rsrc("risk-pattack","p_attack 为倾向分数,非校准概率与风险等级 · 来源 judge.completed"+
+      (_risk.path?(" · "+_risk.path):""));
+  }
+  if(!_risk.seen_verify){
+    _rset("risk-exploit","unk","— 尚未复验(未收到 verification.completed)");
+  }else{
+    const b=_risk.blocked;
+    _rset("risk-exploit",b===true?"ok":(b===false?"bad":"unk"),
+      b===true?"blocked=true · 利用未成功":(b===false?"blocked=false · 仍可利用":"blocked 字段缺失"));
+    _rsrc("risk-exploit","来源 verification.completed · repair_outcome: "+(_risk.repair||"unknown")+
+      " · 与攻击倾向分开判定(修补后同一请求仍可判 attack 而利用被阻断)");
+  }
+  const f=riskFinding();
+  const sev=riskSeverity(f);
+  if(!sev.val){
+    _rset("risk-impact","unk","unknown —— 上游事件/快照未提供 severity,不默认低风险");
+  }else{
+    const lv=sev.val.toLowerCase();
+    _rset("risk-impact",(lv==="high"||lv==="critical")?"bad":(lv==="medium"?"warn":"ok"),sev.val);
+    _rsrc("risk-impact","来源 "+sev.src+"(案例/漏洞配置)");
+  }
+  const st=f?String(f.status||""):"";
+  if(!f)_rset("risk-state","unk","— 本轮无 finding 记录");
+  else if(st==="verified")_rset("risk-state","ok","修复验证通过(verified:攻击被阻断且业务回归通过)");
+  else if(st==="patched")_rset("risk-state","warn","待复核(补丁已部署,复验未完成)");
+  else if(st==="regressed")_rset("risk-state","bad","待修复(复验重新命中,已重新打开)");
+  else if(st==="open")_rset("risk-state","bad",
+    f.pass===false?"待修复(修补候选被门禁否决)":"待修复(尚无可部署通过的补丁)");
+  else if(st)_rset("risk-state","warn",st);
+  else _rset("risk-state","unk","unknown —— finding 状态缺失");
+}
+
+/* ---------- §6.4 历史学习成果(候选队列 + 历史训练版本同卷材料) ----------
+   只展示仓内真实路径文本,不内联指标数字;本轮新样本与历史训练的时间关系必须写清 */
+let _learnSeen=false,_modelManifest=null;
+function hmCopy(p){
+  const t=String(p||"");
+  if(!t)return;
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(
+        function(){showErr("已复制相对路径:"+t,"info");},
+        function(){showErr("剪贴板不可用,请手动复制:"+t);});
+      return;
+    }
+  }catch(e){/* 不支持则降级到提示 */}
+  showErr("剪贴板不可用,请手动复制:"+t);
+}
+function _hmPathEl(tag,p){
+  const d=document.createElement("span");
+  d.className="hm-path";
+  d.title="点击复制相对路径";
+  const t=document.createElement("span");
+  t.className="hm-tag";
+  t.textContent=tag+" ";
+  d.appendChild(t);
+  d.appendChild(document.createTextNode(String(p)));
+  d.onclick=function(){hmCopy(p);};
+  return d;
+}
+function _hmLine(cls,txt){const d=document.createElement("div");d.className=cls;d.textContent=txt;return d;}
+function renderHistory(){
+  const cnt=$("#hm-count");
+  if(cnt)cnt.textContent=_learnSeen?(_learn+" 条"):"—";
+  const host=$("#hm-list");
+  if(!host)return;
+  host.textContent="";
+  const list=(_modelManifest&&Array.isArray(_modelManifest.models))?_modelManifest.models:[];
+  if(!list.length){
+    host.appendChild(_hmLine("hm-sec","历史版本不可用 —— /api/demo/models 未返回 models 清单(不显示占位数字)"));
+    return;
+  }
+  const ev_total=list.reduce(function(a,m){
+    return a+((m&&Array.isArray(m.eval_results))?m.eval_results.length:0);},0);
+  host.appendChild(_hmLine("hm-sec","历史训练版本 "+list.length+" 个 · 评估结果文件 "+ev_total+
+    " 个 · manifest 生成于 "+String(_modelManifest.generated_at||"—")));
+  list.forEach(function(m){
+    m=m||{};
+    const row=document.createElement("div");
+    row.className="hm-row";
+    row.appendChild(_hmLine("hm-id",String(m.model_id||"—")));
+    row.appendChild(_hmLine("hm-ds","dataset_version: "+(m.dataset_version==null?"—":String(m.dataset_version))+
+      " · 训练设备: "+(m.train_device==null?"—":String(m.train_device))));
+    const paths=document.createElement("div");
+    paths.className="hm-paths";
+    const ev=Array.isArray(m.eval_results)?m.eval_results:[];
+    const pc=Array.isArray(m.paired_comparisons)?m.paired_comparisons:[];
+    if(ev.length)ev.forEach(function(p){paths.appendChild(_hmPathEl("eval_results",p));});
+    else paths.appendChild(_hmLine("hm-ds","eval_results: —(manifest 未登记该版本评估文件)"));
+    if(pc.length)pc.forEach(function(p){paths.appendChild(_hmPathEl("paired_comparisons",p));});
+    else paths.appendChild(_hmLine("hm-ds","paired_comparisons: —(manifest 未登记同卷配对材料)"));
+    row.appendChild(paths);
+    host.appendChild(row);
+  });
+  host.appendChild(_hmLine("hm-sec","指标数字以各结果文件为准(未配对数字不画成进步曲线)"));
+}
+
+/* ---------- 阶段条(10 阶段,按 run.stage 高亮) ---------- */
+function renderStageBar(cur,finished){
+  $("#stagebar").innerHTML=STAGES.map(pair=>{
+    const k=pair[0],zh=pair[1];
+    const ci=cur?STAGES.findIndex(s=>s[0]===cur):-1;
+    const cls=finished?" done":(k===cur?" cur":((ci>=0&&STAGES.findIndex(s=>s[0]===k)<ci)?" done":""));
+    return '<div class="sstage'+cls+'">'+zh+'</div>';
+  }).join("");
+}
+
+/* ---------- 快照渲染(run.json → 顶栏/runtime/判官状态/收据) ---------- */
+let _learn=0;
+let _modelsLoaded=false;
+/* /api/demo/models 载荷为 {models:[...],status} —— judge 条目按 id/role/name 模糊定位 */
+function judgeModelLabel(){
+  const list=(_models&&_models.models)||[];
+  for(let i=0;i<list.length;i++){
+    const m=list[i]||{};
+    const key=String(m.model_id||m.id||m.role||m.name||"");
+    if(/judge/i.test(key))return String(m.version||m.label||key);
+  }
+  return "";
+}
+function modelsLabel(s){
+  const mv=(s&&s.model_versions)||{};
+  const parts=[];
+  if(mv.llm||mv.patch)parts.push(String(mv.llm||mv.patch));
+  const jl=mv.judge||judgeModelLabel();
+  if(jl)parts.push(String(jl));
+  return parts.length?parts.join(" · "):"—";
+}
+function applyEnv(s){
+  const env=(s&&s.environment)||{};
+  _set("rt-device",env.device||"—");
+  const mv=(s&&s.model_versions)||{};
+  _set("rt-llm",mv.llm||mv.patch||((s&&s.providers&&Object.values(s.providers).join("·"))||"—"));
+  if(mv.judge)_set("rt-judge",String(mv.judge));
+  else{
+    const jl=judgeModelLabel();
+    if(jl)_set("rt-judge",jl);
+    else if(_modelsLoaded&&String(_models.status||"")==="unavailable")_set("rt-judge","unavailable");
+    else _set("rt-judge","—");
+  }
+  _set("rt-egress",env.egress_bytes!=null?(String(env.egress_bytes)+" B"):"—");
+  _set("rt-learn",String(_learn));
+  /* MF2:边界声明从真值派生——复核走云端时必须写明,不得笼统宣称“全链路本地” */
+  const prov=(s&&s.providers)||{};
+  const rev=String(prov.review||"");
+  const grid=$("#rt-boundary");
+  if(grid)grid.textContent=(rev==="step")?"主链路本地 · 复核 diff 送 StepFun"
+    :(rev?"全链路本地("+rev+")":"—");
+}
+function setPhase(txt,cls){const p=$("#phase");p.className="phase-chip"+(cls?(" "+cls):"");p.textContent=txt;}
+function renderState(run){
+  if(run)_snap=run;
+  const s=_snap||{};
+  _set("rm-run",s.run_id||"—");
+  _set("rm-case",s.case_id||"—");
+  _set("rm-models",modelsLabel(s));
+  _set("rm-clean",cleanLabel(typeof s.cleanup==="string"?s.cleanup:(s.cleanup&&s.cleanup.state)));
+  applyEnv(s);
+  judgePanelState(s.judge_status);
+  _set("rc-policy",s.patch_mode?String(s.patch_mode):"—");
+  _set("rc-audit",_evCache.size?(_evCache.size+" 条"):"—");
+  _set("rc-egress",(s.environment&&s.environment.egress_bytes!=null)?(String(s.environment.egress_bytes)+" B"):"—");
+  if(s.stage)renderStageBar(s.stage,TERMINAL_STATES.indexOf(s.state)>=0);
+  tickWall();
+  renderGates();renderConv();renderJudgeStats();renderRisk();
+  if(_mode==="follow"&&(s.state==="queued"||s.state==="running")){
+    setPhase("● "+String(s.state||"RUNNING").toUpperCase()+" · "+stageZh(s.stage),"run");
+  }
+}
+/* D5:耗时 = 快照 started_at→ended_at(终态)或 now(进行中)。原实现在 _mode!=="follow"
+   时不写,而回放/静态背景不注册该定时器 ⇒ 顶栏「耗时」恒为「—」,与收敛环「用时」
+   (同一快照同源)不一致。改为任何模式都写,并在每次快照渲染时刷新。 */
+function tickWall(){_set("t-wall",fmtDur(wallOf(_snap)));}
+
+/* ---------- 事件分发(新 schema:it.type + payload;中文正则解析已整体退役) ---------- */
+function relSec(ts){
+  if(_feedT0==null)return null;
+  const t=Date.parse(ts);
+  return isFinite(t)?Math.max(0,Math.round((t-_feedT0)/1000)):null;
+}
+function present(ev){
+  if(!ev||!ev.type)return;
+  if(_feedT0==null){const t0=Date.parse(ev.ts);if(isFinite(t0))_feedT0=t0;}
+  const p=ev.payload||{};
+  const seq=ev.seq;
+  _evCache.set(seq,ev);
+  if(_evCache.size>2000){const k0=_evCache.keys().next().value;_evCache.delete(k0);}
+  const tRel=relSec(ev.ts);
+  switch(ev.type){
+    case "run.created":{
+      feedAdd("dim","任务·创建",esc(ev.summary||("RUN "+(ev.run_id||""))),tRel,seq);
+      spotlight("run","任务已创建:<b>"+esc(ev.run_id||"")+"</b>",'<div class="badge">模式 <b>LIVE</b></div>');
+      break;
+    }
+    case "run.started":{
+      feedAdd("dim","任务·接管","编排器接管任务,进入预检阶段",tRel,seq);
+      spotlight("run","编排器启动红蓝对抗闭环",'<div class="badge">模式 <b>LIVE</b></div>');
+      break;
+    }
+    case "stage.started":{
+      renderStageBar(ev.stage);
+      feedAdd("dim","阶段",stageZh(ev.stage)+" 开始",tRel,seq);
+      if(ev.stage==="attack")spotlight("red","红方开始攻击目标靶机");
+      break;
+    }
+    case "business.checked":{
+      /* T7 对照计划书(审阅员 M1):原读 p.pass/p.outcome —— 引擎从不发这两个键,
+         二者均 undefined ⇒ ok 恒 true,连 A06(补丁关掉整个功能)也写「通过」。
+         现按引擎实发键读:ok(真实布尔) + keyword/endpoint + phase(基线/复测)。
+         缺 ok 时显示「未知」——不把缺证据折算成通过。 */
+      const hasOk=typeof p.ok==="boolean";
+      const ok=p.ok===true;
+      const ep=p.keyword||p.endpoint||"—";
+      const ph=p.phase==="verify"?"复测":"基线";
+      const verdictTxt=!hasOk?"<b style=\"color:var(--amber)\">未知(事件未带 ok)</b>"
+        :(ok?'<b style="color:var(--acc)">通过</b>':'<b style="color:var(--red)">异常</b>');
+      feedAdd("biz","业务·"+ph,"["+ph+"] <b>"+esc(ep)+"</b> → "+verdictTxt+
+        (hasOk&&!ok&&p.reason?" · "+esc(String(p.reason)):""),tRel,seq);
+      sideSay("blue","["+ph+"] "+esc(ep)+" · "+(!hasOk?"未知":(ok?"通过":"异常")),hasOk&&!ok);
+      spotlight("blue","<b style=\"color:var(--blue)\">"+ph+"业务检查</b> "+esc(ep)+" "+verdictTxt,
+        '<div class="badge">来源 <b>business.checked</b></div><div class="badge">依据 <b>'+
+        (!hasOk?"缺 ok":(ok?"PASS":"FAIL"))+'</b></div>');
+      break;
+    }
+    case "flow.captured":{
+      const intent=String(p.intent_label||"attack");
+      const mth=esc(p.method||"—"),pth=esc(p.path||p.endpoint||"—"),st=esc(p.status!=null?String(p.status):"—");
+      const hits=(Array.isArray(p.markers_hit)?p.markers_hit:
+        (Array.isArray(p.marker_hits)?p.marker_hits:[]));
+      const hit=(hits.length>0)||p.outcome==="exploited";
+      if(intent==="benign"||p.kind==="business"){
+        feedAdd("biz","业务·流量","<b>"+mth+"</b> "+pth+" → "+st,tRel,seq);
+        break;
+      }
+      feedAdd("red","红方·发射","<b>"+mth+"</b> "+pth+" → "+st+
+        (hit?' <b style="color:var(--red)">◆ 命中</b>':""),tRel,seq);
+      sideSay("red","→ "+pth+(hit?' <b style="color:var(--red)">◆</b>':""),hit);
+      if(hit)_bump("red-cnt");
+      _bump("t-shots");
+      spotlight("red",
+        "正在打击 <b style=\"color:var(--red)\">"+pth+"</b> · "+mth+" → "+st+(hit?" ◆ 命中":""),
+        '<div class="badge">本次发射 <b>'+mth+'</b></div><div class="badge">结果 <b>'+esc(p.outcome||"—")+'</b></div>');
+      break;
+    }
+    case "detection.completed":{
+      /* T10-S2:规则侧与复核真值按 flow_id 归档 —— 必须在 matched 早退**之前**记录,
+         否则规则沉默的流(如良性 /login)不进真值映射,三列表真值列显 unknown、分歧计数恒 0。 */
+      {
+        const fid0=String(ev.flow_id||p.flow_id||"");
+        if(fid0){_fmap[fid0]={intent_label:String(p.intent_label||""),matched:!!p.matched,
+          cls:String(p.class||""),severity:String(p.severity||""),endpoint:String(p.endpoint||"")};
+          renderJudgePanel();}
+      }
+      /* A03:正常流也进检测。matched=false → 规则沉默(≠正常,也不得记成检出)。 */
+      const matched=p.matched===true;
+      const clsRaw=p.class||p.category;
+      if(!matched){
+        feedAdd("dim","蓝方·规则","<b>规则沉默</b> @ "+esc(p.endpoint||p.path||"—")+
+          "(无签名命中;不等于正常)",tRel,seq);
+        break;
+      }
+      const fid=ev.finding_id||p.finding_id||("F"+seq);
+      /* D1:同一 finding 的后续观测(verify 阶段回放攻击再次检出同一 fid)**只更新观测字段**,
+         不得用新对象整替 —— 整替会把 gate.completed 写入的 gates/reasons/pass 与 status
+         一起丢掉,导致尾帧门禁三项退化为「未知」、收敛环从 patched 倒退为 open。 */
+      const prev=_findings[fid];
+      _findings[fid]=prev?Object.assign({},prev,{class:clsRaw||prev.class,
+        severity:p.severity||prev.severity,id:p.id||prev.id,
+        endpoint:p.endpoint||p.path||prev.endpoint})
+        :{fid:fid,class:clsRaw||"未知类",severity:p.severity||"",
+          status:"open",id:p.id||fid,endpoint:p.endpoint||p.path||""};
+      /* T7 对照计划书(审阅员 M1):规则输出是 matched/no_match,引擎从不发 confidence
+         ⇒ 原「置信 —」是永远填不上的空壳。改用引擎实发证据:签名命中数 alerts。 */
+      const alertsN=(p.alerts!=null?Number(p.alerts):null);
+      const sevTxt=p.severity?esc(String(p.severity)):"未配置";
+      feedAdd("blue","蓝方·检出","<b>检出 "+esc(clsLabel(clsRaw))+"</b> @ "+esc(p.endpoint||"—")+
+        (p.reasoning?(" · "+esc(p.reasoning)):""),tRel,seq);
+      /* T7 复核 P1:规则命中只产生**检测结果**,不等于拦截(拦截需实际阻断)。
+         措辞按真实动作:检出,不是拦截。 */
+      sideSay("blue","检出 <b>"+esc(clsLabel(clsRaw))+"</b>"+
+        (alertsN?(" · 签名命中 "+alertsN):""),true);
+      _bump("blue-cnt");_bump("t-block");
+      spotlight("blue","四层检测栈命中:<b style=\"color:var(--blue)\">"+esc(clsLabel(clsRaw))+"</b> @ "+esc(p.endpoint||"—"),
+        '<div class="badge">漏洞类 <b>'+esc(clsLabel(clsRaw))+'</b></div>'+
+        '<div class="badge">影响等级 <b>'+sevTxt+'</b></div>'+
+        '<div class="badge">签名命中 <b>'+(alertsN!=null?alertsN:"—")+'</b></div>');
+      renderGates();renderConv();
+      break;
+    }
+    case "judge.completed":{
+      /* MF1 同款:p_attack 缺失 = 无裁决,不得当作 0% 良性 */
+      const hasP=p.p_attack!=null&&isFinite(Number(p.p_attack));
+      const pr=hasP?Math.round(Number(p.p_attack)*100):null;
+      const verdict=String(p.verdict||"");
+      const abstain=verdict==="abstain";
+      const atk=hasP&&!abstain&&(verdict==="attack"||pr>=50);
+      const pthRaw=String(p.path||p.flow_id||"").replace(/^https?:\/\/[^\/]+/,"");
+      feedAdd("pur","判官·裁决","旁路复核 <b>"+esc(pthRaw)+"</b> → <b>p_attack "+(hasP?(pr+"%"):"—")+"</b> · "+esc(verdict||"—")+
+        (abstain&&p.raw_verdict!=null?(" (raw "+esc(String(p.raw_verdict))+")"):"")+
+        (p.latency_ms!=null?(" · "+esc(String(p.latency_ms))+"ms"):""),tRel,seq);
+      judgeVerdict(p,pthRaw);
+      /* T10-S2:逐流归档 + 重画面板(选中流) */
+      _jrows.push({seq:seq,flow_id:String(ev.flow_id||p.flow_id||""),
+                   p_attack:(hasP?Number(p.p_attack):null),verdict:verdict,band:String(p.band||""),
+                   latency_ms:(p.latency_ms!=null?Number(p.latency_ms):null),
+                   path:pthRaw,model_version:String(p.model_version||"")});
+      renderJudgePanel();
+      _jstats.n++;
+      if(p.latency_ms!=null)_jstats.lat_sum+=Number(p.latency_ms)||0;
+      if(hasP){
+        if(abstain)_jstats.abstain++;
+        else if(atk)_jstats.attack++;
+        else _jstats.benign++;
+      }
+      /* hasP=false 不进攻击/良性任一桶(表盘与风险面板均显 —)*/
+      renderJudgeStats();
+      spotlight("judge","判官旁路裁决:<b style=\"color:var(--pur)\">p_attack "+(hasP?(pr+"%"):"—")+"</b> → "+
+        (!hasP?'<b style="color:var(--dim)">无裁决</b>':abstain?'<b style="color:var(--amber)">悬置</b>':atk?'<b style="color:var(--red)">攻击</b>':'<b style="color:var(--ok)">良性</b>'),
+        '<div class="badge">p_attack <b>'+(hasP?(pr+"%"):"—")+'</b></div><div class="badge">裁决 <b>'+
+        (!hasP?"UNAVAILABLE":abstain?"ABSTAIN":atk?"ATTACK":"BENIGN")+'</b></div>');
+      /* §6.2 行1 攻击倾向:取本轮最新一条判官裁决(倾向分数,非风险等级)*/
+      _risk.p_attack=hasP?Number(p.p_attack):null;
+      _risk.verdict=verdict;_risk.path=pthRaw;
+      renderRisk();
+      if(p.reasoning)showThink("JUDGE",String(p.reasoning).slice(-500),_mode==="follow");
+      break;
+    }
+    case "patch.proposed":{
+      const fid=ev.finding_id||p.finding_id||"";
+      if(fid&&_findings[fid])_findings[fid].status="patched";
+      const dsum=diffSummary(p);
+      feedAdd("grn","修补·候选","候选补丁 <b>"+esc(p.candidate_id||fid||"—")+"</b> 已生成"+
+        (p.provider?(" · "+esc(p.provider)):"")+
+        (p.model&&p.model!==p.provider?(" · 模型 "+esc(p.model)):"")+
+        (dsum.length?(" · "+esc(dsum.join(" · "))):"")+
+        (p.artifact?(" · "+esc(String(p.artifact))):""),tRel,seq);
+      spotlight("patch","<b style=\"color:var(--acc)\">修补智能体</b>:为 "+esc(fid||"—")+" 生成候选补丁"+
+        (p.provider?("("+esc(p.provider)+")"):""),
+        '<div class="badge">三门禁 <b>改动范围 / 危险模式 / 模型复核</b></div><div class="badge">否决 <b>不入部署链</b></div>');
+      if(p.reasoning)showThink("PATCH",String(p.reasoning).slice(-500),_mode==="follow");
+      renderGates();renderConv();
+      break;
+    }
+    case "gate.completed":{
+      const fid=ev.finding_id||p.finding_id||"";
+      const ok=p.decision==="approved"||p.pass===true||ev.status==="pass";
+      const gs=Array.isArray(p.gates)?p.gates:[];
+      const rs=Array.isArray(p.reasons)?p.reasons:[];
+      const gf=fid?_findings[fid]:null;
+      if(gf){gf.gates=gs;gf.reasons=rs;gf.pass=ok;}
+      feedAdd("grn","门禁·审查","候选 "+esc(p.candidate_id||fid||"—")+" 三门禁 "+
+        (ok?'<b style="color:var(--acc)">通过</b>':'<b style="color:var(--amber)">否决</b>'+
+        (rs.length?(" · "+esc(String(rs[0]))):"")),tRel,seq);
+      if(!ok&&gf&&gf.status==="patched")gf.status="open";
+      spotlight(ok?"patch":"verify","<b style=\"color:var(--amber)\">修补门禁</b>:候选 "+
+        esc(p.candidate_id||fid||"—")+" "+(ok?"通过全部审查":"被否决"),
+        '<div class="badge">审查 <b>3 重</b></div><div class="badge">结果 <b>'+(ok?"PASS":"REJECT")+'</b></div>');
+      renderGates();renderConv();renderRisk();
+      break;
+    }
+    case "patch.applied":{
+      const fid=ev.finding_id||p.finding_id||"";
+      if(fid&&_findings[fid])_findings[fid].status="patched";
+      feedAdd("grn","修补·部署","补丁已部署到靶场"+
+        (p.deploy_hash?(" · "+esc(String(p.deploy_hash).slice(0,10))):""),tRel,seq);
+      renderGates();renderConv();
+      break;
+    }
+    case "verification.completed":{
+      const fid=ev.finding_id||p.finding_id||"";
+      const ro=String(p.repair_outcome||ev.status||"");
+      if(fid&&_findings[fid]){
+        if(ro==="verified")_findings[fid].status="verified";
+        else if(ro==="regressed")_findings[fid].status="regressed";
+        else if(ro==="rejected"||ro==="inconclusive")_findings[fid].status="open";
+      }
+      const pass=ro==="verified";
+      feedAdd("amb","门禁·复验","<b>"+esc(fid||"—")+"</b> 复验 "+
+        (pass?'<b style="color:var(--acc)">VERIFIED</b>':'<b style="color:var(--amber)">'+esc(ro||"未过")+"</b>")+
+        (p.replay_hit!=null?(" · 重放命中 "+esc(String(p.replay_hit))+"/"+esc(p.replay_total!=null?String(p.replay_total):"—")):"")+
+        (p.business_pass!=null?(" · 业务回归 "+(p.business_pass?"PASS":"FAIL")):""),tRel,seq);
+      if(p.replay_hit!=null)_set("cv-hits",String(p.replay_hit));
+      if(p.replay_total!=null)_set("cv-atk",String(p.replay_total));
+      spotlight("verify","<b style=\"color:var(--amber)\">验证门禁</b>:"+esc(fid||"—")+" → "+esc(ro||"—"),
+        '<div class="badge">重放攻击 <b>'+(pass?"全拦":"仍有命中")+'</b></div>'+
+        '<div class="badge">功能回归 <b>'+(p.business_pass===true?"PASS":(p.business_pass===false?"FAIL":"—"))+'</b></div>');
+      /* §6.2 行2 利用结果:只来自验证器,与行1 攻击倾向分开(修补后仍可 attack 而 blocked)*/
+      _risk.blocked=(typeof p.blocked==="boolean")?p.blocked:null;
+      _risk.repair=(p.repair_outcome==null?"":String(p.repair_outcome));
+      _risk.seen_verify=true;
+      renderGates();renderConv();renderRisk();
+      break;
+    }
+    case "learning.queued":{
+      const c=Number(p.count!=null?p.count:(p.queued!=null?p.queued:(p.candidates||0)))||0;
+      const dup=Number(p.duplicates||0)||0;
+      _learn+=c;
+      _learnSeen=true;
+      _set("rt-learn",String(_learn));
+      renderHistory();
+      feedAdd("pur","学习·入队","判读样本入队 <b>"+c+"</b> 条(累计 "+_learn+
+        (dup?(",去重 "+dup):"")+")",tRel,seq);
+      break;
+    }
+    case "cleanup.completed":{
+      const st=String(p.status||"");
+      const restored=st==="restored"||st==="retained";
+      /* S1:cleanup 失败单独记账,终局时与中止原因分开上屏(不再被 run.failed 的 error 顶掉) */
+      _cleanupFailed=!restored;
+      feedAdd(restored?"dim":"red","收尾·恢复",
+        st==="retained"?"按策略保留补丁态(未恢复)"
+        :(restored?"靶场已恢复供下一次演示"
+          :'<b style="color:var(--red)">靶场恢复失败</b>'+(p.error?(" · "+esc(p.error)):
+            (p.note?(" · "+esc(p.note)):" · 详情见 run.json error"))),tRel,seq);
+      _set("rm-clean",cleanLabel(restored?st:"failed"));
+      break;
+    }
+    case "run.finished": case "run.partial": case "run.failed": case "run.cancelled": case "run.interrupted":{
+      /* follow 模式由 ingestEvent 统一走 finishRun;回放模式本地渲染终局 */
+      if(_mode==="replay"){
+        const st=String(p.state||ev.type.split(".")[1]||"").toLowerCase();
+        const rsn=termReason(p,ev);
+        /* S1:终态色/标题/原因全部从该轮自己的事件载荷得出;五种终态分开呈现 */
+        setPhase("● "+termWord(st)+" · 回放",termCls(st));
+        if(st==="succeeded")feedBanner("◆ 回放:该轮 RUN "+termZh(st),"ok");
+        else if(st==="partial")feedBanner("△ 回放:该轮 RUN "+termZh(st)+(rsn?(" · "+esc(rsn)):""),"warn");
+        else if(st==="cancelled"||st==="interrupted")
+          feedBanner("■ 回放:该轮 RUN "+termZh(st)+(rsn?(" · "+esc(rsn)):""),"warn");
+        else feedBanner("✕ 回放:该轮 RUN "+termZh(st)+(rsn?(" · "+esc(rsn)):""),"bad");
+        /* S1:靶场恢复失败与中止原因分开上屏(两件事,两行) */
+        if(_cleanupFailed)feedBanner("✕ 靶场恢复失败 —— 与上面的中止原因分开登记,需人工检查部署","bad");
+      }
+      break;
+    }
+    default:{
+      if(ev.summary)feedAdd("dim","事件",esc(ev.summary),tRel,seq);
+      break;
+    }
+  }
+}
+
+/* ---------- 数据层:模式状态机 + (run_id, seq) 去重游标 ---------- */
+/* S1 页面视角所有权(缺陷现场:回放失败轮播完后 rpDone() 把 _mode 打回裸 idle,3s 后
+   scanRuns() 又 loadStatic() 最新 run 重画顶栏/摘要 —— 屏幕一半说 failed、一半说 succeeded)。
+   现在把「屏幕这一帧归谁」显式化,四种视角互相排斥:
+     live    —— 跟随进行中的 run(数据源:SSE + 轮询)
+     replay  —— 历史回放进行中(数据源:本地回放时钟,体内零网络)
+     frozen  —— 历史回放已结束:身份/相位/summary/门禁/尾帧全部冻结,后台扫描不得改写
+     ambient —— 仅看最近 run:静态背景,不声称是本轮结果
+   每次视角变更 _epoch++;所有异步回调在落 DOM 前用 viewToken()/tokenValid() 校验
+   「世代 + 当前视角 + 目标 run_id」,晚到的响应一律丢弃。 */
+let _view="ambient",_viewRunId=null,_epoch=0;
+let _feedRunId=null;   /* 事件流里那批事件属于哪个 run(判断「本轮结果」是否真在本页播出过) */
+let _frozenHint="";    /* 冻结期 scanRuns 只写这一句提示,不改写画面 */
+let _mode="idle",_run=null,_lastSeq=0,_staticRunId=null;
+let _es=null,_timers={};
+
+const VIEW_ZH={live:"LIVE 跟随",replay:"历史回放进行中",frozen:"历史回放已结束(冻结)",ambient:"仅看最近 run(背景)"};
+/* 终态:word 保留服务端 state 的英文词(真数据回放脚本按它核对相位),后面再跟中文口径 ——
+   failed/partial/cancelled/interrupted 分开呈现,不揉进一个 else 分支。 */
+const TERM_WORD={succeeded:"CONVERGED",partial:"PARTIAL",failed:"FAILED",cancelled:"CANCELLED",interrupted:"INTERRUPTED"};
+const TERM_ZH={succeeded:"收敛成功",partial:"部分完成",failed:"失败",cancelled:"已取消(用户中止)",interrupted:"被中断(进程/环境)"};
+function termWord(st){const s=String(st||"").toLowerCase();return TERM_WORD[s]||s.toUpperCase();}
+function termZh(st){const s=String(st||"").toLowerCase();return TERM_ZH[s]||s;}
+function termCls(st){const s=String(st||"").toLowerCase();
+  /* S1:interrupted(被中断)与 cancelled(用户中止)不同色 —— 前者是环境/进程异常,按红坏呈现 */
+  return s==="succeeded"?"done":(s==="partial"?"warn":(s==="cancelled"?"warn":"bad"));}
+/* D2 同款形状纪律:真快照里 cleanup 是字符串("restored"),不是对象 */
+function cleanupStateOf(s){const c=s&&s.cleanup;return String(typeof c==="string"?c:((c&&c.state)||""));}
+function viewToken(){return {view:_view,runId:_viewRunId,epoch:_epoch};}
+function tokenValid(t){
+  return !!t&&t.epoch===_epoch&&t.view===_view
+    &&(t.runId==null||String(t.runId)===String(_viewRunId));
+}
+function setView(v,runId){
+  const rid=(runId==null?null:String(runId));
+  if(_view===v&&String(_viewRunId)===String(rid))return;
+  _view=v;_viewRunId=rid;_epoch++;
+}
+/* S1 视角声明条:把「这一帧是谁的画面、哪些计数算本轮」写在屏幕上,而不是只存在于 JS 变量里 */
+function renderViewBar(){
+  const el=$("#viewbar");if(!el)return;
+  /* S1:视角条必须点名**具体 run**。背景视角下 _viewRunId 为空,要取 _staticRunId(真正加载的那轮),
+     否则条上只有一个「—」——看着像没看到任何 run,评委会误以为页面没接数据。 */
+  const rid=_viewRunId||_staticRunId||"—",s=_snap||{};
+  const played=!!(_viewRunId&&_feedRunId)&&String(_feedRunId)===String(_viewRunId);
+  let cls="vbar",main="",tail="";
+  if(_view==="live"){
+    cls+=" live";
+    main="跟随 "+rid+(s.state?(" · state="+String(s.state)):"")+(s.stage?(" · "+stageZh(s.stage)):"")+
+      " · 数据源 SSE + 事件轮询 2s / 快照轮询 2.5s";
+  }else if(_view==="replay"){
+    cls+=" replay";
+    main="回放 "+rid+" · 已播 "+_rp.i+" / "+_rp.items.length+" 条事件 · 本地时钟驱动,期间零网络写请求";
+  }else if(_view==="frozen"){
+    cls+=" frozen";
+    main="冻结在 "+rid+" 的尾帧(state="+String(s.state||"—")+") · 身份/相位/摘要/门禁不再被后台扫描改写";
+    tail=_frozenHint||"点回放条 ✕ 退出 返回背景";
+  }else{
+    main=played
+      ? "本页播出的是 "+rid+"(state="+String(s.state||"—")+") · 下方计数即该轮结果"
+      : (_feedRunId
+        ? "待命 · 背景 run="+rid+"(state="+String(s.state||"—")+")仅作背景信息;事件流当前是 "+_feedRunId+
+          " 的记录,两者不同源,顶部身份/摘要来自 "+rid+"(本页未播放其事件)"
+        : "待命 · 最近运行 "+rid+"(state="+String(s.state||"—")+")仅作背景信息:未播放该轮事件,故红蓝/判官/门禁/收敛环计数为空或 0;点 ⟲ 彩排回放 可完整重放该轮");
+    tail="⟲ 彩排回放 可选任意历史轮";
+  }
+  el.className=cls;
+  el.innerHTML='<span class="vlbl">视角 '+esc(VIEW_ZH[_view]||_view)+'</span><span class="vmain">'+esc(main)+'</span>'+
+    (tail?('<span class="vhint">'+esc(tail)+'</span>'):"");
+}
+
+/* S1:cleanup 失败必须与中止原因**分开**呈现,所以单独记一笔(在 cleanup.completed 里写) */
+let _cleanupFailed=false;
+/* S1:终局事件是否真在本页播出过 —— 没播过但服务端 state 已是终态时,相位/横幅由快照 state 得出 */
+let _terminalEventSeen=false;
+function resetAll(){
+  ["red-cnt","blue-cnt","t-shots","t-block"].forEach(id=>_set(id,0));
+  _findings={};_jstats={n:0,attack:0,benign:0,abstain:0,lat_sum:0};_jrows=[];_fmap={};_learn=0;_feedT0=null;
+  _cleanupFailed=false;_terminalEventSeen=false;_feedRunId=null;
+  _evCache.clear();
+  $("#feed").innerHTML="";_lastFeedCount=0;
+  $("#jlog").innerHTML="";$("#jverdict").style.display="none";
+  $("#jv-p").textContent="—";$("#jarc").style.strokeDashoffset="251.3";
+  _set("rt-learn","—");_set("t-wall","—");_set("cv-hits","–");_set("cv-atk","–");_set("cv-wall","–");
+  _learnSeen=false;
+  _risk={p_attack:null,verdict:"",path:"",blocked:null,repair:"",seen_verify:false};
+  renderGates();renderConv();renderJudgeStats();renderStageBar(null);
+  renderRisk();renderHistory();
+  drawerClose();
+}
+
+/* (run_id, seq) 游标:seq 严格递增才受理,重复/过期一律丢弃 */
+function ingestEvent(ev){
+  if(_mode!=="follow"||!ev)return;
+  if(ev.run_id&&_run&&String(ev.run_id)!==String(_run))return;
+  const s=Number(ev.seq);
+  if(!isFinite(s)||s<=_lastSeq)return;
+  _lastSeq=s;
+  present(ev);
+  if(ev.type==="run.finished"||ev.type==="run.partial"||ev.type==="run.failed"||ev.type==="run.cancelled"||ev.type==="run.interrupted"){
+    const p=ev.payload||{};
+    finishRun(p.state||ev.type.split(".")[1]||"",termReason(p,ev));
+  }
+}
+
+async function loadRunRaw(id){
+  const r=await fetch("/api/demo/runs/"+encodeURIComponent(id));
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  return j.run||j;
+}
+async function fetchEventsPage(id,after){
+  const r=await fetch("/api/demo/runs/"+encodeURIComponent(id)+"/events?after="+Number(after||0)+"&limit=200");
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  return j.events||j.items||[];
+}
+async function fetchAllEvents(id){
+  let after=0,out=[];
+  for(let guard=0;guard<500;guard++){
+    const page=await fetchEventsPage(id,after);
+    if(!page.length)break;
+    out=out.concat(page);
+    const s=Number(page[page.length-1]&&page[page.length-1].seq);
+    if(!isFinite(s)||s<=after)break;
+    after=s;
+    if(page.length<200)break;
+  }
+  return out;
+}
+
+function closeStream(){if(_es){try{_es.close();}catch(e){}_es=null;}}
+function closeFollow(){
+  closeStream();
+  Object.keys(_timers).forEach(k=>{clearInterval(_timers[k]);});
+  _timers={};
+}
+function backToIdle(){
+  closeFollow();
+  _mode="idle";_run=null;
+  setLiveBtn("idle");showConn("idle");
+}
+
+/* SSE:Last-Event-ID 由浏览器自动携带;心跳(heartbeat)不渲染 */
+function openStream(){
+  closeStream();
+  try{_es=new EventSource("/api/demo/runs/"+encodeURIComponent(_run)+"/stream?after="+_lastSeq);}
+  catch(e){showConn("err");return;}
+  _es.onopen=function(){showConn("ok");};
+  _es.onerror=function(){
+    /* 已回 idle(终态收尾/取消)时连接关闭属预期,不再误报「重连中」 */
+    if(_mode!=="follow")return;
+    showConn("err");
+  };
+  /* 后端 SSE 是命名事件(event: demo),onmessage 收不到,必须 addEventListener */
+  _es.addEventListener("demo",function(m){
+    let ev=null;
+    try{ev=JSON.parse(m.data);}catch(e){return;}
+    if(!ev||!ev.type||ev.type==="heartbeat")return;
+    ingestEvent(ev);
+  });
+  /* 终态后服务端发 event: eos 并关闭连接:补拉一次快照后安静收尾 */
+  _es.addEventListener("eos",function(){
+    if(_mode==="follow"&&_run)pollSnap();
+    closeStream();
+  });
+}
+
+/* 2s 轮询 events 兜底(A10:SSE 断线时靠它追赶)
+   S1:进门守卫不够 —— 请求发出后可能已切轮/已进回放,响应回来必须先校验视角世代,
+   否则上一轮的事件会被 ingest 进当前轮的游标里。 */
+async function pollEvents(){
+  if(_mode!=="follow"||!_run)return;
+  const t=viewToken(),rid=String(_run);
+  try{
+    const r=await fetch("/api/demo/runs/"+encodeURIComponent(rid)+"/events?after="+_lastSeq);
+    if(!r.ok)return;
+    const j=await r.json();
+    if(!tokenValid(t)||_mode!=="follow"||String(_run)!==rid)return;
+    (j.events||j.items||[]).forEach(ingestEvent);
+  }catch(e){}
+}
+/* 2.5s 轮询 run 快照:阶段/耗时/终态的权威来源(终态服务端决定,§7-5) */
+async function pollSnap(){
+  if(_mode!=="follow"||!_run)return;
+  const t=viewToken(),rid=String(_run);
+  try{
+    const run=await loadRunRaw(rid);
+    if(!tokenValid(t)||_mode!=="follow"||String(_run)!==rid)return;
+    _snap=run;renderState(run);
+    if(TERMINAL_STATES.indexOf(run.state)>=0)finishRun(run.state,stopReason(run));
+  }catch(e){}
+}
+
+async function followRun(id){
+  if(_mode==="replay")return;
+  if(_view==="frozen")return;      /* S1:冻结画面只能由「退出回放」或「启动 LIVE」解锁 */
+  if(_mode==="follow"&&_run===String(id))return;
+  const rid=String(id);
+  closeFollow();
+  _mode="follow";_run=rid;_lastSeq=0;_staticRunId=null;
+  setView("live",rid);
+  resetAll();
+  _feedRunId=rid;
+  setLiveBtn("follow");showConn("connecting");renderViewBar();
+  const t=viewToken();
+  try{
+    const run=await loadRunRaw(rid);
+    if(!tokenValid(t)||_mode!=="follow"||String(_run)!==rid)return;   /* S1:晚到响应不得覆写下一轮 */
+    _snap=run;renderState(run);renderViewBar();
+    const evs=await fetchAllEvents(rid);
+    if(!tokenValid(t)||_mode!=="follow"||String(_run)!==rid)return;
+    evs.forEach(ingestEvent);
+    /* 终态守卫:若拉齐过程中 run 已终态(含 ingestEvent 内部已触发 finishRun
+       将 _mode 打回 idle),直接返回,不再 openStream/开 timers(SSE 泄漏与空转) */
+    if(_mode!=="follow"||String(_run)!==rid)return;
+    if(_snap&&TERMINAL_STATES.indexOf(_snap.state)>=0){
+      finishRun(_snap.state,stopReason(_snap));
+      return;
+    }
+  }catch(e){
+    if(!tokenValid(t))return;
+    showErr("跟随任务失败:"+e.message);
+    backToIdle();
+    return;
+  }
+  openStream();
+  _timers.poll=setInterval(pollEvents,2000);
+  _timers.snap=setInterval(pollSnap,2500);
+  _timers.wall=setInterval(tickWall,1000);
+}
+
+/* 终态处理:服务端 state 决定;succeeded→绿 / partial→黄 / 其余→红+stop_reason;
+   cleanup 失败双显示(原始中止原因 + 恢复失败) */
+async function finishRun(state,reason){
+  if(_mode!=="follow")return;
+  const runId=_run;
+  backToIdle();
+  /* 终态仍显示本页刚播完的 LIVE。后台扫描遇到同一最新 run 时不要
+     再调用 loadStatic，把相位误改成“背景历史轮”。 */
+  _staticRunId=String(runId);
+  renderStageBar(null,true);
+  let snap=null;
+  try{snap=await loadRunRaw(runId);}catch(e){}
+  if(snap){_snap=snap;renderState(snap);}
+  const st=String((snap&&snap.state)||state||"").toLowerCase();
+  const rsn=reason||stopReason(snap||{});
+  const cl=snap&&snap.cleanup?snap.cleanup.state:"";
+  if(st==="succeeded"){
+    setPhase("● CONVERGED · 成功","done");
+    feedBanner("◆ RUN 收敛成功 · "+esc(runId||""),"ok");
+  }else if(st==="partial"){
+    setPhase("● PARTIAL · 部分完成","warn");
+    feedBanner("△ RUN 部分完成"+(rsn?(" · "+esc(rsn)):""),"warn");
+  }else{
+    setPhase("● "+st.toUpperCase()+(rsn?(" · "+String(rsn).slice(0,24)):""),"bad");
+    feedBanner("✕ RUN "+esc(st)+(rsn?(" · "+esc(rsn)):""),"bad");
+  }
+  if(cl==="failed"){
+    const cem=(snap.cleanup&&snap.cleanup.error)||"";
+    showErr((rsn?("原始中止原因:"+rsn+" · "):"")+"靶场恢复失败"+(cem?(": "+cem):"")+" —— 需人工检查部署","sticky");
+    feedBanner("✕ 靶场恢复失败"+(cem?(" · "+esc(cem)):""),"bad");
+  }
+  /* D4 同源文案:LIVE 收敛的结尾断言同样改为数据推导(不可无条件宣称三门禁全过) */
+  spotlight("run",st==="succeeded"
+    ?"任务收敛完成——"+gateVerdictText()
+    :"任务已结束("+esc(st)+")——终局详情见事件流与治理收据");
+}
+
+/* idle 周期扫描:发现非终态 run 自动跟随(A09);最新 run 变化刷新静态背景
+   S1:已冻结的历史回放**不得**被后台扫描改写 —— 冻结期只写一句提示,不落任何身份/相位/计数。 */
+async function scanRuns(){
+  if(_mode==="replay")return;
+  try{
+    const r=await fetch("/api/demo/runs");
+    if(!r.ok)return;
+    const j=await r.json();
+    const runs=Array.isArray(j)?j:(j.runs||j.items||[]);
+    if(!runs.length)return;
+    runs.sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||"")));
+    const active=runs.find(x=>x.state==="queued"||x.state==="running");
+    if(_view==="frozen"){
+      /* 冻结期:只提示,不改写。用户点 ▶ LIVE 或 ⟲ 彩排回放 才切换视角。 */
+      const hint=active
+        ? "后台有新 LIVE 在跑("+String(active.run_id)+")——点 ▶ LIVE 对抗 退出冻结并跟随"
+        : (runs[0]&&String(runs[0].run_id)!==String(_viewRunId)
+            ? "后台已刷新:最新 run="+String(runs[0].run_id)+"(本帧仍冻结在上一个 run)"
+            : "");
+      if(hint!==_frozenHint){_frozenHint=hint;renderViewBar();}
+      return;
+    }
+    if(active){
+      setView("live",active.run_id);
+      if(!(_mode==="follow"&&_run===String(active.run_id)))followRun(active.run_id);
+      return;
+    }
+    if(_mode==="idle"){
+      const top=runs[0];
+      if(top&&top.run_id&&String(top.run_id)!==String(_staticRunId))loadStatic(top.run_id);
+    }
+  }catch(e){}
+}
+/* 静态展示最近一次终态 run(背景上下文,不播放事件)
+   S1:晚到的响应不得把当前画面覆成另一个 run —— 入口取 token,落 DOM 前校验。 */
+async function loadStatic(id){
+  const tk=viewToken();
+  try{
+    const run=await loadRunRaw(id);
+    if(!tokenValid(tk))return;              /* 期间已切视角 → 丢弃这次结果 */
+    if(_view!=="ambient"&&_view!=="live")return;
+    _staticRunId=String(id);_snap=run;renderState(run);
+    loadEvidenceReceipt(id);      /* T10-S2:四步收据随背景轮一起拉(真数据,失败则显 unknown) */
+    loadProbeLineage(id);         /* T10-S4:受限二次探针 lineage(未启用时显未启用) */
+    if(TERMINAL_STATES.indexOf(run.state)>=0){
+      renderStageBar(null,true);
+      const rsn=stopReason(run);
+      /* S1:背景轮的相位必须自带「背景/历史」标注 —— 不得把背景读成「本轮成功」 */
+      if(run.state==="succeeded")setPhase("● CONVERGED · 背景(历史成功轮,未播放事件)","done");
+      else if(run.state==="partial")setPhase("● PARTIAL · 背景(历史,未播放事件)","warn");
+      else setPhase("● "+String(run.state).toUpperCase()+" · 背景(历史,未播放事件)","bad");
+      if(rsn)showErr("上次 RUN 终止原因:"+rsn);
+    }
+    renderViewBar();
+  }catch(e){}
+}
+/* 模型 manifest:缺记录显示 unavailable(§2.4 GET /api/demo/models) */
+async function loadModels(){
+  const tk=viewToken();
+  try{
+    const r=await fetch("/api/demo/models");
+    if(!r.ok){_set("rt-judge","unavailable");return;}
+    const j=await r.json();
+    if(!tokenValid(tk))return;              /* S1:晚到的 manifest 不得改写已冻结/回放中的画面 */
+    _models=j.models||j;
+    /* §6.4:历史版本清单整份载荷(renderHistory 只取 models/generated_at,不内联指标)*/
+    _modelManifest=Array.isArray(j.models)?j:null;
+    renderHistory();
+    renderMetrics(j.metrics_three_layers||null);   /* T10-S3:三层指标(服务端读文件提供) */
+    if(_snap&&(_view==="ambient"||_view==="live"))renderState(_snap);
+    if(_models&&_models.judge&&_models.judge.status==="unavailable")_set("rt-judge","unavailable");
+  }catch(e){_set("rt-judge","unavailable");}
+}
+
+/* ---------- LIVE(创建任务 / 跟随 / 中止) ---------- */
+function setLiveBtn(m){
+  const b=$("#btn-live"),c=$("#btn-cancel"),r=$("#btn-replay");
+  if(m==="follow"){b.disabled=true;b.textContent="⚔ 对抗进行中";c.style.display="";r.disabled=true;}
+  else{b.disabled=false;b.textContent="▶ LIVE 对抗";c.style.display="none";r.disabled=false;}
+}
+async function startLive(){
+  if(_mode==="replay")stopReplay();
+  if(_view==="frozen"){setView("ambient",null);_frozenHint="";renderViewBar();}  /* S1:启动 LIVE 即退出冻结 */
+  if(_mode==="follow")return;
+  setLiveBtn("follow");
+  spotlight("run","编排器启动红蓝对抗闭环",'<div class="badge">模式 <b>LIVE</b></div>');
+  try{
+    const r=await fetch("/api/demo/runs",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({case_id:DEFAULT_CASE})});
+    if(!r.ok){
+      if(r.status===409){showErr("已有任务运行中——本页已跟随该任务");}
+      else{showErr("启动失败:HTTP "+r.status+(r.status===400?"(案例 ID 不合法?)":""));}
+      setLiveBtn("idle");
+      scanRuns();
+      return;
+    }
+    const j=await r.json();
+    if(!j||!j.run_id)throw new Error("响应缺 run_id");
+    followRun(j.run_id);
+  }catch(e){
+    showErr("触发失败:"+e.message);
+    setLiveBtn("idle");
+  }
+}
+async function cancelRun(){
+  if(_mode!=="follow"||!_run)return;
+  try{
+    const r=await fetch("/api/demo/runs/"+encodeURIComponent(_run)+"/cancel",{method:"POST"});
+    if(!r.ok&&r.status!==202){showErr("取消请求失败:HTTP "+r.status);return;}
+    showErr("已请求取消,等待任务退出…","info");
+  }catch(e){showErr("取消失败:"+e.message);}
+}
+
+/* ---------- REPLAY 模式(冻结历史 run 从零累计,只读事件,零写操作) ---------- */
+let _rp={items:[],i:0,timer:null,speed:1,paused:false,runId:null};
+async function openRunPicker(){
+  if(_mode==="follow"){showErr("LIVE 对抗进行中,请等结束后回放");return;}
+  let runs=[];
+  try{
+    const r=await fetch("/api/demo/runs");
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const j=await r.json();
+    runs=Array.isArray(j)?j:(j.runs||j.items||[]);
+  }catch(e){showErr("拉取 RUN 列表失败:"+e.message);return;}
+  if(!runs.length){showErr("尚无历史 RUN——先跑一轮 LIVE");return;}
+  runs.sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||"")));
+  if(_mode==="replay")stopReplay();
+  renderPicker(runs);
+}
+/* 选择器行全部用 DOM API + textContent 组装(A17:无 innerHTML 注入面) */
+function renderPicker(runs){
+  const list=$("#pk-list");
+  list.innerHTML="";
+  runs.slice(0,30).forEach(function(r){
+    const row=document.createElement("div");
+    row.className="pk-row";
+    const rid=document.createElement("span");
+    rid.className="rid";
+    rid.textContent=String(r.run_id||"?")+(r.case_id?(" · "+r.case_id):"");
+    const rc=document.createElement("span");
+    const st=String(r.state||"?").toLowerCase();
+    rc.className="rc "+(st==="succeeded"?"ok":(TERMINAL_STATES.indexOf(st)>=0?"bad":"warn"));
+    rc.textContent=st;
+    const rt=document.createElement("span");
+    rt.className="rtime";
+    rt.textContent=String(r.created_at||"").replace("T"," ").slice(0,19);
+    row.appendChild(rid);row.appendChild(rc);row.appendChild(rt);
+    row.onclick=function(){pickRun(r.run_id);};
+    list.appendChild(row);
+  });
+  $("#runpicker").classList.add("show");
+}
+function closePicker(){$("#runpicker").classList.remove("show");}
+async function pickRun(id){
+  closePicker();
+  if(_mode==="follow"){showErr("LIVE 对抗进行中,请等结束后回放");return;}
+  if(!id)return;
+  let evs=[];
+  try{evs=await fetchAllEvents(id);}
+  catch(e){showErr("拉取事件失败:"+e.message);return;}
+  if(!evs.length){showErr("该 RUN 无事件可回放");return;}
+  /* MF3 修复:回放必须回填被回放 run 的身份(只读 GET,不破 A14 零写请求) */
+  let snap=null;
+  try{
+    const rs=await fetch("/api/demo/runs/"+encodeURIComponent(id));
+    if(rs.ok)snap=(await rs.json()).run||null;
+  }catch(e){/* 快照不可得时身份显示 —,不得沿用上一轮残留 */}
+  /* T10-S2:四步收据也在这里(进回放**之前**)取完 —— 回放推进期间必须零网络请求,
+     所以不能拖到 rpDone() 再拉。取不到就传 null,由 renderEvidenceReceipt 显“未提供”。 */
+  let receipt=null, receiptErr="";
+  try{
+    const rr=await fetch("/api/demo/runs/"+encodeURIComponent(id)+"/artifacts/evidence-receipt");
+    if(rr.ok)receipt=await rr.json(); else receiptErr="HTTP "+rr.status;
+  }catch(e){receipt=null;receiptErr=String((e&&e.message)||e);}
+  /* T10-S4:探针 lineage 同法在进回放前取完(回放期间仍零网络请求) */
+  let lineage=null;
+  try{
+    const rl=await fetch("/api/demo/runs/"+encodeURIComponent(id)+"/artifacts/probe-lineage");
+    if(rl.ok)lineage=await rl.json();
+  }catch(e){lineage=null;}
+  enterReplay(id,evs,snap,receipt,receiptErr,lineage);
+}
+function enterReplay(id,evs,snap,receipt,receiptErr,lineage){
+  _mode="replay";
+  setView("replay",id);          /* S1:视角切到「历史回放进行中」,后台扫描自此不得改写画面 */
+  _snap=null;_staticRunId=null;
+  resetAll();
+  /* T10-S2/S3(评审指出的跨轮污染):切轮的**当下**就要把上一轮留在屏上的东西换掉 ——
+     收据/逐流表/视角条都属于“上一条被回放的 run”,不能等本轮播完才换。
+     拿不到本轮收据时显式写“未提供 + 原因”,绝不留上一轮的值。 */
+  renderEvidenceReceipt(receipt||null);
+  renderProbeLineage(lineage||null);      /* T10-S4:切轮时把上一轮探针 lineage 一并换掉 */
+  renderJudgePanel();
+  renderViewBar();
+  /* D3:回放必须复位相位芯片 —— resetAll 不动 phase,否则从 CP1 到终局事件之间一直沿用
+     boot 静态背景的相位(如「● CONVERGED · 成功(历史)」),与被回放的 run 无关。 */
+  setPhase("● REPLAY · 回放中","");
+  const keep=(_rp&&_rp.speed)||1;
+  _rp={items:evs,i:0,timer:null,speed:keep,paused:false,runId:String(id),receipt:(receipt||null),receiptErr:String(receiptErr||""),lineage:(lineage||null)};
+  if(snap)renderState(snap);          /* 身份/恢复状态/耗时从该 run 快照来 */
+  else{
+    _set("rm-run",String(id));
+    _set("rm-case","—");_set("rm-models","—");_set("rm-clean","—");
+  }
+  renderViewBar();
+  $("#replaybar").classList.add("show");
+  $("#modebadge").classList.add("show");
+  $("#rp-toggle").textContent="⏸ 暂停";
+  $("#rp-speed").value=String(keep);
+  spotlight("run","编排器 · 回放历史真实对抗记录("+esc(String(id))+")",
+    '<div class="badge">模式 <b>REPLAY</b></div><div class="badge">记录 <b>'+evs.length+' 条</b></div>');
+  _set("rp-pos","0 / "+evs.length);
+  _rpTick();
+}
+/* 播放循环:纯本地时钟驱动,体内零网络请求(A14) */
+function _rpTick(){
+  if(_mode!=="replay")return;
+  const it=_rp.items[_rp.i];
+  if(!it){rpDone();return;}
+  present(it);
+  _rp.i++;
+  _set("rp-pos",_rp.i+" / "+_rp.items.length);
+  const heavy=["judge.completed","detection.completed","patch.proposed","verification.completed",
+    "run.finished","run.partial","run.failed","run.cancelled"].indexOf(it.type)>=0?2600:900;
+  _rp.timer=setTimeout(_rpTick,heavy/(_rp.speed||1));
+}
+function rpToggle(){
+  if(_mode!=="replay")return;
+  _rp.paused=!_rp.paused;
+  $("#rp-toggle").textContent=_rp.paused?"▶ 继续":"⏸ 暂停";
+  if(_rp.paused){clearTimeout(_rp.timer);}
+  else{_rpTick();}
+}
+function rpStep(){
+  if(_mode!=="replay"||!_rp.paused)return;
+  const it=_rp.items[_rp.i];
+  if(!it){rpDone();return;}
+  present(it);
+  _rp.i++;
+  _set("rp-pos",_rp.i+" / "+_rp.items.length);
+}
+/* 回放自然结束:隐藏回放条 + 隐藏角标 + _mode 复位回 idle(修勘察 1c 残留)
+   D4:结论文案由 gateVerdictText() 按该轮真实门禁数据推导(不得固定宣称三门禁全过)。
+   S1:结束后进入「冻结」视角 —— 不再回到会被 scanRuns 覆盖的裸 idle。
+   身份/相位/摘要/门禁保持该轮尾帧,直到用户点 ⟲ 彩排回放(另一轮)或 ▶ LIVE 对抗。
+   若这一轮**没有**终局事件播过,但服务端 state 已是终态(如 interrupted),相位与横幅由快照 state 得出。 */
+function rpDone(){
+  clearTimeout(_rp.timer);
+  const hadTerm=(_rp.items||[]).some(function(e){
+    return ["run.finished","run.partial","run.failed","run.cancelled","run.interrupted"].indexOf(e.type)>=0;});
+  setView("frozen",_rp.runId);
+  const st=String((_snap&&_snap.state)||"").toLowerCase();
+  if(st&&TERMINAL_STATES.indexOf(st)>=0){
+    setPhase("● "+termWord(st)+" · 回放",termCls(st));
+    if(!hadTerm){
+      const rsn=stopReason(_snap);
+      feedBanner("■ 回放:该轮 RUN "+termZh(st)+" —— 事件流里没有终局事件,此结论取自服务端 state"+
+        (rsn?(" · "+esc(rsn)):""),termCls(st)==="done"?"ok":(termCls(st)==="warn"?"warn":"bad"));
+    }
+  }
+  spotlight("run","回放结束——"+gateVerdictText(),
+    '<div class="badge">记录 <b>'+_rp.items.length+' 条</b></div><div class="badge">来源 <b>落盘 events.jsonl</b></div>');
+  /* S1:回放条**保持可见** —— 冻结期必须留一个明确的出囗(✕ 退出),否则冻结成死路 */
+  $("#replaybar").classList.add("show");
+  $("#modebadge").classList.remove("show");
+  _rp.paused=true;
+  const tb=$("#rp-toggle");if(tb)tb.textContent="▶ 继续";
+  _mode="idle";
+  _frozenHint="";
+  renderViewBar();
+  renderEvidenceReceipt(_rp.receipt||null);   /* T10-S2:用进入回放前取好的收据,此处不再发网络请求 */
+  renderProbeLineage(_rp.lineage||null);      /* T10-S4:受限二次探针 lineage */
+  renderJudgePanel();                        /* T10-S2:冻结时用冻结住的选中流重画表盘 */
+}
+function stopReplay(){
+  clearTimeout(_rp.timer);
+  if(_mode==="replay")_mode="idle";
+  setView("ambient",null);      /* S1:显式退出冻结/回放 → 回到「仅看最近 run(背景)」 */
+  _frozenHint="";
+  $("#replaybar").classList.remove("show");
+  $("#modebadge").classList.remove("show");
+  hideThink();drawerClose();
+  /* S1:释放冻结后，背景允许被重画 —— 清掉静态游标让最近一轮重新加载 */
+  _staticRunId=null;
+  renderViewBar();
+  scanRuns();
+  spotlight("idle","回放已退出——按 ▶ LIVE 对抗 进入真实闭环;上方已回到最近一轮背景");
+}
+/* 速度滑条活控件:写入 _rp.speed(修勘察 1c 死控件) */
+function rpSetSpeed(v){_rp.speed=Math.max(0.25,Number(v)||1);}
+
+/* ---------- 启动 ---------- */
+function boot(){
+  /* S1:首屏先把「本轮计数」显式置 0 —— 背景轮不是本轮,红蓝/判官/门禁为 0 必须有据可循,
+     而不是因为桩 DOM 不加载静态 HTML 文本而让计数看上去既非 0 也非实。 */
+  resetAll();
+  renderGates();renderConv();renderJudgeStats();renderStageBar(null);
+  renderRisk();renderHistory();
+  renderViewBar();          /* S1:首屏就要有一张「视角声明」,不得让背景成功与全 0 计数同屏无解释 */
+  /* S1:事件流也必须有显式待命行 —— 空白的黑色区域看上去像“没接上数据”,
+     而不是“没播放任何事件”。 */
+  const fd=$("#feed");
+  if(fd&&!fd.innerHTML)fd.innerHTML='<div class="feedrow dim">待命 —— 本页尚未播放任何事件;上方的 run 仅为背景。点 ⟲ 彩排回放 重放某一轮,或 ▶ LIVE 对抗 跑一轮。</div>';
+  _lastFeedCount=1;
+  spotlight("idle","按 ▶ LIVE 对抗 启动红蓝对抗闭环;页面打开时会自动跟随进行中的任务");
+  setPhase("● STANDBY","");
+  loadModels();
+  scanRuns();
+  setInterval(()=>{if(_mode==="idle")scanRuns();},3000);
+}
+boot();
+</script>
+</body>
+</html>

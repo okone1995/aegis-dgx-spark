@@ -1,0 +1,16 @@
+{
+ "source": "Spark ~/aegis: bash demo.sh 循环 18000s。原始 soak.log/soak_cycles.log 未入仓（*.log 被 .gitignore）；仓内出处 = 本文件 + verified_per_cycle.txt（逐轮原文 1653 行）",
+ "cycles": 1653,
+ "cycle_fails": 0,
+ "first_cycle_utc": "2026-09-24T16:16:50+00:00",
+ "last_cycle_utc": "2026-09-24T21:16:44+00:00",
+ "verified8_lines_in_stdout_log": 1653,
+ "fatal_lines_in_stdout_log": 0,
+ "empty_mem_fields_in_soak_log": 1654,
+ "memory_note": "used_mem_mb 全列为空（awk 字段被 ssh 双引号吞）→ 本账不支持任何内存/泄漏结论",
+ "runloop_archive_dirs": 1672,
+ "in_repo_evidence": [
+  "bench/results/soak_5h/soak_summary.json",
+  "bench/results/soak_5h/verified_per_cycle.txt"
+ ]
+}

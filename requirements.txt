@@ -1,0 +1,8 @@
+# Aegis 引擎/测试运行面（Spark venv aegis 与本机 conda env aegis 同集）
+pydantic>=2
+requests
+pyyaml
+pytest
+fastapi
+uvicorn
+httpx

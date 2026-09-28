@@ -1,0 +1,21 @@
+skill: secaudit-detect
+runner:
+  primary: pyrunner            # 判官走离线引擎（80.8ms/条），无需 harness 会话
+  fallback: pyrunner
+entry:
+  engine: engine.detect        # scan_flow / link_findings —— 确定性规则层
+  judge:
+    service: judge v3 参赛卷 (adapter=judge_v3_mix_lora, logit 判读)   # 四层栈第二层，离线引擎
+    evidence: bench/train/results/{tier2_family_noblocked,tier2b_family_v1_blocked,d7_b}/
+    latency: median 80.8ms / p95 118.5ms (batch=1, claims.yaml)
+  escalation: engine.llm       # 125B 语义判定（关思考）→ 悬置/人工
+tools: [files, rules-yaml, judge-lane, llm:local-qwen]
+providers:
+  semantics: local-qwen
+  judge: offline-engine        # 非生成式：单次前向 logit 判读
+output:
+  blackboard: alerts.json
+  schema: engine.models.Alert
+headless:
+  cmd: null                    # 本技能为库调用（引擎内联），无独立会话
+  append_system_prompt: SKILL.md

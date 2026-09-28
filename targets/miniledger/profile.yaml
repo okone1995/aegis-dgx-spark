@@ -1,0 +1,41 @@
+# MiniLedger profile —— 第二个目标（T11/S1 验收靶）
+# 与 edu-lite 不同：PHP 但路由/查询形态/机密表/端口/认证形态全不同 ⇒ 证明引擎不再假设目标形态。
+kind: php
+name: miniledger
+display: MiniLedger 货运台账（A 实例）
+
+paths:
+  root: targets/miniledger
+  canonical_sources:
+    - src/index.php
+  deploy_cmd: bash targets/miniledger/deploy.sh
+  runtime_dir: targets/miniledger/var
+
+gates:
+  syntax: php -l {file}
+  functional_test: python -m pytest targets/miniledger/tests/test_functional.py -q
+  functional_test_env:
+    MINILEDGER_BASE: "{base}"
+  benign_traffic: python targets/miniledger/tools/benign_traffic.py
+  business:                  # 业务断言入口（引擎不认识本目标语义，只消费探针判定与真实交换）
+    positive: python targets/miniledger/tools/business_probe.py --base {base} --case present
+    negative: python targets/miniledger/tools/business_probe.py --base {base} --case absent
+
+auth:
+  mode: none                 # 该目标没有登录面（引擎不得因此阻断整轮）
+
+instances:
+  a:
+    base: http://127.0.0.1:8095
+    label: development
+    surface:
+      carrier_param: carrier
+  b:
+    base: http://127.0.0.1:8096
+    label: evaluation-only
+
+corpus:
+  keys:
+    sqli: [union, select, 注入, 报错]
+
+marker_semantics: error_echo

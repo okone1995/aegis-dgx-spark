@@ -1,0 +1,129 @@
+{
+ "run_at": "2026-09-25T05:38:40+0800",
+ "model": {
+  "base": "C:/Users/<user>/models/Qwen3.5-4B",
+  "adapter": "bench/train/out/judge_v1_lora/adapter"
+ },
+ "data": "bench/train/results/d7_b/holdout_b_clean.jsonl",
+ "n": 7266,
+ "protocol": {
+  "band": [
+   0.2,
+   0.8
+  ],
+  "threshold": 0.5,
+  "softmax_tokens": {
+   "attack": 19941,
+   "benign_first": 7713
+  },
+  "enable_thinking": false
+ },
+ "confusion_attack_positive": {
+  "tp": 4636,
+  "fp": 6,
+  "fn": 2,
+  "tn": 2622
+ },
+ "accuracy_overall": {
+  "n": 7266,
+  "acc": 0.9989
+ },
+ "precision_attack": 0.9987,
+ "recall_attack": 0.9996,
+ "abstain": {
+  "n": 1,
+  "ratio": 0.0001,
+  "band": [
+   0.2,
+   0.8
+  ]
+ },
+ "confident_subset": {
+  "n": 7265,
+  "acc": 0.999
+ },
+ "calibration_p_attack_deciles": {
+  "0.0-0.1": {
+   "n": 2624,
+   "actual_attack_rate": 0.0008
+  },
+  "0.7-0.8": {
+   "n": 1,
+   "actual_attack_rate": 0.0
+  },
+  "0.9-1.0": {
+   "n": 4641,
+   "actual_attack_rate": 0.9989
+  }
+ },
+ "by_input_mode": {
+  "exchange": {
+   "n": 3633,
+   "acc": 0.9989,
+   "abstain": 1
+  },
+  "request_only": {
+   "n": 3633,
+   "acc": 0.9989,
+   "abstain": 0
+  }
+ },
+ "by_class": {
+  "benign": {
+   "n": 2608,
+   "acc": 1.0
+  },
+  "brute_no_lock": {
+   "n": 1324,
+   "acc": 1.0
+  },
+  "idor": {
+   "n": 58,
+   "acc": 1.0
+  },
+  "lfi": {
+   "n": 200,
+   "acc": 1.0
+  },
+  "nearmiss": {
+   "n": 20,
+   "acc": 0.7
+  },
+  "rce_deser": {
+   "n": 218,
+   "acc": 1.0
+  },
+  "sqli": {
+   "n": 2428,
+   "acc": 1.0
+  },
+  "ssrf": {
+   "n": 74,
+   "acc": 0.973
+  },
+  "upload_bypass": {
+   "n": 84,
+   "acc": 1.0
+  },
+  "xss_stored": {
+   "n": 252,
+   "acc": 1.0
+  }
+ },
+ "latency_ms_per_sample": {
+  "mean": 21.6,
+  "median": 19.7,
+  "note": "5090 bf16 合并权重批量口径（前 2 批冷启动不入账，故样本数 ≤2 批时为 null）；Spark GGUF 单发另行实测"
+ },
+ "wall_seconds": 164.4,
+ "verify_2token_agreement": {
+  "n": 32,
+  "agree": 32,
+  "rate": 1.0,
+  "sampling": "per-label equidistant, deterministic"
+ },
+ "dump_samples": {
+  "path": "bench\\train\\results\\d7_b\\samples_b_clean.jsonl",
+  "n": 7266
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "run_at": "2026-09-24T21:53:57+0800",
+ "model": "C:/Users/<user>/models/Qwen3.5-4B",
+ "quant": "none",
+ "smoke": false,
+ "hyperparams": {
+  "lora_r": 16,
+  "alpha": 32,
+  "dropout": 0.05,
+  "targets": [
+   "q_proj",
+   "k_proj",
+   "v_proj",
+   "o_proj",
+   "gate_proj",
+   "up_proj",
+   "down_proj"
+  ],
+  "lr": 0.0001,
+  "epochs": 3,
+  "cutoff": 2048,
+  "batch": 8,
+  "grad_accum": 2,
+  "seed": 20260924
+ },
+ "trainable": {
+  "n": 21233664,
+  "total": 4226984960,
+  "ratio": 0.005023
+ },
+ "data": {
+  "train": 7984,
+  "holdout": 1280,
+  "train_stats": {
+   "bad": 0
+  },
+  "holdout_stats": {
+   "bad": 0
+  }
+ },
+ "train_metrics": {
+  "train_runtime": 7628.9906,
+  "train_samples_per_second": 3.14,
+  "train_steps_per_second": 0.196,
+  "total_flos": 1.3310212903600128e+17,
+  "train_loss": 0.00385,
+  "epoch": 3.0
+ },
+ "peak_vram_gib": 30.8,
+ "wall_seconds": 7651.1,
+ "note": "judge v1 = v3 family split + blocked patched-state flows (wave4)"
+}

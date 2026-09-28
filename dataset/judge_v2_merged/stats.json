@@ -1,0 +1,127 @@
+{
+  "input": [
+    "dataset/raw/dvwa_flows/attack.jsonl",
+    "dataset/raw/dvwa_flows/benign.jsonl",
+    "dataset/raw/dvwa_flows/blocked.jsonl"
+  ],
+  "total": 12383,
+  "dropped_duplicate": 1828,
+  "dropped_families_label_conflict": 3,
+  "split_unit": "family",
+  "split_seed": 20260925,
+  "holdout_pct": 20,
+  "family_namespace": "DVWA:",
+  "families": {
+    "train": 3198,
+    "holdout": 958,
+    "total": 4156,
+    "overlap": 0
+  },
+  "gates": {
+    "b_family_sources_readonly": [
+      "bench\\train\\results\\d7_b\\holdout_b_clean.jsonl",
+      "dataset\\raw\\gen_flows_b.jsonl",
+      "dataset\\raw\\gen_mutations_b.jsonl"
+    ],
+    "b_family_cores_known": 2476,
+    "b_family_overlap_in_output": 0,
+    "content_8082_hits": 0
+  },
+  "train_n": 9419,
+  "holdout_n": 2964,
+  "train": {
+    "labels": {
+      "attack": 5927,
+      "benign": 3492
+    },
+    "outcomes": {
+      "hit": 2169,
+      "miss": 3168,
+      "benign": 3492,
+      "blocked": 520,
+      "not_provable": 70
+    },
+    "modules": {
+      "sqli": 2441,
+      "sqli_blind": 937,
+      "exec": 473,
+      "fi": 463,
+      "upload": 517,
+      "xss_r": 1296,
+      "xss_s": 1083,
+      "csrf": 48,
+      "open_redirect": 44,
+      "weak_id": 4,
+      "cryptography": 546,
+      "brute": 709,
+      "authbypass": 42,
+      "bac": 178,
+      "captcha": 40,
+      "javascript": 50,
+      "xss_d": 30,
+      "source_leak": 28,
+      "browse": 442,
+      "fi_remote": 48
+    },
+    "sources": {
+      "dvwa": 9030,
+      "hack_skills@dvwa": 389
+    },
+    "security_levels": {
+      "low": 8602,
+      "impossible": 817
+    }
+  },
+  "holdout": {
+    "labels": {
+      "attack": 1920,
+      "benign": 1044
+    },
+    "outcomes": {
+      "hit": 734,
+      "miss": 1002,
+      "benign": 1044,
+      "blocked": 165,
+      "not_provable": 19
+    },
+    "modules": {
+      "sqli": 845,
+      "sqli_blind": 275,
+      "exec": 197,
+      "fi": 138,
+      "upload": 137,
+      "xss_r": 390,
+      "xss_s": 366,
+      "csrf": 7,
+      "open_redirect": 6,
+      "cryptography": 134,
+      "brute": 206,
+      "authbypass": 12,
+      "bac": 44,
+      "captcha": 9,
+      "javascript": 14,
+      "source_leak": 2,
+      "xss_d": 4,
+      "browse": 160,
+      "fi_remote": 18
+    },
+    "sources": {
+      "dvwa": 2838,
+      "hack_skills@dvwa": 126
+    },
+    "security_levels": {
+      "low": 2672,
+      "impossible": 292
+    }
+  },
+  "used_for_training": false,
+  "note": "dvwa external target; family-level split; B families refused by gate",
+  "tokens": {
+    "tokenizer": "C:/Users/<user>/models/Qwen3.5-4B",
+    "max_prompt_tokens": 1009,
+    "max_full_tokens": 1012,
+    "cutoff": 2048,
+    "over_cutoff": 0,
+    "note": "train_lora.encode_record 对 full 长度是 assert（超限即报错，不截断）"
+  }
+}

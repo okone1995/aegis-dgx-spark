@@ -1,0 +1,105 @@
+{
+ "n_samples": 7266,
+ "n_families": 2327,
+ "effective_n_note": "置信区间以家族为聚类单元 bootstrap(2000,seed=7)；区间宽度反映的独立证据量是 n_families 而非 n_samples",
+ "point": {
+  "acc": 0.9989,
+  "precision": 0.9987,
+  "recall": 0.9996,
+  "f1": 0.9991,
+  "ece": 0.0006,
+  "abstain": 0.0001,
+  "tp": 4636,
+  "fp": 6,
+  "fn": 2,
+  "tn": 2622
+ },
+ "cluster_bootstrap_95ci": {
+  "acc": {
+   "lo": 0.9976,
+   "hi": 0.9998,
+   "boot_mean": 0.9989
+  },
+  "precision": {
+   "lo": 0.9968,
+   "hi": 1.0,
+   "boot_mean": 0.9987
+  },
+  "recall": {
+   "lo": 0.9985,
+   "hi": 1.0,
+   "boot_mean": 0.9996
+  },
+  "f1": {
+   "lo": 0.9981,
+   "hi": 0.9998,
+   "boot_mean": 0.9991
+  },
+  "ece": {
+   "lo": 0.0001,
+   "hi": 0.0018,
+   "boot_mean": 0.0007
+  },
+  "abstain": {
+   "lo": 0.0,
+   "hi": 0.0005,
+   "boot_mean": 0.0001
+  }
+ },
+ "iid_naive_ci_for_contrast": {
+  "acc_halfwidth": 0.0008,
+  "note": "仅作对照：按样本数算会低估区间宽度，本行不进任何对外结论"
+ },
+ "by_class_point": {
+  "benign": {
+   "acc": 1.0,
+   "precision": null,
+   "recall": null
+  },
+  "brute_no_lock": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "idor": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "lfi": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "nearmiss": {
+   "acc": 0.7,
+   "precision": 0.0,
+   "recall": null
+  },
+  "rce_deser": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "sqli": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "ssrf": {
+   "acc": 0.973,
+   "precision": 1.0,
+   "recall": 0.973
+  },
+  "upload_bypass": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  },
+  "xss_stored": {
+   "acc": 1.0,
+   "precision": 1.0,
+   "recall": 1.0
+  }
+ }
+}

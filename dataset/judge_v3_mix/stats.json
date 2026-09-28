@@ -1,0 +1,49 @@
+{
+ "sources": {
+  "edulite": {
+   "train": 7984,
+   "holdout": 1280
+  },
+  "external_dvwa": {
+   "train": 9419,
+   "holdout": 2964
+  }
+ },
+ "train_n": 17403,
+ "holdout_n": 4244,
+ "families": {
+  "train": 5390,
+  "holdout": 1415,
+  "cross_split_overlap": 0
+ },
+ "b_family_overlap": 0,
+ "b_cores_known": 2328,
+ "domains_in_holdout": {
+  "edulite": 1280,
+  "external_dvwa": 2964
+ },
+ "labels": {
+  "train": {
+   "labels": {
+    "attack": 11483,
+    "benign": 5920
+   },
+   "domains": {
+    "edulite": 7984,
+    "external_dvwa": 9419
+   }
+  },
+  "holdout": {
+   "labels": {
+    "attack": 2727,
+    "benign": 1517
+   },
+   "domains": {
+    "edulite": 1280,
+    "external_dvwa": 2964
+   }
+  }
+ },
+ "note": "两域原卷拼接、切分不改；家族命名空间隔离由断言保证",
+ "reproduce": "python dataset/build_judge_v3_mix.py --out dataset/judge_v3_mix"
+}

@@ -1,0 +1,9 @@
+# scope.yaml 示例 — 运行前由 engine/scope.py 强制校验
+targets:
+  - name: edu-lite-a
+    base_url: http://127.0.0.1:8080
+    bind: local-only          # local-only: 仅回环/内网；any: 需额外书面授权
+allowed_classes: [sqli, rce_deser, upload_bypass, lfi, xss_stored, ssrf, idor, brute_no_lock]
+forbidden_actions: [destructive_write, persistence, outbound_exploit, dos, worm]
+max_rounds: 5
+collector_port: 30010         # payload 回显允许的唯一本地采集端口

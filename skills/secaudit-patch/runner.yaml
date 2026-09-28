@@ -1,0 +1,20 @@
+skill: secaudit-patch
+runner:
+  primary: pyrunner            # A2 起：step（单类演示路径）；回退 pyrunner
+  fallback: pyrunner
+entry:
+  engine: engine.patcher.apply_template
+  llm: engine.llm.patch_adapt       # 补丁脑（qwen=本地主权 / step=云增强）
+  review: engine.patch_review.review # 三重审查（fail-closed）
+  syntax_gate: php -l
+cli: null                       # 经 engine.runloop 编排调用
+tools: [files, git, llm:local-qwen, llm:step, review-gate, syntax-gate]
+providers:
+  patch_adapt: local-qwen       # 默认本地主权；step 为云增强/对比列
+  review: step                  # 异构复核（不同模型家族）
+output:
+  blackboard: patches/F-xxx.patch + transition
+  schema: engine.models.PatchRecord
+headless:
+  cmd: step -p --mode json --no-session --append-system-prompt SKILL.md
+  append_system_prompt: SKILL.md

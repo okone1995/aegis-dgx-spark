@@ -1,0 +1,138 @@
+{
+ "run_at": "2026-09-24T17:38:16+0800",
+ "model": {
+  "base": "C:/Users/<user>/models/Qwen3.5-4B",
+  "adapter": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\bench\\train\\out\\judge_v0_lora\\adapter"
+ },
+ "data": "C:\\Users\\<user>\\.zcode\\workspace\\default\\aegis\\dataset\\judge_v0\\holdout.jsonl",
+ "n": 1140,
+ "protocol": {
+  "band": [
+   0.2,
+   0.8
+  ],
+  "threshold": 0.5,
+  "softmax_tokens": {
+   "attack": 19941,
+   "benign_first": 7713
+  },
+  "enable_thinking": false
+ },
+ "confusion_attack_positive": {
+  "tp": 666,
+  "fp": 2,
+  "fn": 1,
+  "tn": 471
+ },
+ "accuracy_overall": {
+  "n": 1140,
+  "acc": 0.9974
+ },
+ "precision_attack": 0.997,
+ "recall_attack": 0.9985,
+ "abstain": {
+  "n": 1,
+  "ratio": 0.0009,
+  "band": [
+   0.2,
+   0.8
+  ]
+ },
+ "confident_subset": {
+  "n": 1139,
+  "acc": 0.9982
+ },
+ "calibration_p_attack_deciles": {
+  "0.0-0.1": {
+   "n": 471,
+   "actual_attack_rate": 0.0
+  },
+  "0.4-0.5": {
+   "n": 1,
+   "actual_attack_rate": 1.0
+  },
+  "0.8-0.9": {
+   "n": 1,
+   "actual_attack_rate": 1.0
+  },
+  "0.9-1.0": {
+   "n": 667,
+   "actual_attack_rate": 0.997
+  }
+ },
+ "by_input_mode": {
+  "exchange": {
+   "n": 575,
+   "acc": 0.9983,
+   "abstain": 0
+  },
+  "request_only": {
+   "n": 562,
+   "acc": 0.9964,
+   "abstain": 1
+  },
+  "response_only": {
+   "n": 3,
+   "acc": 1.0,
+   "abstain": 0
+  }
+ },
+ "by_class": {
+  "benign": {
+   "n": 464,
+   "acc": 1.0
+  },
+  "benign_traffic": {
+   "n": 3,
+   "acc": 1.0
+  },
+  "brute_no_lock": {
+   "n": 228,
+   "acc": 1.0
+  },
+  "idor": {
+   "n": 6,
+   "acc": 1.0
+  },
+  "lfi": {
+   "n": 22,
+   "acc": 1.0
+  },
+  "nearmiss": {
+   "n": 6,
+   "acc": 0.6667
+  },
+  "rce_deser": {
+   "n": 84,
+   "acc": 1.0
+  },
+  "sqli": {
+   "n": 210,
+   "acc": 1.0
+  },
+  "ssrf": {
+   "n": 16,
+   "acc": 0.9375
+  },
+  "upload_bypass": {
+   "n": 42,
+   "acc": 1.0
+  },
+  "xss_stored": {
+   "n": 59,
+   "acc": 1.0
+  }
+ },
+ "latency_ms_per_sample": {
+  "mean": 25.9,
+  "median": 23.8,
+  "note": "5090 bf16 合并权重批量口径；Spark GGUF 单发另行实测"
+ },
+ "wall_seconds": 34.2,
+ "verify_2token_agreement": {
+  "n": 32,
+  "agree": 32,
+  "rate": 1.0,
+  "sampling": "per-label equidistant, deterministic"
+ }
+}

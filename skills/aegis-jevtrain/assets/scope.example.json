@@ -1,0 +1,6 @@
+{
+  "_comment": "aegis-jevtrain has no target scope; this file documents the operator env instead.",
+  "schema_version": 1,
+  "queue": "dataset/review_queue/jevtrain_candidates.jsonl",
+  "operator_env": "AEGIS_JEVTRAIN_OPERATOR"
+}

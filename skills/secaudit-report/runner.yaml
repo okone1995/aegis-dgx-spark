@@ -1,0 +1,18 @@
+skill: secaudit-report
+runner:
+  primary: step                # 报告为云增强道（StepFun），演示日可切本地 qwen
+  fallback: pyrunner
+entry:
+  engine: engine.llm.chat      # purpose="report", role="报告智能体"
+  data: engine.blackboard.Blackboard + workspace/rounds/*.json
+  claims_gate: claims.yaml + bench/train/assert_claims.py
+cli: null
+tools: [files, llm:step, claims-gate]
+providers:
+  report: step                 # 云增强道（审计主链路仍全本地）
+output:
+  artifact: report.md + 收敛曲线图
+  schema: markdown
+headless:
+  cmd: step -p --mode text --no-session --append-system-prompt SKILL.md
+  append_system_prompt: SKILL.md

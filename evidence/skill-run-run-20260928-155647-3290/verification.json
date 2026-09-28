@@ -1,0 +1,59 @@
+{
+  "blocked": true,
+  "auth_valid": true,
+  "marker_hit": false,
+  "network_error": false,
+  "exchanges": 2,
+  "business": [
+    {
+      "keyword": "图书馆",
+      "expect_present": true,
+      "ok": true,
+      "reason": "search hit"
+    },
+    {
+      "keyword": "不存在关键字xyz",
+      "expect_present": false,
+      "ok": true,
+      "reason": "no-result clean"
+    }
+  ],
+  "business_pass": true,
+  "replay_hit": 0,
+  "replay_total": 2,
+  "functional_tests": {
+    "status": "passed",
+    "exit_code": 0,
+    "tail": "...........                                                              [100%]\n11 passed in 0.07s\n"
+  },
+  "repair_outcome": "verified",
+  "probe": {
+    "enabled": false,
+    "reason": "AEGIS_PROBE=off"
+  },
+  "replay_linkage": {
+    "pre_patch_attack": {
+      "flow_id": "FL-003",
+      "seq": 7,
+      "replay_of": "",
+      "source": "seq:7"
+    },
+    "post_patch_replays": [
+      {
+        "flow_id": "FL-004",
+        "seq": 24,
+        "replay_of": "FL-003",
+        "source": "seq:24"
+      },
+      {
+        "flow_id": "FL-005",
+        "seq": 26,
+        "replay_of": "FL-003",
+        "source": "seq:26"
+      }
+    ],
+    "deploy_seq": 20
+  },
+  "finding_id": "F-001",
+  "ts": "2026-09-28T15:58:16.166Z"
+}

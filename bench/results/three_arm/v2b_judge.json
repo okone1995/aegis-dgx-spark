@@ -1,0 +1,185 @@
+{
+ "run_at": "2026-09-25T21:25:37+0800",
+ "model": {
+  "base": "C:\\Users\\<user>\\models\\Qwen3.5-4B",
+  "adapter": "bench/train/out/judge_v2b_merged_lora/adapter"
+ },
+ "data": "dataset/judge_v2_merged/holdout.jsonl",
+ "n": 2964,
+ "protocol": {
+  "band": [
+   0.2,
+   0.8
+  ],
+  "threshold": 0.5,
+  "softmax_tokens": {
+   "attack": 19941,
+   "benign_first": 7713
+  },
+  "enable_thinking": false
+ },
+ "confusion_attack_positive": {
+  "tp": 1918,
+  "fp": 8,
+  "fn": 2,
+  "tn": 1036
+ },
+ "accuracy_overall": {
+  "n": 2964,
+  "acc": 0.9966
+ },
+ "precision_attack": 0.9958,
+ "recall_attack": 0.999,
+ "abstain": {
+  "n": 0,
+  "ratio": 0.0,
+  "band": [
+   0.2,
+   0.8
+  ]
+ },
+ "confident_subset": {
+  "n": 2964,
+  "acc": 0.9966
+ },
+ "calibration_p_attack_deciles": {
+  "0.0-0.1": {
+   "n": 1037,
+   "actual_attack_rate": 0.001
+  },
+  "0.1-0.2": {
+   "n": 1,
+   "actual_attack_rate": 1.0
+  },
+  "0.9-1.0": {
+   "n": 1926,
+   "actual_attack_rate": 0.9958
+  }
+ },
+ "by_input_mode": {
+  "exchange": {
+   "n": 1618,
+   "acc": 0.9969,
+   "abstain": 0
+  },
+  "request_only": {
+   "n": 1346,
+   "acc": 0.9963,
+   "abstain": 0
+  }
+ },
+ "by_class": {
+  "authbypass": {
+   "n": 12,
+   "acc": 0.8333
+  },
+  "bac": {
+   "n": 26,
+   "acc": 1.0
+  },
+  "browse": {
+   "n": 160,
+   "acc": 1.0
+  },
+  "brute": {
+   "n": 194,
+   "acc": 0.9897
+  },
+  "brute_no_lock": {
+   "n": 12,
+   "acc": 1.0
+  },
+  "captcha": {
+   "n": 9,
+   "acc": 1.0
+  },
+  "cryptography": {
+   "n": 134,
+   "acc": 1.0
+  },
+  "csrf": {
+   "n": 7,
+   "acc": 1.0
+  },
+  "exec": {
+   "n": 197,
+   "acc": 0.9898
+  },
+  "fi": {
+   "n": 108,
+   "acc": 1.0
+  },
+  "idor": {
+   "n": 18,
+   "acc": 1.0
+  },
+  "javascript": {
+   "n": 14,
+   "acc": 0.8571
+  },
+  "lfi": {
+   "n": 30,
+   "acc": 1.0
+  },
+  "open_redirect": {
+   "n": 6,
+   "acc": 1.0
+  },
+  "source_leak": {
+   "n": 2,
+   "acc": 0.0
+  },
+  "sqli": {
+   "n": 845,
+   "acc": 1.0
+  },
+  "sqli_blind": {
+   "n": 275,
+   "acc": 1.0
+  },
+  "ssrf": {
+   "n": 18,
+   "acc": 1.0
+  },
+  "upload": {
+   "n": 131,
+   "acc": 1.0
+  },
+  "upload_bypass": {
+   "n": 6,
+   "acc": 1.0
+  },
+  "xss_d": {
+   "n": 4,
+   "acc": 1.0
+  },
+  "xss_r": {
+   "n": 390,
+   "acc": 1.0
+  },
+  "xss_s": {
+   "n": 348,
+   "acc": 1.0
+  },
+  "xss_stored": {
+   "n": 18,
+   "acc": 1.0
+  }
+ },
+ "latency_ms_per_sample": {
+  "mean": 37.5,
+  "median": 35.9,
+  "note": "5090 bf16 合并权重批量口径（前 2 批冷启动不入账，故样本数 ≤2 批时为 null）；Spark GGUF 单发另行实测"
+ },
+ "wall_seconds": 118.1,
+ "verify_2token_agreement": {
+  "n": 32,
+  "agree": 32,
+  "rate": 1.0,
+  "sampling": "per-label equidistant, deterministic"
+ },
+ "dump_samples": {
+  "path": "bench\\results\\three_arm\\v2b_judge_dump.jsonl",
+  "n": 2964
+ }
+}

@@ -1,0 +1,18 @@
+skill: secaudit-verify
+runner:
+  primary: pyrunner            # 门禁为确定性引擎，无 LLM、无 harness 会话
+  fallback: pyrunner
+entry:
+  engine: engine.verify.gate   # replay_all + functional_tests —— 唯一权威
+  replay: engine.verify.replay_all
+  tests: engine.verify.functional_tests
+  session: engine.replay.admin_session   # 每次强制新会话
+cli: null                       # 经 engine.runloop 编排调用
+tools: [http, pytest, files, blackboard]
+providers: {}                   # 零 LLM：门禁是确定性承诺
+output:
+  blackboard: verify-results.json + transition（verified/regressed）
+  schema: engine.models.VerifyResult
+headless:
+  cmd: null
+  append_system_prompt: SKILL.md

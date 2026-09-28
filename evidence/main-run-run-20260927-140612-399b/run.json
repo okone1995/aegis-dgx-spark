@@ -1,0 +1,43 @@
+{
+  "summary": "succeeded: repair=verified judge=ok learn=queued cleanup=restored flows=9",
+  "state": "succeeded",
+  "case_id": "sqli",
+  "client_request_id": "",
+  "model_versions": {
+    "patch": "qwen",
+    "review": "step",
+    "judge": "judge_v3_adapter",
+    "judge_protocol": "judge-protocol-v2",
+    "review_boundary": "cloud: diff only"
+  },
+  "heartbeat_at": "2026-09-27T14:07:44.757Z",
+  "schema_version": 1,
+  "last_seq": 41,
+  "owner_generation": 1,
+  "stage": "cleanup",
+  "process_identity": "1139943@gx10-9bf3",
+  "cleanup": "restored",
+  "patch_mode": "llm_guided",
+  "started_at": "2026-09-27T14:06:13.111Z",
+  "run_id": "run-20260927-140612-399b",
+  "judge_status": "ok",
+  "repair_outcome": "verified",
+  "providers": {
+    "patch": "qwen",
+    "review": "step"
+  },
+  "ended_at": "2026-09-27T14:07:44.757Z",
+  "pid": 1139943,
+  "degraded_reasons": [],
+  "exit_code": 0,
+  "created_at": "2026-09-27T14:06:12.984Z",
+  "learning_status": "queued",
+  "environment": {
+    "php_bin": "/home/<user>/tools/php/php",
+    "base": "http://127.0.0.1:8081",
+    "fault_inject": null,
+    "canonical_sha256": "4b7c0d2d2e9a7a03303eb1b9540a152ca8f1e352cbd234c203ce08111e1bcfd5",
+    "canonical_path": "/home/<user>/aegis/target/edu-lite/src/app.php"
+  },
+  "error": null
+}

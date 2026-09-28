@@ -1,0 +1,848 @@
+{
+ "run_id": "run-20260926-152228-24de",
+ "run_json_terminal": {
+  "state": "succeeded",
+  "exit_code": 0,
+  "repair_outcome": "verified",
+  "judge_status": "ok",
+  "learning_status": "queued",
+  "cleanup": "restored",
+  "degraded_reasons": [],
+  "last_seq": 41,
+  "providers": {
+   "patch": "qwen",
+   "review": "step"
+  },
+  "model_versions": {
+   "patch": "qwen",
+   "review": "step",
+   "judge": "judge_v3_adapter",
+   "judge_protocol": "judge-protocol-v1",
+   "review_boundary": "cloud: diff only"
+  },
+  "error": null
+ },
+ "summary_json": {
+  "state": "succeeded",
+  "repair_outcome": "verified",
+  "judge_status": "ok",
+  "learning_status": "queued",
+  "cleanup": "restored",
+  "failed_stage": null,
+  "error": null,
+  "degraded_reasons": [],
+  "flow_count": 9,
+  "providers": {
+   "patch": "qwen",
+   "review": "step"
+  },
+  "stage_durations": {
+   "preflight": 0.018,
+   "baseline": 0.016,
+   "attack": 0.011,
+   "classify": 0.33,
+   "patch": 70.181,
+   "review": 14.798,
+   "deploy": 0.558,
+   "verify": 0.875,
+   "learn": 0.09,
+   "cleanup": 0.554
+  }
+ },
+ "verification": {
+  "blocked": true,
+  "auth_valid": true,
+  "network_error": false,
+  "replay_hit": 0,
+  "replay_total": 2,
+  "business_pass": true,
+  "repair_outcome": "verified",
+  "functional_tests": {
+   "status": "passed",
+   "exit_code": 0,
+   "tail": "...........                                                              [100%]\n11 passed in 0.09s\n"
+  },
+  "marker_hit": false,
+  "exchanges": 2
+ },
+ "artifacts": [
+  {
+   "id": "summary",
+   "path": "summary.json",
+   "sha256": "b703ca6c03f57eb8",
+   "scrubbed": true,
+   "scrub_substitutions": 0
+  },
+  {
+   "id": "verification",
+   "path": "verification.json",
+   "sha256": "3af313c571874c86",
+   "scrubbed": true,
+   "scrub_substitutions": 0
+  },
+  {
+   "id": "patch-diff",
+   "path": "patches/F-001.patch",
+   "sha256": "8d8501660a747aa7",
+   "scrubbed": true,
+   "scrub_substitutions": 0
+  },
+  {
+   "id": "patch-candidate",
+   "path": "patches/F-001.candidate.php",
+   "sha256": "d7b8cf66912f6b5b",
+   "scrubbed": true,
+   "scrub_substitutions": 0
+  }
+ ],
+ "event_count": 41,
+ "event_types": [
+  "business.checked",
+  "cleanup.completed",
+  "detection.completed",
+  "flow.captured",
+  "gate.completed",
+  "judge.completed",
+  "learning.queued",
+  "patch.applied",
+  "patch.proposed",
+  "run.created",
+  "run.finished",
+  "run.started",
+  "stage.started",
+  "verification.completed"
+ ],
+ "events_brief": [
+  {
+   "seq": 1,
+   "type": "run.created",
+   "stage": "preflight",
+   "status": "ok",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "run created for case sqli",
+   "payload_keys": [
+    "case_id",
+    "cleanup_policy",
+    "client_request_id",
+    "providers",
+    "strict_llm"
+   ]
+  },
+  {
+   "seq": 2,
+   "type": "run.started",
+   "stage": "preflight",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "base",
+    "case_id"
+   ]
+  },
+  {
+   "seq": 3,
+   "type": "stage.started",
+   "stage": "preflight",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 4,
+   "type": "stage.started",
+   "stage": "baseline",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 5,
+   "type": "business.checked",
+   "stage": "baseline",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "endpoint",
+    "intent_label",
+    "keyword",
+    "ok",
+    "phase",
+    "reason"
+   ]
+  },
+  {
+   "seq": 6,
+   "type": "stage.started",
+   "stage": "attack",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 7,
+   "type": "flow.captured",
+   "stage": "attack",
+   "status": "",
+   "flow_id": "FL-003",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "flow_id",
+    "intent_label",
+    "markers_hit",
+    "method",
+    "outcome",
+    "path",
+    "payload_file",
+    "status"
+   ]
+  },
+  {
+   "seq": 8,
+   "type": "stage.started",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 9,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-001",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 10,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-001",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 11,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-002",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 12,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-002",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 13,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-003",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 14,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-003",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 15,
+   "type": "stage.started",
+   "stage": "patch",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 16,
+   "type": "patch.proposed",
+   "stage": "patch",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "artifact",
+    "call_id",
+    "diff",
+    "diff_sha256",
+    "finding_id",
+    "mode",
+    "model",
+    "orig_sha256",
+    "provider",
+    "sha256",
+    "template",
+    "template_sha256"
+   ]
+  },
+  {
+   "seq": 17,
+   "type": "stage.started",
+   "stage": "review",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 18,
+   "type": "gate.completed",
+   "stage": "review",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "call_id",
+    "finding_id",
+    "gates",
+    "pass",
+    "provider",
+    "reasons"
+   ]
+  },
+  {
+   "seq": 19,
+   "type": "stage.started",
+   "stage": "deploy",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 20,
+   "type": "patch.applied",
+   "stage": "deploy",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "backup",
+    "deploy",
+    "deploy_hash",
+    "finding_id",
+    "sha256"
+   ]
+  },
+  {
+   "seq": 21,
+   "type": "stage.started",
+   "stage": "verify",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 22,
+   "type": "business.checked",
+   "stage": "verify",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "keyword",
+    "ok",
+    "phase",
+    "reason"
+   ]
+  },
+  {
+   "seq": 23,
+   "type": "business.checked",
+   "stage": "verify",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "keyword",
+    "ok",
+    "phase",
+    "reason"
+   ]
+  },
+  {
+   "seq": 24,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-004",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 25,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-004",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 26,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-005",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 27,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-005",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 28,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-006",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 29,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-006",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 30,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-007",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 31,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-007",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 32,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-008",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 33,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-008",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 34,
+   "type": "detection.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-009",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "alerts",
+    "class",
+    "endpoint",
+    "flow_id",
+    "intent_label",
+    "matched",
+    "reasoning",
+    "scanner",
+    "severity"
+   ]
+  },
+  {
+   "seq": 35,
+   "type": "judge.completed",
+   "stage": "classify",
+   "status": "",
+   "flow_id": "FL-009",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "band",
+    "flow_id",
+    "input_hash",
+    "judge_status",
+    "latency_ms",
+    "model_version",
+    "p_attack",
+    "path",
+    "protocol_id",
+    "raw_verdict",
+    "verdict"
+   ]
+  },
+  {
+   "seq": 36,
+   "type": "verification.completed",
+   "stage": "verify",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "F-001",
+   "summary": "",
+   "payload_keys": [
+    "auth_valid",
+    "blocked",
+    "business",
+    "business_pass",
+    "exchanges",
+    "finding_id",
+    "functional_tests",
+    "marker_hit",
+    "network_error",
+    "repair_outcome",
+    "replay_hit",
+    "replay_total",
+    "ts"
+   ]
+  },
+  {
+   "seq": 37,
+   "type": "stage.started",
+   "stage": "learn",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 38,
+   "type": "learning.queued",
+   "stage": "learn",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "count",
+    "duplicates",
+    "learning_status",
+    "queued",
+    "source"
+   ]
+  },
+  {
+   "seq": 39,
+   "type": "stage.started",
+   "stage": "cleanup",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 40,
+   "type": "cleanup.completed",
+   "stage": "cleanup",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "policy",
+    "restored_sha256",
+    "status"
+   ]
+  },
+  {
+   "seq": 41,
+   "type": "run.finished",
+   "stage": "cleanup",
+   "status": "ok",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "state"
+   ]
+  }
+ ],
+ "file_sha12": {
+  "run.json": "4a081689be0f",
+  "events.jsonl": "f243951d92e7",
+  "artifacts.json": "ac79cb0c9d57"
+ },
+ "fixture_meta": {
+  "kind": "succeeded",
+  "why": "黄金成功轮：六条件齐、41 事件、三门禁 PASS"
+ },
+ "fixture_note": "本文件由 DGX 上真实 run 目录只读提取（run.json/summary.json/verification.json/artifacts.json/events.jsonl 摘要）；不含凭据与完整请求响应。"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "summary",
+    "path": "summary.json",
+    "sha256": "c5e7a3ad8b9e4dd289b771482946e673bebabf5754ead69a9e328acf046fb22f",
+    "scrubbed": true,
+    "scrub_substitutions": 1,
+    "bytes": 2840
+  },
+  {
+    "id": "verification",
+    "path": "verification.json",
+    "sha256": "1d0a193214e6bd9250a5d172635bbe6c450b26ed5441008cbfee9df3f37c0c06",
+    "scrubbed": true,
+    "scrub_substitutions": 0,
+    "bytes": 1258
+  },
+  {
+    "id": "patch-diff",
+    "path": "patches/F-001.patch",
+    "sha256": "d0d2d8fa71a525a43f628a1684a3bcd8b7cd365ef2c6d9bac8c205835d865d50",
+    "scrubbed": true,
+    "scrub_substitutions": 0,
+    "bytes": 1297
+  },
+  {
+    "id": "patch-candidate",
+    "path": "patches/F-001.candidate.php",
+    "sha256": "ac34f26f45e20589b3e124a8804040b1570d57eaa02b45bc68b043e6301e612a",
+    "scrubbed": true,
+    "scrub_substitutions": 0,
+    "bytes": 9806
+  },
+  {
+    "id": "runtime-attestation",
+    "path": "runtime-attestation.json",
+    "sha256": "80a3ef846a57daa81357def415e345df8b68834da4489507c4d9a6cd45dbb134",
+    "scrubbed": true,
+    "scrub_substitutions": 1,
+    "bytes": 1852
+  },
+  {
+    "id": "evidence-receipt",
+    "path": "evidence-receipt.json",
+    "sha256": "ac8bfd8fa4741518045322dbbc5bf419bd27afbde0f4a9029b1bc2001b408518",
+    "scrubbed": true,
+    "scrub_substitutions": 0,
+    "bytes": 3335
+  }
+]

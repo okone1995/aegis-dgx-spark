@@ -1,0 +1,96 @@
+{
+  "run": {
+    "patch_mode": "llm_guided",
+    "state": "succeeded",
+    "learning_status": "queued",
+    "degraded_reasons": [],
+    "environment": {
+      "php_bin": "/home/<deploy-user>/tools/php/php",
+      "base": "http://127.0.0.1:8081",
+      "fault_inject": null,
+      "canonical_sha256": "4b7c0d2d2e9a7a03303eb1b9540a152ca8f1e352cbd234c203ce08111e1bcfd5",
+      "canonical_path": "/home/<deploy-user>/aegis/target/edu-lite/src/app.php"
+    },
+    "case_id": "sqli",
+    "providers": {
+      "patch": "qwen",
+      "review": "step"
+    },
+    "repair_outcome": "verified",
+    "created_at": "2026-09-28T15:56:47.985Z",
+    "stage": "cleanup",
+    "run_id": "run-20260928-155647-3290",
+    "process_identity": "2069167@gx10-9bf3",
+    "pid": 2069167,
+    "model_versions": {
+      "patch": "qwen",
+      "review": "step",
+      "judge": "judge_v3_adapter",
+      "judge_protocol": "judge-protocol-v2",
+      "review_boundary": "cloud: diff only"
+    },
+    "heartbeat_at": "2026-09-28T15:58:16.845Z",
+    "judge_status": "ok",
+    "summary": "succeeded: repair=verified judge=ok learn=queued cleanup=restored flows=9",
+    "exit_code": 0,
+    "cleanup": "restored",
+    "started_at": "2026-09-28T15:56:48.089Z",
+    "client_request_id": "film-skill-20260928-235641",
+    "owner_generation": 1,
+    "last_seq": 41,
+    "ended_at": "2026-09-28T15:58:16.845Z",
+    "schema_version": 1,
+    "error": null
+  },
+  "last_seq": 41,
+  "artifacts": [
+    {
+      "id": "summary",
+      "path": "summary.json",
+      "sha256": "1a784920ff0aecff49fe164358ee822bf2f93a6434834d7593a4b6b704d8e911",
+      "scrubbed": true,
+      "scrub_substitutions": 1,
+      "bytes": 2839
+    },
+    {
+      "id": "verification",
+      "path": "verification.json",
+      "sha256": "596042d53d0efa314f570d47c021d479d6b89d669643095d208f84eda6c252cd",
+      "scrubbed": true,
+      "scrub_substitutions": 0,
+      "bytes": 1258
+    },
+    {
+      "id": "patch-diff",
+      "path": "patches/F-001.patch",
+      "sha256": "d0d2d8fa71a525a43f628a1684a3bcd8b7cd365ef2c6d9bac8c205835d865d50",
+      "scrubbed": true,
+      "scrub_substitutions": 0,
+      "bytes": 1297
+    },
+    {
+      "id": "patch-candidate",
+      "path": "patches/F-001.candidate.php",
+      "sha256": "ac34f26f45e20589b3e124a8804040b1570d57eaa02b45bc68b043e6301e612a",
+      "scrubbed": true,
+      "scrub_substitutions": 0,
+      "bytes": 9806
+    },
+    {
+      "id": "runtime-attestation",
+      "path": "runtime-attestation.json",
+      "sha256": "c4c93d0ff8762ac26caf531b7af1741347681eb143ebb5896ff4e68429b4f143",
+      "scrubbed": true,
+      "scrub_substitutions": 1,
+      "bytes": 1852
+    },
+    {
+      "id": "evidence-receipt",
+      "path": "evidence-receipt.json",
+      "sha256": "d85765748bcabbed3bf07c1935836c9c98a531ce2fab92d47b6fa4ec6c1c930d",
+      "scrubbed": true,
+      "scrub_substitutions": 0,
+      "bytes": 3335
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "final": "aegis-final-demo-20260929.mp4",
+  "sha256": "8af723c093139af57b00bc9871515869257184b2473627ce844a453f63d1ceb4",
+  "base_sha256": "45514faded5b0f965a6e658d4cd4eba59b90655f0fe70c489f8ee73d3537c926",
+  "skill_sha256": "cb5256edb26c6a36f56534cee28f9b95f99241d5e92f604c8611b1389bfe346d",
+  "segments": [
+    {
+      "source": "aegis-dgx-spark-demo-20260927.mp4",
+      "seconds": 178
+    },
+    {
+      "source": "aegis-skills-real-execution-20260929.mp4",
+      "seconds": 44.233333
+    },
+    {
+      "source": "aegis-dgx-spark-demo-20260927.mp4",
+      "seconds": 17.766666999999984
+    }
+  ],
+  "runs": [
+    "run-20260927-140612-399b",
+    "run-20260928-155647-3290"
+  ],
+  "boundary": "Historical main run and a newly CLI-started skill run; no next model trained."
+}

@@ -1,0 +1,4 @@
+{"schema_version": 1,
+ "targets": [{"target_id": "c-demo-target", "case_id": "sqli",
+              "target_base": "http://127.0.0.1:8093",
+              "source_root": "targets/c-demo-target"}]}

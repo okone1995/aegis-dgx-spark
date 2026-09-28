@@ -1,0 +1,154 @@
+{
+ "run_id": "run-20260926-151849-943c",
+ "run_json_terminal": {
+  "state": "failed",
+  "exit_code": 1,
+  "repair_outcome": null,
+  "judge_status": "not_invoked",
+  "learning_status": "not_run",
+  "cleanup": "restored",
+  "degraded_reasons": [],
+  "last_seq": 6,
+  "providers": {
+   "patch": "qwen",
+   "review": "step"
+  },
+  "model_versions": {
+   "patch": "qwen",
+   "review": "step",
+   "judge": "not_invoked",
+   "judge_protocol": null,
+   "review_boundary": "cloud: diff only"
+  },
+  "error": "preflight_php_missing: PHP_BIN unset & php not on PATH"
+ },
+ "summary_json": {
+  "state": "failed",
+  "repair_outcome": null,
+  "judge_status": "not_invoked",
+  "learning_status": "not_run",
+  "cleanup": "restored",
+  "failed_stage": "preflight",
+  "error": "preflight_php_missing: PHP_BIN unset & php not on PATH",
+  "degraded_reasons": [],
+  "flow_count": 0,
+  "providers": {
+   "patch": "qwen",
+   "review": "step"
+  },
+  "stage_durations": {
+   "preflight": 0.017,
+   "cleanup": 0.002
+  }
+ },
+ "verification": null,
+ "artifacts": [
+  {
+   "id": "summary",
+   "path": "summary.json",
+   "sha256": "5691c08f2432d9f5",
+   "scrubbed": true,
+   "scrub_substitutions": 0
+  }
+ ],
+ "event_count": 6,
+ "event_types": [
+  "cleanup.completed",
+  "run.created",
+  "run.failed",
+  "run.started",
+  "stage.started"
+ ],
+ "events_brief": [
+  {
+   "seq": 1,
+   "type": "run.created",
+   "stage": "preflight",
+   "status": "ok",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "run created for case sqli",
+   "payload_keys": [
+    "case_id",
+    "cleanup_policy",
+    "client_request_id",
+    "providers",
+    "strict_llm"
+   ]
+  },
+  {
+   "seq": 2,
+   "type": "run.started",
+   "stage": "preflight",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "base",
+    "case_id"
+   ]
+  },
+  {
+   "seq": 3,
+   "type": "stage.started",
+   "stage": "preflight",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 4,
+   "type": "stage.started",
+   "stage": "cleanup",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "stage"
+   ]
+  },
+  {
+   "seq": 5,
+   "type": "cleanup.completed",
+   "stage": "cleanup",
+   "status": "",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "",
+   "payload_keys": [
+    "note",
+    "policy",
+    "status"
+   ]
+  },
+  {
+   "seq": 6,
+   "type": "run.failed",
+   "stage": "preflight",
+   "status": "failed",
+   "flow_id": "",
+   "finding_id": "",
+   "summary": "failed: repair=None judge=not_invoked learn=not_run cleanup=restored flows=0",
+   "payload_keys": [
+    "error",
+    "stage"
+   ]
+  }
+ ],
+ "file_sha12": {
+  "run.json": "62450eb20f26",
+  "events.jsonl": "bc4c200e95b0",
+  "artifacts.json": "82b29e12babe"
+ },
+ "fixture_meta": {
+  "kind": "failed",
+  "why": "预检失败轮（PHP_BIN 缺失）：用于回放失败路径与页面状态归属验收"
+ },
+ "fixture_note": "本文件由 DGX 上真实 run 目录只读提取（run.json/summary.json/verification.json/artifacts.json/events.jsonl 摘要）；不含凭据与完整请求响应。"
+}

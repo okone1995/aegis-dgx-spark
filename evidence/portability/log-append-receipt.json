@@ -1,0 +1,8 @@
+{
+  "changed": "docs/integrity-log.md only",
+  "application_source_sha256_before": "a0127046b3968ef9ae1ecfa5a940b8c0d7fd501cd71ebdc7c5e00d58da5d58b3",
+  "application_source_sha256_after": "a0127046b3968ef9ae1ecfa5a940b8c0d7fd501cd71ebdc7c5e00d58da5d58b3",
+  "log_sha256": "36986266d44b0b92b6c88160f8aeeac45a8e3cb90f5ce7a332fcc841aff9b11c",
+  "sealed_package_outputs": "not modified",
+  "note": "historical header remains; append-only amendment supersedes it"
+}

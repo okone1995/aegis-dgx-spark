@@ -1,0 +1,13 @@
+operator env loaded:
+  engine root : C:\Users\<user>\.zcode\workspace\default\aegis-fork
+  target      : c-demo-target
+  gate set    : True
+  scopes: scope_hunt.json / scope_evolve.json (pin computed at load time)
+=== files before ===
+hunt_zeroshot.json, targets_other_only.json
+=== 6 hunt run --use-library ===
+{"attempt_count": 3, "budget": {"requests_cap": 40, "requests_used": 3, "seconds_cap": 120.0, "seconds_used": 0.22}, "claim": "exploited_confirmed", "class": "sqli", "column_count": null, "hit": {"markers_hit": ["CREATE TABLE"], "n": 3, "poc_candidate_id": "sqli-88f5c8f30011", "status": 200, "step": "library:90_poc_120757b197fe.txt"}, "library_hit": "90_poc_120757b197fe.txt", "notes": ["library_first_hit=90_poc_120757b197fe.txt", "本轮命中来自 POC 库（上轮沉淀后被用上）"], "queue": {"approved": 1, "by_evidence": {"confirmed": 3, "untried": 19}, "by_source": {"menu": 22}, "duplicates": 0, "pending": 21, "rejected": 0, "total": 22}, "status": "ok", "target": "c-demo-target"}
+exit=0
+=== 7 compare ===
+{"after": {"claim": "exploited_confirmed", "column_count": null, "first_hit_at": 3, "hit_step": "library:90_poc_120757b197fe.txt", "label": "after (library-first)", "library_hit": "90_poc_120757b197fe.txt", "requests_used": 3, "seconds_used": 0.22}, "before": {"claim": "exploited_confirmed", "column_count": 7, "first_hit_at": 21, "hit_step": "exfil_targeted:rot=0", "label": "before (zero-shot)", "library_hit": null, "requests_used": 21, "seconds_used": 0.51}, "note": "two independent columns; never merged", "schema": "evolve-compare-v1", "status": "ok"}
+exit=0

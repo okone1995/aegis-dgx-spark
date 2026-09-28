@@ -1,0 +1,20 @@
+skill: secaudit-attack
+runner:
+  primary: pyrunner            # A2 起：step（单类演示路径）；回退 pyrunner
+  fallback: pyrunner
+entry:
+  engine: engine.attacker      # menu_for / plan_free —— 选招与自由造招（双闸）
+  replay: engine.replay.replay_payload
+  policy_gate: governance.payload_policy.assert_allowed
+  blackboard: engine.blackboard.Blackboard.add_finding
+cli: python -m engine.attacker --help
+tools: [http, files, policy-gate, syntax-gate, llm:local-qwen, blackboard]
+providers:
+  plan: local-qwen             # 红方脑：选招理由与自由变异（思考关，短输出）
+  monolog: true                # 内心独白落盘（AEGIS_MONOLOG）
+output:
+  blackboard: findings.json + flow.jsonl
+  schema: engine.models.Finding
+headless:
+  cmd: step -p --mode json --no-session --append-system-prompt SKILL.md
+  append_system_prompt: SKILL.md

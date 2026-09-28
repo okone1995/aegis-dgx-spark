@@ -1,0 +1,305 @@
+# claims.yaml —— 上墙数字的唯一出处（评审强制：README/EVIDENCE/deck 只准从这里抄）
+#
+# 每条记录 = 一句对外宣称 + 它在仓内的硬出处 + 期望值。`bench/train/assert_claims.py`
+# 逐条断言，任一不符即非零退出；`tests/test_claims.py` 把它挂进 pytest。
+# 规矩：宁可不写，不可写错——写不出条目的句子就不许出现在任何对外材料里。
+#
+# kind:
+#   json     —— 读 JSON，按点号选择器取值（列表用 [i]）
+#   linecount—— 数文件行（可选 equals=每行必须同为该字符串）
+#   computed —— 调 assert_claims.COMPUTED[<fn>] 现场算（行数/标记计数等）
+#   runtime  —— 运行时采集，只断言 >= floor（如 pytest 条数，不写死）
+# 可选 tie: 该条目在对外材料中的用法注释（不参与断言）
+
+- claim_id: b_net_acc
+  clause: "B 净卷 acc 0.9989(v1 对照臂,adapter=judge_v1_lora)"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: accuracy_overall.acc
+  expected: 0.9989
+
+- claim_id: b_net_acc_v3
+  clause: "参赛 v3(adapter=judge_v3_mix_lora)在同一留存 B 卷上的 acc 0.9992,口径 band 0.2-0.8 离线,请求面按改名表归一后与训练面同形"
+  kind: json
+  file: bench/train/results/d7_b/v3_eval_b_clean.json
+  selector: accuracy_overall.acc
+  expected: 0.9992
+
+- claim_id: b_net_recall_v3
+  clause: "参赛 v3 留存 B 卷攻击召回 1.0"
+  kind: json
+  file: bench/train/results/d7_b/v3_eval_b_clean.json
+  selector: recall_attack
+  expected: 1.0
+
+- claim_id: b_net_abstain_v3
+  clause: "参赛 v3 留存 B 卷弃权 0"
+  kind: json
+  file: bench/train/results/d7_b/v3_eval_b_clean.json
+  selector: abstain.ratio
+  expected: 0.0
+
+- claim_id: b_offline_band_lo
+  clause: "留存 B 卷评估口径的悬置带下界 0.2"
+  kind: json
+  file: bench/train/results/d7_b/v3_eval_b_clean.json
+  selector: protocol.band[0]
+  expected: 0.2
+
+- claim_id: b_offline_band_hi
+  clause: "留存 B 卷评估口径的悬置带上界 0.8,与线上 v2 的 0.40-0.60 不得互引"
+  kind: json
+  file: bench/train/results/d7_b/v3_eval_b_clean.json
+  selector: protocol.band[1]
+  expected: 0.8
+
+- claim_id: b_net_ci
+  clause: "家族聚类 95% CI [0.9976, 0.9998]"
+  kind: json
+  file: bench/train/results/d7_b/ci_b_clean.json
+  selector: cluster_bootstrap_95ci.acc.lo
+  expected: 0.9976
+  tie: {file: bench/train/results/d7_b/ci_b_clean.json, selector: "cluster_bootstrap_95ci.acc.hi", expected: 0.9998}
+
+- claim_id: b_net_recall
+  clause: "攻击召回 0.9996"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: recall_attack
+  expected: 0.9996
+
+- claim_id: b_net_precision
+  clause: "精确率 0.9987"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: precision_attack
+  expected: 0.9987
+
+- claim_id: b_net_ece
+  clause: "ECE 0.0006"
+  kind: json
+  file: bench/train/results/d7_b/ci_b_clean.json
+  selector: point.ece
+  expected: 0.0006
+
+- claim_id: b_net_abstain
+  clause: "悬置带 0.01%"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: abstain.ratio
+  expected: 0.0001
+
+- claim_id: b_net_n
+  clause: "净卷 n=7266"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: n
+  expected: 7266
+
+- claim_id: b_zeroshot_acc
+  clause: "同卷底座零样本 acc 0.8431"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean_zeroshot.json
+  selector: accuracy_overall.acc
+  expected: 0.8431
+
+- claim_id: b_zeroshot_recall
+  clause: "零样本召回 0.7618"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean_zeroshot.json
+  selector: recall_attack
+  expected: 0.7618
+
+- claim_id: b_zeroshot_abstain
+  clause: "零样本悬置带 14.23%"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean_zeroshot.json
+  selector: abstain.ratio
+  expected: 0.1423
+
+- claim_id: exchange_arm_acc
+  clause: "含 B 真跑未见响应体的完整交换臂 acc 0.9989（n=3633）"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_clean.json
+  selector: by_input_mode.exchange.acc
+  expected: 0.9989
+  tie: {file: bench/train/results/d7_b/eval_b_clean.json, selector: "by_input_mode.exchange.n", expected: 3633}
+
+- claim_id: b_all_acc_same
+  clause: "全卷与净卷同为 0.9989（同形样本未抬分，故不作反背题宣称）"
+  kind: json
+  file: bench/train/results/d7_b/eval_b_all.json
+  selector: accuracy_overall.acc
+  expected: 0.9989
+
+- claim_id: t3_request_face_share
+  clause: "按改名表归一后请求面 100% 与 A 同形（真新面 0）——级 3 因此禁称未见攻击泛化"
+  kind: json
+  file: bench/train/results/d7_b/d7_surface_analysis.json
+  selector: T3_share_of_b_families
+  expected: 1.0
+
+- claim_id: t1_gate_caught
+  clause: "原口径家族闸真拦到 148 族（6.0%）"
+  kind: json
+  file: bench/train/results/d7_b/d7_surface_analysis.json
+  selector: T1_raw_key_overlap.families
+  expected: 148
+
+- claim_id: domain_tier2_acc
+  clause: "自训判官域内（家族级切分，A 实例）acc 0.9974"
+  kind: json
+  file: bench/train/results/tier2_family_noblocked/eval_logit_results.json
+  selector: accuracy_overall.acc
+  expected: 0.9974
+
+- claim_id: domain_tier2_confusion
+  clause: "域内混淆矩阵 tp666 fp2 fn1 tn471"
+  kind: json
+  file: bench/train/results/tier2_family_noblocked/eval_logit_results.json
+  selector: confusion_attack_positive.tp
+  expected: 666
+  tie: {file: bench/train/results/tier2_family_noblocked/eval_logit_results.json,
+        selector: "confusion_attack_positive.fp", expected: 2}
+
+- claim_id: train_peak_vram
+  clause: "judge v1 训练峰值显存 30.8 GiB"
+  kind: json
+  file: bench/train/results/tier2b_family_v1_blocked/train_summary.json
+  selector: peak_vram_gib
+  expected: 30.8
+
+- claim_id: train_wall
+  clause: "单次 LoRA 复训 wall 7651 秒"
+  kind: json
+  file: bench/train/results/tier2b_family_v1_blocked/train_summary.json
+  selector: wall_seconds
+  expected: 7651.1
+
+- claim_id: soak_cycles
+  clause: "一键演示同机连跑 1653 轮"
+  kind: json
+  file: bench/results/soak_5h/soak_summary.json
+  selector: cycles
+  expected: 1653
+
+- claim_id: soak_fails
+  clause: "0 失败（此句永不与内存结论同段）"
+  kind: json
+  file: bench/results/soak_5h/soak_summary.json
+  selector: cycle_fails
+  expected: 0
+
+- claim_id: soak_verified8_per_cycle
+  clause: "每轮均 verified=8/8（逐轮原文 1653 行同一句）"
+  kind: linecount
+  file: bench/results/soak_5h/verified_per_cycle.txt
+  expected: 1653
+  equals: "  黑板终态: 8 findings, verified=8"
+
+- claim_id: wave5_exchanges
+  clause: "红方自由造招准入并发射 47 发"
+  kind: computed
+  fn: wave5_exchanges
+  expected: 47
+
+- claim_id: wave5_hits
+  clause: "环境判定命中 17 发"
+  kind: computed
+  fn: wave5_hits
+  expected: 17
+
+- claim_id: wave5_rejects
+  clause: "双闸拒案 22 发留痕不销毁"
+  kind: computed
+  fn: wave5_rejects
+  expected: 22
+
+- claim_id: wave5_policy_rejects
+  clause: "其中治理闸（payload policy）真拦下 1 发"
+  kind: computed
+  fn: wave5_policy_rejects
+  expected: 1
+
+- claim_id: jail_webshell_exec
+  clause: "jail 实弹：webshell 真落盘且执行（PRE 空 → POST 有文件 + JAIL_RCE_OK）"
+  kind: computed
+  fn: jail_exec_evidence
+  expected: 1
+
+- claim_id: jail_escape_denied
+  clause: "jail 档仍拒越笼写（/root gadget 未发射）"
+  kind: computed
+  fn: jail_escape_denied
+  expected: 1
+
+- claim_id: pytest_green
+  clause: "历史完整私有环境的测试数量；当前提交只主张公开子集，见 VALIDATION.json，不能据此宣称全套全绿"
+  retired_from_submission: true
+  kind: runtime
+  fn: pytest_count
+  floor: 90
+
+# —— Spark 侧 judge 单发时延与跨机判读一致性（2026-09-25 实跑，bf16 未量化路径）——
+# 口径纪律：本组数字只说 batch=1 单发 + transformers bf16 合并权重；
+# 5090 的 18.5ms/条是批量口径，两者不同句、不换算、不称"GGUF"。
+
+- claim_id: spark_judge_median_ms
+  clause: "judge 在 Spark 单发（batch=1）中位时延 73.6 ms"
+  kind: json
+  file: bench/results/judge_latency/spark_single_shot.json
+  selector: single_shot_ms.median
+  expected: 73.6
+
+- claim_id: spark_judge_p95_ms
+  clause: "同测 p95 118.2 ms（40 条、覆盖 8 类 + 良性/近良，剔除前 5 条冷启动）"
+  kind: json
+  file: bench/results/judge_latency/spark_single_shot.json
+  selector: single_shot_ms.p95
+  expected: 118.2
+
+- claim_id: spark_judge_load_seconds
+  clause: "底座+LoRA 合并加载 50.5 s（125B 服务在场、MemAvailable 15.7 GiB 时测得）"
+  kind: json
+  file: bench/results/judge_latency/spark_single_shot.json
+  selector: load_seconds
+  expected: 50.5
+
+- claim_id: spark_judge_no_flip
+  clause: "与 5090 侧逐条对账：40 条全连接、判定翻转 0 条、最大 p_attack 漂移 0.00029"
+  kind: json
+  file: bench/results/judge_latency/spark_single_shot.json
+  selector: agreement_with_5090.verdict_flips
+  expected: 0
+  tie: {file: bench/results/judge_latency/spark_single_shot.json, selector: agreement_with_5090.max_abs_drift, expected: 0.00029}
+
+- claim_id: eval5090_batch_mean_ms
+  clause: "对照：5090 批量口径 18.5 ms/条（mean）——与上面单发口径不同句、不换算"
+  kind: json
+  file: bench/train/results/tier2b_family_v1_blocked/eval_logit_results.json
+  selector: latency_ms_per_sample.mean
+  expected: 18.5
+
+# —— 三臂拦截表（外部靶留出卷；v2b 与 v1 不同级别考卷，不得相减当"提升 x 分"）——
+- claim_id: v2b_external_holdout_acc
+  clause: "外部靶留出卷（家族级）acc 0.9966、召回 0.9990、误报 8 条、悬置带 0.00%"
+  kind: json
+  file: bench/results/three_arm/v2b_judge.json
+  selector: accuracy_overall.acc
+  expected: 0.9966
+  tie: {file: bench/results/three_arm/v2b_judge.json, selector: abstain.ratio, expected: 0.0}
+
+- claim_id: rules_silent_recovered_by_judge
+  clause: "留出 958 族里规则只开口 100 族（10.4%），341 个攻击族由判官捞回"
+  kind: json
+  file: bench/results/three_arm/three_arm_v2b.json
+  selector: headline.rules_miss_recovered_by_judge
+  expected: 341
+  tie: {file: bench/results/three_arm/three_arm_v2b.json, selector: arms.rules_only.families_scored, expected: 100}
+
+- claim_id: v1_external_collapse
+  clause: "v1 考同一张外部卷 acc 0.7294，误报 798 条（=良性流量 76.4%）"
+  kind: json
+  file: bench/results/three_arm/v1_on_external.json
+  selector: accuracy_overall.acc
+  expected: 0.7294

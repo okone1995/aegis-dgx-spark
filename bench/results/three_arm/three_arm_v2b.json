@@ -1,0 +1,54 @@
+{
+ "unit": "family（与级 3 同口径），留出家族数 958",
+ "rules_threshold": 0.5,
+ "arms": {
+  "rules_only": {
+   "families_scored": 100,
+   "acc": 1.0,
+   "recall_attack": 1.0,
+   "false_positive_rate": 0.0,
+   "families_unevaluated": 858,
+   "tp": 100,
+   "fp": 0,
+   "fn": 0,
+   "tn": 0,
+   "abstain": 858
+  },
+  "judge_only": {
+   "families_scored": 958,
+   "acc": 0.9958,
+   "recall_attack": 0.9977,
+   "false_positive_rate": 0.0058,
+   "families_unevaluated": 0,
+   "tp": 441,
+   "fp": 3,
+   "fn": 1,
+   "tn": 513,
+   "abstain": 0
+  },
+  "escalation": {
+   "families_scored": 958,
+   "acc": 0.9958,
+   "recall_attack": 0.9977,
+   "false_positive_rate": 0.0058,
+   "families_unevaluated": 0,
+   "tp": 441,
+   "fp": 3,
+   "fn": 1,
+   "tn": 513,
+   "abstain": 0
+  }
+ },
+ "headline": {
+  "rules_miss_recovered_by_judge": 341,
+  "judge_fp_with_rule_silent": 3,
+  "note": "第一行=judge 的存在理由；第二行=规则层仍需在场当刹车"
+ },
+ "coverage_note": "外部靶（DVWA/hack-skills）上没有为它写的签名，rules_only 召回近 0 是构造使然，不是规则层失效；这张表的用处是说明『没有签名的地方靠什么判』。",
+ "flows_dirs": [
+  "dataset/raw/dvwa_flows",
+  "dataset/raw/hackskills_dvwa_flows"
+ ],
+ "dump": "bench/results/three_arm/v2b_judge_dump.jsonl",
+ "holdout": "dataset/judge_v2_merged/holdout.jsonl"
+}

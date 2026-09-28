@@ -1,0 +1,97 @@
+{
+  "run_id": "run-20260927-140612-399b",
+  "case_id": "sqli",
+  "state": "succeeded",
+  "exit_code": 0,
+  "repair_outcome": "verified",
+  "judge_status": "ok",
+  "learning_status": "queued",
+  "cleanup": "restored",
+  "cleanup_policy": "restore",
+  "flow_count": 9,
+  "finding": {
+    "id": "F-001"
+  },
+  "stage_durations": {
+    "preflight": 0.02,
+    "baseline": 0.011,
+    "attack": 0.012,
+    "classify": 0.339,
+    "patch": 71.247,
+    "review": 17.959,
+    "deploy": 0.558,
+    "verify": 0.814,
+    "learn": 0.119,
+    "cleanup": 0.563
+  },
+  "error": null,
+  "failed_stage": null,
+  "providers": {
+    "patch": "qwen",
+    "review": "step"
+  },
+  "degraded_reasons": [],
+  "base": "http://127.0.0.1:8081",
+  "degraded": {
+    "judge_client": true,
+    "scan_observation": true,
+    "learning_queue": true,
+    "run.finished_event": true
+  },
+  "runtime_attestation": {
+    "phase": "terminal",
+    "attested_at": "2026-09-27T14:07:44.757Z",
+    "run_id": "run-20260927-140612-399b",
+    "fields": {
+      "local_patch_model": {
+        "value": "Qwen3.8-Flash-Next-NVFP4-SSD-Stream",
+        "source": "http://127.0.0.1:30000/v1/models (GET, provider=qwen);provider 约定密钥 env AEGIS_KEY(已设置);HTTP 200:data[].id"
+      },
+      "jev_adapter": {
+        "value": "[PATH]/aegis/models/judge_v3_adapter",
+        "source": "engine.judge_client.metadata() → GET $AEGIS_JUDGE_URL(默认 127.0.0.1:30002)/metadata:adapter"
+      },
+      "jev_protocol": {
+        "value": "judge-protocol-v2",
+        "source": "engine.judge_client.metadata() → GET $AEGIS_JUDGE_URL(默认 127.0.0.1:30002)/metadata:protocol"
+      },
+      "jev_device": {
+        "value": "NVIDIA GB10",
+        "source": "engine.judge_client.metadata() → GET $AEGIS_JUDGE_URL(默认 127.0.0.1:30002)/metadata:device"
+      },
+      "spark_device": {
+        "value": "NVIDIA GB10",
+        "source": "engine.judge_client.metadata() → GET $AEGIS_JUDGE_URL(默认 127.0.0.1:30002)/metadata:device(服务自报运行设备)"
+      },
+      "review_provider": {
+        "value": "step",
+        "source": "demo_case.providers['review'](运行入口配置)"
+      },
+      "review_model": {
+        "value": "step-3.5-flash",
+        "source": "llm.PROVIDERS[step].model"
+      },
+      "review_endpoint_host": {
+        "value": "api.stepfun.com",
+        "source": "llm.PROVIDERS[step].url"
+      },
+      "review_boundary": {
+        "value": "cloud: diff only",
+        "source": "providers['review']=='step' → 云侧,出域内容仅候选 diff;否则本地,不出域"
+      }
+    },
+    "unknowns": [],
+    "jev_metadata_keys": [
+      "abstain_band",
+      "adapter",
+      "band_basis",
+      "base_model",
+      "device",
+      "input_mode",
+      "offline_abstain_band",
+      "protocol_id",
+      "render_spec",
+      "threshold"
+    ]
+  }
+}
