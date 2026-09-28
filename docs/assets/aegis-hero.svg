@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="380" viewBox="0 0 1280 380" role="img" aria-labelledby="title desc">
+  <title id="title">Aegis：让安全智能体具备自修补与持续进化的能力</title>
+  <desc id="desc">红方发现风险、蓝方修补代码、JEV 判读流量，连接成递归自我改进循环。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#102a36"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#4fd8d0" stop-opacity=".16"/><stop offset="1" stop-color="#4fd8d0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1280" height="380" rx="22" fill="url(#bg)"/>
+  <circle cx="1060" cy="190" r="260" fill="url(#glow)"/>
+  <g font-family="Microsoft YaHei, Noto Sans CJK SC, Arial, sans-serif">
+    <text x="60" y="57" fill="#76b900" font-size="16" font-weight="700" letter-spacing="2">NVIDIA DGX SPARK · MULTI-AGENT SECURITY</text>
+    <text x="56" y="145" fill="#f1f7fc" font-size="78" font-weight="800" letter-spacing="-2">Aegis</text>
+    <text x="62" y="193" fill="#f1f7fc" font-size="26" font-weight="700">让安全智能体学会自挖风险、自修补、持续进化</text>
+    <text x="62" y="232" fill="#a5bacb" font-size="19">RSI 递归自我改进 × JEV 流量判官 × 可复用 Agent Skills</text>
+    <g font-size="15" font-weight="700">
+      <rect x="62" y="275" width="154" height="38" rx="19" fill="#352029" stroke="#f57578" stroke-opacity=".55"/><text x="85" y="300" fill="#ff898b">RED · 风险发现</text>
+      <rect x="231" y="275" width="166" height="38" rx="19" fill="#172d49" stroke="#6ca7f5" stroke-opacity=".55"/><text x="254" y="300" fill="#87b9ff">BLUE · 修补验证</text>
+      <rect x="412" y="275" width="174" height="38" rx="19" fill="#163c3d" stroke="#60e0d2" stroke-opacity=".55"/><text x="433" y="300" fill="#76eadc">JEV · 判读与学习</text>
+    </g>
+    <g transform="translate(815 56)">
+      <path d="M140 5 L261 49 L252 161 Q235 223 140 266 Q45 223 28 161 L19 49 Z" fill="#122a39" stroke="#5cdacb" stroke-width="2"/>
+      <path d="M140 43 L220 74 L214 149 Q200 191 140 222 Q80 191 66 149 L60 74 Z" fill="none" stroke="#31596b"/>
+      <path d="M91 128 L123 160 L187 91" fill="none" stroke="#79d775" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="24" cy="60" r="9" fill="#ff797d"/><circle cx="255" cy="62" r="9" fill="#75aef6"/><circle cx="140" cy="265" r="9" fill="#66e0d3"/>
+      <text x="140" y="309" fill="#cce2ed" font-size="17" font-weight="700" text-anchor="middle">发现 → 修补 → 验证 → 学习</text>
+    </g>
+  </g>
+</svg>

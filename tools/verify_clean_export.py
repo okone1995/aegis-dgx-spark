@@ -8,9 +8,11 @@ import argparse,hashlib,json,os,re,subprocess,sys
 MEDIA=('workspace/video/aegis-final-demo-20260929.mp4',
        'workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4',
        'workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx')
+DOC_ASSETS=('docs/assets/aegis-hero.svg','docs/assets/demo-console.png')
 REQUIRED=('README.md','RELEASE.md','LICENSE','SECURITY-AND-USE.md','THIRD-PARTY.md',
           'REVIEW-README.md','REVIEW-PACKET.md','docs/PROJECT-DOC-20260928.md',
-          'docs/ten-days.md','tests/test_submission_quality.py','bench/train/train_lora.py')
+          'docs/ten-days.md','tests/test_submission_quality.py','bench/train/train_lora.py',
+          *DOC_ASSETS)
 EVIDENCE_NAMES=('alerts.json','artifacts.json','audit-log.jsonl','events.jsonl',
  'evidence-receipt.json','findings.json','flow.jsonl','judge.jsonl','learning-candidates.jsonl',
  'run.json','runtime-attestation.json','summary.json','verification.json',
@@ -24,6 +26,35 @@ def sha(p):
     with p.open('rb') as f:
         for chunk in iter(lambda:f.read(1<<20),b''):h.update(chunk)
     return h.hexdigest()
+
+def identity_patterns():
+    """Generic paths plus optional private markers, without deployment identities.
+
+    Split literal path prefixes so export-time text scrubbing cannot modify the
+    regex source. AEGIS_EXPORT_PRIVATE_MARKERS accepts a JSON list of strings;
+    marker values are supplied by an operator and never printed in diagnostics.
+    """
+    patterns=[r'[A-Za-z]:[\\/]+Users[\\/]+(?!<)[A-Za-z0-9_.-]+',
+              r'/[a-z]/'+r'Users/(?!<)[A-Za-z0-9_.-]+',
+              r'/'+r'home/(?!<)[A-Za-z0-9_.-]+']
+    user=os.environ.get('USERNAME','')
+    if user:patterns.append(r'\b'+re.escape(user)+r'\b')
+    encoded=os.environ.get('AEGIS_EXPORT_PRIVATE_MARKERS','')
+    if encoded:
+        try:markers=json.loads(encoded)
+        except ValueError:raise ValueError('private marker setting must be a JSON list') from None
+        if not isinstance(markers,list) or any(not isinstance(m,str) or not m for m in markers):
+            raise ValueError('private marker setting must contain non-empty strings')
+        patterns.extend(re.escape(marker) for marker in markers)
+    return [re.compile(pattern,re.I) for pattern in patterns]
+
+def shipped_files(root):
+    """Ignore installed root environments/Git and generated Python caches only."""
+    for directory,dirs,names in os.walk(root):
+        here=Path(directory)
+        dirs[:]=[name for name in dirs if name not in ('__pycache__','.pytest_cache')
+                 and (here!=root or name not in ('.git','.venv'))]
+        for name in names:yield here/name
 
 def number_assertions(root):
     """Check direct JSON claims/ties; do not pretend to check omitted raw data."""
@@ -65,9 +96,7 @@ def check(root):
         if not p.is_file():problems.append('missing file: '+rel);continue
         if p.stat().st_size!=entry.get('bytes') or sha(p)!=entry.get('sha256'):
             problems.append('hash/size mismatch: '+rel)
-    actual={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()
-            and '.git' not in p.relative_to(root).parts
-            and '__pycache__' not in p.parts and '.pytest_cache' not in p.parts
+    actual={p.relative_to(root).as_posix() for p in shipped_files(root) if p.is_file()
             and p.name not in ('FINAL-BUILD-MANIFEST.json','VALIDATION.json')}
     if actual-set(files):problems.append('unlisted files: '+', '.join(sorted(actual-set(files))[:8]))
     ev=root/'evidence/main-run-run-20260927-140612-399b'
@@ -75,16 +104,14 @@ def check(root):
         if not (ev/rel).is_file():problems.append('missing main-run evidence: '+rel)
     for rel in manifest.get('claims_result_files',[]):
         if not (root/rel).is_file():problems.append('missing claimed result: '+rel)
-    user=os.environ.get('USERNAME','')
-    pats=[r'61\.172\.235\.130',r'\<deploy-user>\b',r'C:[\\/]+Users[\\/]+(?!<)[A-Za-z0-9_.-]+',
-          r'/c/Users/<user>?!<)[A-Za-z0-9_.-]+',r'/home/(?!<)[A-Za-z0-9_.-]+']
-    if user:pats.append(r'\b'+re.escape(user)+r'\b')
-    for p in root.rglob('*'):
-        if (not p.is_file() or '.git' in p.relative_to(root).parts
-                or p.suffix not in {'.md','.py','.json','.jsonl','.yaml','.yml','.txt','.html','.sh','.js','.mjs','.php','.patch'}
-                or '__pycache__' in p.parts or p.name=='verify_clean_export.py'):continue
+    try:pats=identity_patterns()
+    except ValueError as exc:return sorted(set(problems+[str(exc)])),manifest
+    for p in shipped_files(root):
+        if (not p.is_file()
+                or p.suffix not in {'.md','.py','.json','.jsonl','.yaml','.yml','.txt','.html','.sh','.js','.mjs','.php','.patch','.svg'}
+                or p.name=='verify_clean_export.py'):continue
         txt=p.read_text(encoding='utf-8',errors='replace')
-        if any(re.search(pat,txt,re.I) for pat in pats):problems.append('unscrubbed host identity: '+p.relative_to(root).as_posix())
+        if any(pat.search(txt) for pat in pats):problems.append('unscrubbed host identity: '+p.relative_to(root).as_posix())
         if re.search(r'(?i)sk-[A-Za-z0-9_-]{24,}',txt):problems.append('possible API secret: '+p.relative_to(root).as_posix())
     return sorted(set(problems)),manifest
 

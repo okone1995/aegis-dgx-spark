@@ -1,5 +1,7 @@
 # Final release · 2026-09-29 local time
 
+R2 完善项目主页：项目定位、六大优势、系统架构、RSI 流程、JEV 技术与成绩、Skills 复用、代码结构、快速开始及部署说明；新增项目横幅与真实大屏截图。验收执行交付副本的 CLI，并支持正常 Git 克隆和仓内虚拟环境。
+
 提交视频：workspace/video/aegis-final-demo-20260929.mp4（四分钟）。新技能短片：workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4（44.233 秒，有旁白，等待 4× 加速）。PPT：workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx。十日谈：docs/ten-days.md。所有实际完整哈希与源文件版本均见 FINAL-BUILD-MANIFEST.json。
 
 ## 运行证据
