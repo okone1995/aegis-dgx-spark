@@ -53,10 +53,15 @@ FastAPI 与 SSE 将每轮红蓝对抗、JEV 判断、补丁 diff、门禁、复�
 
 ## 系统架构
 
+<p align="center"><img src="docs/assets/aegis-architecture-gpt-v1.png" alt="Aegis 系统架构：DGX Spark 红蓝对抗与代码修补、JEV 独立流量判读、StepFun 云端复核，以及 RSI 经验与模型改进回环" width="100%" /></p>
+
+<details>
+<summary>展开查看架构连接细节（Mermaid）</summary>
+
 ```mermaid
 flowchart TB
     WEB["红蓝对抗大屏 /demo"] --> API["FastAPI Console · SSE 实时事件"]
-    SKILL["宿主智能体 · Agent Skills"] --> API
+    SKILL["宿主智能体 · 自修补 Skill"] --> API
     API --> CASE["DemoCase 编排器 · 统一 run_id"]
     subgraph SPARK["NVIDIA DGX Spark · GB10"]
       CASE --> RED["红方：探测阶梯与攻击经验库"]
@@ -77,10 +82,12 @@ flowchart TB
     FLOW --> DATA["样本收集 · 标签审核 · 去重与家族切分"]
     JEV --> DATA
     VERIFY --> DATA
-    DATA --> TRAIN["训练材料导出 · LoRA 离线训练 · 留存评估"]
+    DATA --> TRAIN["训练材料导出 · RTX 5090 LoRA 离线训练 · 留存评估"]
     TRAIN -. "模型升级流程" .-> JEV
     RECEIPT --> API
 ```
+
+</details>
 
 Web 大屏和自修补 Skill 共用后台运行入口，`DemoCase` 按阶段推进并记录事件；探测、经验写回和训练材料整理也提供独立 CLI。JEV 负责流量分类，StepFun 负责候选补丁的异构复核，攻击与业务复测负责验证实际修补效果。
 

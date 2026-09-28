@@ -1,8 +1,8 @@
 {
   "schema": "aegis-final-build-v2",
-  "built_at_utc": "2026-09-28T23:25:57.166696+00:00",
+  "built_at_utc": "2026-09-28T23:43:48.978669+00:00",
   "source_commits": {
-    "main": "1ffbc7df0b3a4fd8466787d18081a75f04b18de7",
+    "main": "e7efe354eb74141681db3a192894b1baa2e5ecac",
     "capability": "5e2403c900e8ae35f28a14bfb91b25bd5c0e5a25",
     "previous_review": "4c5bc61d221aa7ce4aa322724a88324490cb39cc"
   },
@@ -274,6 +274,20 @@
       "source": "main",
       "source_path": "demo.sh",
       "source_sha256": "8c38dec6e1cab31961cbc7876914805b7720b6baf278601969b95a48be4db284"
+    },
+    "docs/assets/aegis-architecture-gpt-prompt.md": {
+      "bytes": 9995,
+      "sha256": "b116b7a8a86f8c08f8927da6d1ee6b65a94b160c818bf500dbbc2508820d08b9",
+      "source": "main-readme-visual",
+      "source_path": "docs/assets/aegis-architecture-gpt-prompt.md",
+      "source_sha256": "d03f6cc9c643852fef1d9c24e86ac442e2e7c51b6e74c6e32c752041b47e0825"
+    },
+    "docs/assets/aegis-architecture-gpt-v1.png": {
+      "bytes": 1679009,
+      "sha256": "de6a0e4554e36f942699a12175a7a3e19ec6431ce8fb690a5b26baba67746b03",
+      "source": "main-readme-visual",
+      "source_path": "docs/assets/aegis-architecture-gpt-v1.png",
+      "source_sha256": "de6a0e4554e36f942699a12175a7a3e19ec6431ce8fb690a5b26baba67746b03"
     },
     "docs/assets/aegis-hero.svg": {
       "bytes": 2717,
@@ -968,11 +982,11 @@
       "source_sha256": "f93a3397ccbe19fb8067a68a14389850c9652a7abda7065880368b03209589eb"
     },
     "README.md": {
-      "bytes": 16140,
-      "sha256": "333914ae7ae45d021c5aaae26302ed9ede2fb663f768a4fbe6a65c5f88d02420",
+      "bytes": 16491,
+      "sha256": "218cd6c135116f3e43fa4a6224cba38891ae884c4a95d6b7b868555e9158b144",
       "source": "final-release-docs",
       "source_path": "README.md",
-      "source_sha256": "bc88dd5049619876189a332a5059615e8bb465db710c0612c4fc87f5d74b2ada"
+      "source_sha256": "eda9d8d1098f954cd4f67d6d566db9d0058ab4932df0011a78c22598b97e959f"
     },
     "RELEASE.md": {
       "bytes": 3393,
@@ -1815,11 +1829,11 @@
       "source_sha256": "cbd57c4f450da062b1716be97ade94a7a56980be448706ecbfd3624c71d4eaa2"
     },
     "tools/verify_clean_export.py": {
-      "bytes": 9069,
-      "sha256": "f8c1851323f97dd8b9a05d2e5df8ffe8301dadf872f6d5eb63c5931bd71dbb9b",
+      "bytes": 9188,
+      "sha256": "b0020c61bd75b6a9667730596eb7d5290633b6ff5074a540a6c2abe6495dd295",
       "source": "main-validator",
       "source_path": "verify_clean_export.py",
-      "source_sha256": "68507fdffeb259ac4273a466c4776ed63e020cbd739d04584db453143ec22d69"
+      "source_sha256": "f2f90e8f7d5b08708c9ec8fd75156a5f21e90447defbd5ec799ebc28feb8d280"
     },
     "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": {
       "bytes": 766204,

@@ -9,7 +9,9 @@ from urllib.parse import urlsplit
 MEDIA=('workspace/video/aegis-final-demo-20260929.mp4',
        'workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4',
        'workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx')
-DOC_ASSETS=('docs/assets/aegis-hero.svg','docs/assets/demo-console.png')
+DOC_ASSETS=('docs/assets/aegis-hero.svg','docs/assets/demo-console.png',
+            'docs/assets/aegis-architecture-gpt-v1.png',
+            'docs/assets/aegis-architecture-gpt-prompt.md')
 REQUIRED=('README.md','RELEASE.md','LICENSE','SECURITY-AND-USE.md','THIRD-PARTY.md',
           'REVIEW-README.md','REVIEW-PACKET.md','docs/PROJECT-DOC-20260928.md',
           'docs/ten-days.md','tests/test_submission_quality.py','bench/train/train_lora.py',
