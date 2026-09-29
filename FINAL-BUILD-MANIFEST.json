@@ -332,11 +332,11 @@
       "source_sha256": "178d62d749e76de10aa3af9c5890903563b9b8c0b31250ea22f24c86b9d321c7"
     },
     "docs/ten-days.md": {
-      "bytes": 10003,
-      "sha256": "b89a5de8bda03ed6b00be8b3d67c1b4567aa809b992286058106c1c4e434fca5",
+      "bytes": 10290,
+      "sha256": "43fb52c1d72fd4c9d21e6737ac774624824b59f00e510130191c3fdc409b8d6c",
       "source": "main",
       "source_path": "docs/ten-days.md",
-      "source_sha256": "b89a5de8bda03ed6b00be8b3d67c1b4567aa809b992286058106c1c4e434fca5"
+      "source_sha256": "43fb52c1d72fd4c9d21e6737ac774624824b59f00e510130191c3fdc409b8d6c"
     },
     "docs/video-script.md": {
       "bytes": 9706,
@@ -982,8 +982,8 @@
       "source_sha256": "f93a3397ccbe19fb8067a68a14389850c9652a7abda7065880368b03209589eb"
     },
     "README.md": {
-      "bytes": 16491,
-      "sha256": "218cd6c135116f3e43fa4a6224cba38891ae884c4a95d6b7b868555e9158b144",
+      "bytes": 16499,
+      "sha256": "e82a1b4f1549bd67a20ee1821bdc2c3ecd7928fb3a998a36ab7aec863e28422c",
       "source": "final-release-docs",
       "source_path": "README.md",
       "source_sha256": "eda9d8d1098f954cd4f67d6d566db9d0058ab4932df0011a78c22598b97e959f"
