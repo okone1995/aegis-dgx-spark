@@ -1,7 +1,7 @@
 # Aegis 决赛演示手册（单案例闭环 · 现场操作版）
 
 版本：2026-09-26 · 适用入口：`/demo` 作战大屏 + `POST /api/demo/runs` 单案例闭环
-配套材料：`JUDGES.md`（评委 100 分映射与最短评审路径）、`docs/worklog/T7-spark-evidence.md`（全部真机证据）
+配套材料：`JUDGES.md`（评委 100 分映射与最短评审路径）、`EVIDENCE.md`（全部真机数字与出处）
 
 > 本手册只讲**现场怎么演、屏上怎么读、被问到怎么答**；不讲开发历程，也不含未上墙数字。
 > 手册里每个数字都带出处；现场若与手册不符，**以屏幕和接口为准**，并如实说明。
@@ -69,7 +69,6 @@ $SSH 'bash $HOME/bin/start_aegis_console.sh'
 > ② 本地 125B 补丁模型所需密钥；③ 云端异构复核所需密钥。
 > 裸起 uvicorn 会丢掉它们，预检立即失败、屏幕显示 `preflight_php_missing: PHP_BIN unset & php not on PATH`，
 > 后两项会在补丁/复核阶段才暴露。两个密钥只从 `~/aegis/secrets.local.env` 载入（未跟踪、未进 git 历史）。
-> 本工程的推送脚本 `docs/worklog/_spark_final.sh` 已改为调用该启动器。
 
 ```bash
 # 只读核对环境是否带全（只列变量名，不打印任何值）
@@ -194,7 +193,7 @@ $SSH 'cd ~/aegis && kill $(ss -tlnp | grep ":30002 " | grep -oP "pid=\K[0-9]+" |
 | 验证口径 | `blocked=true` 需"实发交换数>0 且认证有效且无 marker 命中"；`functional_tests=passed` 是真跑 `test_functional.py` | `verification.json` |
 | 真实成功率 | 14 轮真机：**8 成功 / 1 降级 / 5 失败**（失败含 2 次靶场未起、3 次复核拒绝） | `workspace/runs/*/run.json` |
 | 单轮耗时 | patch ~70s + review ~10–20s 为主，整轮 **约 2–3 分钟** | `summary.json.stage_durations` |
-| 本次没做的 | 战场训练/热更新、B 集重采、浏览器像素级渲染验收 | `docs/worklog/T7-deviation-audit-2.md` §3 |
+| 本次没做的 | 战场训练/热更新、B 集重采、浏览器像素级渲染验收 | 开发记录（未随仓发布） |
 
 ---
 

@@ -80,5 +80,5 @@ For each round `r = 1..max_rounds`:
 
 - Sub-skills: `secaudit-recon`, `secaudit-attack`, `secaudit-detect`,
   `secaudit-patch`, `secaudit-verify`
-- `SPEC.md` §6-§11 (contracts), `governance/scope.example.yaml`
+- `docs/PROJECT-DOC-20260928.md` (architecture and contracts), `governance/scope.example.yaml`
 - Official skill format reference: NVIDIA/skills repository conventions
