@@ -710,11 +710,11 @@
       "source_sha256": "6f10318d6bcb88731b3f9877dc86cf1a8e25a33ea5521b5d2c5951d0c9429f8d"
     },
     "evidence/media/ppt-validation.json": {
-      "bytes": 5359,
-      "sha256": "0a1235da906c58a34785e121ef12ff72a0bc0d67f83ab4466adae79ef1678919",
-      "source": "final-ppt-validation",
-      "source_path": "aegis-ppt-validation.json",
-      "source_sha256": "76af0504a4df7bf912613d1014d8b2bf8f9ffc7278e5b73a573a5ab47eb56505"
+      "bytes": 6328,
+      "sha256": "be0394f57d05ce1ec52004cd6a0b6087c0a26d4a8bd9409e15b8c90f1c92485d",
+      "source": "main",
+      "source_path": "evidence/media/ppt-validation.json",
+      "source_sha256": "be0394f57d05ce1ec52004cd6a0b6087c0a26d4a8bd9409e15b8c90f1c92485d"
     },
     "evidence/portability/blind-layer3-report.md": {
       "bytes": 3402,
@@ -1773,11 +1773,11 @@
       "source_sha256": "f2f90e8f7d5b08708c9ec8fd75156a5f21e90447defbd5ec799ebc28feb8d280"
     },
     "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": {
-      "bytes": 766204,
-      "sha256": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96",
+      "bytes": 777501,
+      "sha256": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52",
       "source": "main-media",
       "source_path": "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx",
-      "source_sha256": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96"
+      "source_sha256": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52"
     },
     "workspace/video/aegis-final-demo-20260929.mp4": {
       "bytes": 26626816,
@@ -1814,7 +1814,7 @@
   "media_sha256": {
     "workspace/video/aegis-final-demo-20260929.mp4": "8af723c093139af57b00bc9871515869257184b2473627ce844a453f63d1ceb4",
     "workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4": "cb5256edb26c6a36f56534cee28f9b95f99241d5e92f604c8611b1389bfe346d",
-    "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96"
+    "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52"
   },
   "model_adapter_sha256": "01b21886b6f65bee45a9a058ba8059115f52b9ff0ee6604deda3d147dfb36842",
   "model_adapter_hash_basis": "read-only Spark sha256sum; weights not distributed",
