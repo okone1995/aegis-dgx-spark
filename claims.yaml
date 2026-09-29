@@ -303,3 +303,160 @@
   file: bench/results/three_arm/v1_on_external.json
   selector: accuracy_overall.acc
   expected: 0.7294
+
+# Current development branch cites only historical, shipped aggregates here.
+- claim_id: v3_train_count
+  clause: "JEV v3 历史训练卷 17403 条"
+  kind: json
+  file: dataset/judge_v3_mix/stats.json
+  selector: train_n
+  expected: 17403
+
+- claim_id: v3_holdout_count
+  clause: "JEV v3 历史 holdout 4244 条"
+  kind: json
+  file: dataset/judge_v3_mix/stats.json
+  selector: holdout_n
+  expected: 4244
+
+- claim_id: v3_mix_accuracy
+  clause: "JEV v3 历史混合域 holdout 准确率 0.9955"
+  kind: json
+  file: bench/results/three_arm/v3_mixed.json
+  selector: accuracy_overall.acc
+  expected: 0.9955
+
+- claim_id: v3_spark_median
+  clause: "JEV v3 历史 Spark 单发 median 80.8 ms"
+  kind: json
+  file: bench/results/judge_latency/spark_v3_single_shot.json
+  selector: single_shot_ms.median
+  expected: 80.8
+
+- claim_id: v3_spark_p95
+  clause: "JEV v3 历史 Spark 单发 p95 118.5 ms"
+  kind: json
+  file: bench/results/judge_latency/spark_v3_single_shot.json
+  selector: single_shot_ms.p95
+  expected: 118.5
+
+- claim_id: v3_spark_rate
+  clause: "JEV v3 历史 Spark 单发吞吐 12.17 条每秒"
+  kind: json
+  file: bench/results/judge_latency/spark_v3_single_shot.json
+  selector: throughput_1by1_per_second
+  expected: 12.17
+
+- claim_id: v3_lora_rank
+  clause: "JEV v3 训练配置 LoRA r=16"
+  kind: json
+  file: bench/results/judge_training/v3_summary.json
+  selector: hyperparams.lora_r
+  expected: 16
+
+- claim_id: v3_lora_alpha
+  clause: "JEV v3 训练配置 alpha=32"
+  kind: json
+  file: bench/results/judge_training/v3_summary.json
+  selector: hyperparams.alpha
+  expected: 32
+
+- claim_id: v3_lora_dropout
+  clause: "JEV v3 训练配置 dropout=0.05"
+  kind: json
+  file: bench/results/judge_training/v3_summary.json
+  selector: hyperparams.dropout
+  expected: 0.05
+
+- claim_id: v3_lora_targets
+  clause: "JEV v3 训练配置 7 个投影模块"
+  kind: json
+  file: bench/results/judge_training/v3_summary.json
+  selector: hyperparams.target_count
+  expected: 7
+
+- claim_id: r4_red_zeroshot_requests
+  clause: "历史同目标首次命中 21 次请求"
+  kind: json
+  file: evidence/red-library/hunt_zeroshot.json
+  selector: budget.requests_used
+  expected: 21
+
+- claim_id: r4_red_library_requests
+  clause: "历史同目标入库后命中 3 次请求"
+  kind: json
+  file: evidence/red-library/hunt_library.json
+  selector: budget.requests_used
+  expected: 3
+
+- claim_id: r4_replay_total
+  clause: "历史主演示复测 2 次原攻击"
+  kind: json
+  file: evidence/main-run-run-20260927-140612-399b/verification.json
+  selector: replay_total
+  expected: 2
+
+- claim_id: r4_business_pass
+  clause: "历史主演示业务断言通过"
+  kind: json
+  file: evidence/main-run-run-20260927-140612-399b/verification.json
+  selector: business_pass
+  expected: true
+
+- claim_id: r4_functional_count
+  clause: "历史主演示 11 项功能测试通过"
+  kind: computed
+  fn: historical_functional_count
+  expected: 11
+
+- claim_id: r4_skill_proof
+  clause: "历史 Skill 17 项收据均通过"
+  kind: computed
+  fn: historical_skill_proof
+  expected: 17
+
+- claim_id: r4_public_tests
+  clause: "r4 历史公开子集 73 项测试通过"
+  kind: computed
+  fn: r4_tests
+  expected: 73
+
+- claim_id: r4_public_subtests
+  clause: "r4 历史公开子集 16 项子测试通过"
+  kind: computed
+  fn: r4_subtests
+  expected: 16
+
+- claim_id: r4_public_json_assertions
+  clause: "r4 历史 JSON 指标直接核对 39 项"
+  kind: json
+  file: VALIDATION.json
+  selector: json_value_assertions
+  expected: 39
+
+- claim_id: v3_model_identity
+  clause: "JEV v3 训练底座 Qwen3.5-4B"
+  kind: json
+  file: bench/results/judge_training/v3_summary.json
+  selector: model
+  expected: Qwen3.5-4B
+
+- claim_id: v3_spark_cross_device_count
+  clause: "历史 Spark 与训练机 60 条逐条对账"
+  kind: json
+  file: bench/results/judge_latency/spark_v3_single_shot.json
+  selector: agreement_with_5090.n_joined
+  expected: 60
+
+- claim_id: r4_skills_video_seconds
+  clause: "r4 真实 Skills 执行短片约 44 秒"
+  kind: computed
+  fn: historical_skill_video_seconds
+  expected: 44
+
+- claim_id: r4_deck_pages
+  clause: "r4 项目 PPT 共 9 页"
+  kind: json
+  file: evidence/media/ppt-validation.json
+  selector: packageIntegrity.slide_count
+  expected: 9

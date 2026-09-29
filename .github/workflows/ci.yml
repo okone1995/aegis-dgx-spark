@@ -1,0 +1,35 @@
+name: CPU regression
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  regression:
+    name: Python 3.12 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    env:
+      PYTHONUTF8: "1"
+      AEGIS_JUDGE_MODE: "off"
+      AEGIS_JEVTRAIN: "off"
+      AEGIS_RECONCILE: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+      - name: Install locked CPU dependencies
+        run: python -m pip install -r requirements-lock.txt
+      - name: Check developer dependencies
+        run: python tools/doctor.py --offline
+      - name: Run isolated regression suite
+        run: >-
+          python -m pytest -q -rs --import-mode=importlib
+          tests skills/aegis-hunt/tests skills/aegis-self-repair/tests
+          skills/aegis-jevtrain/tests skills/aegis-evolve/tests

@@ -6,9 +6,9 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
-def test_claims_all_traceable():
+def test_public_claims_all_traceable():
     env = dict(**__import__("os").environ, AEGIS_SKIP_RUNTIME_CLAIMS="1")
-    r = subprocess.run([sys.executable, "bench/train/assert_claims.py"],
+    r = subprocess.run([sys.executable, "bench/train/assert_claims.py", "--public"],
                        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300, env=env)
     assert r.returncode == 0, "有宣称对不上仓内出处：\n" + r.stdout[-2500:]
 
@@ -62,3 +62,19 @@ def test_no_host_paths_in_tracked_files():
                        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
     assert r.returncode == 0, ('跟踪文件残留宿主路径/用户名/公网 IP（SPEC B.6）：'
  + r.stdout[-1200:])
+
+
+def test_private_computed_claims_from_raw_evidence():
+    import os
+    import pytest
+    required = ("dataset/raw/gen_freeflows.jsonl",
+                "dataset/raw/gen_freeflows_rejects.jsonl",
+                "bench/results/jail_smoke/jail_smoke.json")
+    missing = [name for name in required if not (ROOT / name).is_file()]
+    if missing:
+        pytest.skip("Private raw evidence is not distributed: " + ", ".join(missing))
+    env = dict(os.environ, AEGIS_SKIP_RUNTIME_CLAIMS="1")
+    r = subprocess.run([sys.executable, "bench/train/assert_claims.py"],
+                       cwd=ROOT, capture_output=True, text=True, encoding="utf-8",
+                       errors="replace", timeout=300, env=env)
+    assert r.returncode == 0, r.stdout[-2500:]

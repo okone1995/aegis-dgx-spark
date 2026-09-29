@@ -1,0 +1,10 @@
+POST {{TARGET}}/profile/avatar HTTP/1.1
+Cookie: {{SESSION}}
+Content-Type: multipart/form-data; boundary=AEGISBOUND
+
+--AEGISBOUND
+Content-Disposition: form-data; name="{{AVATAR_FIELD}}"; filename="pwn_v1.php4"
+Content-Type: application/octet-stream
+
+VULN_CONFIRMED_V1
+--AEGISBOUND--

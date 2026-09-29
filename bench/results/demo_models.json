@@ -1,0 +1,266 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-09-26T00:00:00Z",
+  "source_discipline": "只引用仓内实际存在的文件;缺记录写 null/unavailable。B 集已永封,不因新样本重新切分。",
+  "models": [
+    {
+      "model_id": "judge_v0_lora",
+      "adapter_path": "bench/train/out/judge_v0_lora",
+      "dataset_version": "judge_v0",
+      "dataset_stats_ref": "dataset/judge_v0/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": null,
+      "eval_results": [
+        "bench/results/three_arm/v1_on_edulite.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v0_lora/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v0_lora/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "unknown",
+      "inference_device_source": "unknown:该 adapter 无推理实测记录(无 judge_latency 产物、无在线服务自报)。本工程整机只有 1 x 5090 D 训练机与 1 x NVIDIA GB10 推理目标;按纪律不按整机设备推定,故保持 unknown。"
+    },
+    {
+      "model_id": "judge_v0_lora_tier1_sample_split",
+      "adapter_path": "bench/train/out/judge_v0_lora_tier1_sample_split",
+      "dataset_version": "judge_v0",
+      "dataset_stats_ref": "dataset/judge_v0/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": null,
+      "eval_results": [
+        "bench/train/results/tier1_sample_split_leaky/eval_logit_results.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v0_lora_tier1_sample_split/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v0_lora_tier1_sample_split/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "unknown",
+      "inference_device_source": "unknown:该 adapter 无推理实测记录(无 judge_latency 产物、无在线服务自报)。本工程整机只有 1 x 5090 D 训练机与 1 x NVIDIA GB10 推理目标;按纪律不按整机设备推定,故保持 unknown。"
+    },
+    {
+      "model_id": "judge_v1_lora",
+      "adapter_path": "bench/train/out/judge_v1_lora",
+      "dataset_version": "judge_v1_wave5",
+      "dataset_stats_ref": "dataset/judge_v1_wave5/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": "bench/results/judge_latency/spark_single_shot.json",
+      "eval_results": [
+        "bench/results/three_arm/v1_on_edulite.json",
+        "bench/results/three_arm/v1_on_external.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v1_lora/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v1_lora/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "NVIDIA GB10",
+      "inference_device_source": "推理部署设备(直接读引用文件的 device 字段):bench/results/judge_latency/spark_single_shot.json 的 device = NVIDIA GB10(DGX Spark);同见 bench/d8-judge-spark.md 硬件行"
+    },
+    {
+      "model_id": "judge_v2_dvwa_lora",
+      "adapter_path": "bench/train/out/judge_v2_dvwa_lora",
+      "dataset_version": "judge_v2_dvwa",
+      "dataset_stats_ref": "dataset/judge_v2_dvwa/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": null,
+      "eval_results": [
+        "bench/results/three_arm/v2_judge.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v2_dvwa_lora/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v2_dvwa_lora/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "unknown",
+      "inference_device_source": "unknown:该 adapter 无推理实测记录(无 judge_latency 产物、无在线服务自报)。本工程整机只有 1 x 5090 D 训练机与 1 x NVIDIA GB10 推理目标;按纪律不按整机设备推定,故保持 unknown。"
+    },
+    {
+      "model_id": "judge_v2b_merged_lora",
+      "adapter_path": "bench/train/out/judge_v2b_merged_lora",
+      "dataset_version": "judge_v2_merged",
+      "dataset_stats_ref": "dataset/judge_v2_merged/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": null,
+      "eval_results": [
+        "bench/results/three_arm/v2b_judge.json",
+        "bench/results/three_arm/v2b_on_edulite_holdout.json",
+        "bench/results/three_arm/v2b_on_judge_v0_holdout.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v2b_merged_lora/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v2b_merged_lora/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "unknown",
+      "inference_device_source": "unknown:该 adapter 无推理实测记录(无 judge_latency 产物、无在线服务自报)。本工程整机只有 1 x 5090 D 训练机与 1 x NVIDIA GB10 推理目标;按纪律不按整机设备推定,故保持 unknown。"
+    },
+    {
+      "model_id": "judge_v3_mix_lora",
+      "adapter_path": "bench/train/out/judge_v3_mix_lora",
+      "dataset_version": "judge_v3_mix",
+      "dataset_stats_ref": "dataset/judge_v3_mix/stats.json",
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": "bench/results/judge_latency/spark_v3_single_shot.json",
+      "eval_results": [
+        "bench/results/three_arm/v3_by_domain.json",
+        "bench/results/three_arm/v3_mixed.json"
+      ],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v3_mix_lora/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v3_mix_lora/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "NVIDIA GB10",
+      "inference_device_source": "推理部署设备(直接读引用文件的 device 字段):bench/results/judge_latency/spark_v3_single_shot.json 的 device = NVIDIA GB10(DGX Spark);同见 bench/d8-judge-spark.md 硬件行"
+    },
+    {
+      "model_id": "judge_v2_smoke",
+      "adapter_path": "bench/train/out/judge_v2_smoke",
+      "dataset_version": null,
+      "dataset_stats_ref": null,
+      "family_split_info": null,
+      "train_device": "NVIDIA GeForce RTX 5090 D",
+      "inference_device_ref": null,
+      "eval_results": [],
+      "paired_comparisons": [
+        "bench/results/three_arm/v3_paired_vs_v1_v2b.json",
+        "bench/results/three_arm/v2_vs_v2b_paired.json",
+        "bench/results/three_arm/v3_by_domain.json"
+      ],
+      "protocol": {
+        "protocol_id": "judge-protocol-v1",
+        "abstain_band": [
+          0.4,
+          0.6
+        ],
+        "threshold": 0.5,
+        "note": "评估口径可能为 0.20-0.80,以各评估文件 protocol 字段为准,不混用"
+      },
+      "notes": "数字一律读引用文件,不内联;未配对数字不作跨版本进步曲线",
+      "train_device_ref": "bench/train/out/judge_v2_smoke/smoke/train_summary.json",
+      "train_device_source": "本机训练设备(非逐条实录,推定):①本机 `nvidia-smi --query-gpu=name` 实测 = NVIDIA GeForce RTX 5090 D(本次 S5 落笔在工作机执行);②.gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓)」;③bench/train/out/judge_v2_smoke/smoke/train_summary.json(model 为 Windows 本机路径、quant=none,含 peak_vram_gib,无设备字段)。逐 adapter 无设备字段 ⇒ 设备名由同机产物推定",
+      "inference_device": "unknown",
+      "inference_device_source": "unknown:该 adapter 无推理实测记录(无 judge_latency 产物、无在线服务自报)。本工程整机只有 1 x 5090 D 训练机与 1 x NVIDIA GB10 推理目标;按纪律不按整机设备推定,故保持 unknown。"
+    }
+  ],
+  "schema_version_note": "v2:S5 落笔补设备/来源字段 —— train_device 由 'none'/null 改为设备名(真实来源见 device_registry),新增 train_device_ref/train_device_source/inference_device/inference_device_source;历史数字与引用字段未改动。",
+  "device_registry": {
+    "train": {
+      "device": "NVIDIA GeForce RTX 5090 D",
+      "confidence": "inferred",
+      "basis": [
+        "本机 `nvidia-smi --query-gpu=name --format=csv`(本次 S5 落笔实测;输出仅记设备名,显存/驱动数字不内联)",
+        ".gitignore:13「本机 5090 训练产物(adapter/日志/评估 JSON 不进仓;关键数字回填文档)」",
+        "bench/train/out/judge_v0_lora_tier1_sample_split/train_summary.json 的 note 字段(把该轮记为 5090 bf16 LoRA、无量化)",
+        "各 adapter 的 train_summary.json:model 为 Windows 本机路径、quant=none、含 peak_vram_gib(数值一律读该文件,本 manifest 不内联)"
+      ],
+      "caveat": "逐 adapter 训练设备无独立字段 ⇒ 设备名为推定;取不到确切值不编造,故同时保留 train_device_ref 供逐条核对。"
+    },
+    "inference": {
+      "device": "NVIDIA GB10",
+      "host": "DGX Spark",
+      "confidence": "recorded(仅有时延记录的 adapter 可核)",
+      "basis": [
+        "bench/results/judge_latency/spark_single_shot.json 的 device 字段 = NVIDIA GB10",
+        "bench/results/judge_latency/spark_v3_single_shot.json 的 device 字段 = NVIDIA GB10",
+        "bench/d8-judge-spark.md 硬件行 = NVIDIA GB10(DGX Spark)"
+      ],
+      "caveat": "只有 judge_v1_lora / judge_v3_mix_lora 有 Spark 时延记录;其余 adapter 的部署设备无记录 ⇒ inference_device 写 unknown,不按整机推定。",
+      "fleet_basis": "整机唯一 ⇒ 已实测的推理只可能发生在 GB10;但未实测的 adapter 仍记 unknown,不因整机唯一就回填(评审:身份必须来自实际服务响应或受控采样)。"
+    },
+    "fleet": {
+      "training_hosts": 1,
+      "inference_targets": 1,
+      "statement": "项目所有者 2026-09-27 明确:本工程只有一台训练机(1 x NVIDIA GeForce RTX 5090 D)与一个推理目标(1 x NVIDIA GB10 on DGX Spark)。",
+      "rule": "inference_device 只对**有实测记录**的 adapter 填 NVIDIA GB10(依据 judge_latency 产物的 device 字段或在线服务 /metadata 自报);没有实测记录的保持 unknown —— 不按整机设备推定。",
+      "updated_at": "2026-09-27"
+    }
+  },
+  "baseline_classification": {
+    "status": "historical_baseline_only",
+    "source": "original aegis repository snapshot, dated 2026-09-26",
+    "measured_in_aegis_next": false,
+    "weights_included": false,
+    "note": "Historical model/device/evaluation metadata. This checkout did not load weights or rerun inference."
+  }
+}

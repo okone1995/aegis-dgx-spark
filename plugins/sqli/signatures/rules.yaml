@@ -1,0 +1,17 @@
+# 蓝方确定性签名 —— flow.jsonl 记录的是【原始（URL 编码）】query，规则按编码形态编写
+rules:
+  - id: SQ-001
+    class: sqli
+    pattern: "UNION(%20|\\s)+(SELECT|select)"
+    where: request_query
+    confidence: 0.95
+  - id: SQ-002
+    # 永真式：覆盖编码（%27/%20/%3D）与解码（'/空格/=）两种形态
+    pattern: "(%27|')(%20|\\s)OR(%20|\\s)(%27|')1(%27|')(%3D|=)(%27|')1"
+    where: request_query
+    confidence: 0.9
+  - id: SQ-003
+    class: sqli
+    pattern: "SQL error|SQLite3?::"
+    where: response_body
+    confidence: 0.85

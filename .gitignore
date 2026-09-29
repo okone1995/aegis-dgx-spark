@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+secrets*.env
+.env
+workspace/
+models/
+bench/train/out/
+*.lock
+*.tmp

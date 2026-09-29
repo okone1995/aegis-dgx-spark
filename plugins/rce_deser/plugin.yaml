@@ -1,0 +1,15 @@
+class: rce_deser
+display_name: "反序列化 RCE（导入接口 + POP 链落盘）"
+severity: critical
+cve_patterns: ["unserialize 用户可控 + __destruct gadget（ThinkPHP/组件反序列化 CVE 通用模式）"]
+endpoint: "POST /admin/import"
+detector:
+  type: response_marker
+  marker_route: "GET /uploads/<logFile>"
+  markers: ["VULN_CONFIRMED_D1", "VULN_CONFIRMED_D2", "VULN_CONFIRMED_DV1", "VULN_CONFIRMED_DV2"]
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "gadget=EduBackupLogger（target/src/gadget.php）；JSON 体传输避免 URL 编码歧义；需 admin 会话（{{SESSION}}）"

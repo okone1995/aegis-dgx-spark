@@ -1,0 +1,6 @@
+rules:
+  - id: BR-001
+    class: brute_no_lock
+    pattern: "bad credentials"
+    where: response_body
+    confidence: 0.3   # 单次 401 无罪；蓝方按 session 聚合计数升级（D5 签名自学习素材）

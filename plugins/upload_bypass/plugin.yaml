@@ -1,0 +1,15 @@
+class: upload_bypass
+display_name: "任意文件上传绕过（黑名单不完整）"
+severity: critical
+cve_patterns: ["上传黑名单绕过类（编辑器/附件上传 CVE 通用模式）"]
+endpoint: "POST /profile/avatar"
+detector:
+  type: response_marker
+  marker_route: "GET /uploads/<name>"   # 落盘且可访问即确认
+  markers: ["VULN_CONFIRMED"]
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/        # held-out 组：attack 阶段禁用，仅 verify 门禁重放（SPEC §11①）
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "上传绕过判定=黑名单旁路+落盘可访问；代码执行属 FPM 部署形态，靶场以落盘+可访问为成功标准（README 已声明）"

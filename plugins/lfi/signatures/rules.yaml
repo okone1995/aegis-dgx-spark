@@ -1,0 +1,11 @@
+rules:
+  - id: LF-001
+    class: lfi
+    pattern: "(\\.\\./|%2e%2e%2f|%2e%2E/|\\.\\.%2f)"
+    where: request_query
+    confidence: 0.95
+  - id: LF-002
+    class: lfi
+    pattern: "/download"
+    where: request_path
+    confidence: 0.3   # 低置信：judge 道

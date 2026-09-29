@@ -6,6 +6,7 @@ FastAPI + 轮询式 SSE（零 websocket 依赖）；静态托管 console/fronten
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import os
 import pathlib
@@ -19,8 +20,9 @@ from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from engine.demo_contracts import TERMINAL_STATES, utcnow_iso
-from engine.run_lock import DEFAULT_IDENTITY, RunLock, StaleLockError
+from engine.run_lock import DEFAULT_IDENTITY, RunLock, StaleLockError, default_lock_path
 from engine.run_store import RunStore, RunStoreError
+from engine.storage import file_mutex, StorageBusyError
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 WS = pathlib.Path(os.environ.get("AEGIS_WORKSPACE", ROOT / "workspace"))
@@ -31,7 +33,7 @@ FRONTEND = ROOT / "console/frontend"
 WS.mkdir(parents=True, exist_ok=True)
 RUNS_ROOT = WS / "runs"
 _run_store = RunStore(RUNS_ROOT)
-_LOCK_PATH = WS / ".aegis.lock"          # 契约 §3：锁文件位置 workspace/.aegis.lock
+_LOCK_PATH = default_lock_path()          # 契约 §3：锁文件位置 workspace/.aegis.lock
 _LOCK_IDENTITY = DEFAULT_IDENTITY    # 与任务进程同 identity:崩溃遗留锁可被接手(不跨 identity 互踩)
 _active_demo_runs: dict = {}             # run_id -> subprocess.Popen（仅本进程派生的）
 # 注：AEGIS_WORKSPACE 需在 import 前设置（tests/test_demo_api.py 即靠此隔离）
@@ -100,7 +102,8 @@ def _shadow_loop():
         time.sleep(3)
 
 
-threading.Thread(target=_shadow_loop, daemon=True).start()
+if JUDGE_MODE != "off":
+    threading.Thread(target=_shadow_loop, daemon=True).start()
 
 
 def _read_json(p: pathlib.Path, default):
@@ -549,6 +552,8 @@ def _spawn_demo_case(run_id: str, patch_provider: str = "qwen",
         # 而服务进程内的预检却是通过的 —— 子进程静默死掉、run 永远 queued。
         # 显式传 PYTHONPATH 才能与解释器配置无关(Spark 上碰巧能跑)。
         env = dict(os.environ)
+        env["AEGIS_LOCK_PATH"] = str(_LOCK_PATH.resolve())
+        env["AEGIS_WORKSPACE"] = str(WS.resolve())
         env["PYTHONPATH"] = (str(ROOT) + os.pathsep + env["PYTHONPATH"]
                              if env.get("PYTHONPATH") else str(ROOT))
         proc = subprocess.Popen(
@@ -584,30 +589,48 @@ def _ensure_engine_importable() -> None:
 
 @app.post("/api/demo/runs", status_code=202)
 def demo_create_run(body: dict = None):
+    # One transaction spans idempotency lookup, busy check, reservation and spawn.
+    try:
+        with file_mutex(_run_store.runs_root / ".create.lock"):
+            return _create_demo_run_locked(body)
+    except StorageBusyError as exc:
+        raise HTTPException(503, "run creation is busy; retry with the same request id") from exc
+
+
+def _create_demo_run_locked(body: dict = None):
     """创建单案例演示 run（契约 §2.4）：202+run_id；白名单参数；
     忙时 409；幂等靠 client_request_id；缺依赖产生可见预检失败不假启动。"""
     body = body or {}
     case_id = body.get("case_id", "sqli")
-    if case_id not in DEMO_CASES:
+    if not isinstance(case_id, str) or case_id not in DEMO_CASES:
         raise HTTPException(400, f"bad case_id: {case_id} (legal: {sorted(DEMO_CASES)})")
     patch_provider = body.get("patch_provider", "qwen")
-    if patch_provider not in DEMO_PROVIDERS:
+    if not isinstance(patch_provider, str) or patch_provider not in DEMO_PROVIDERS:
         raise HTTPException(400, f"bad patch_provider: {patch_provider}")
     review_provider = body.get("review_provider", "step")
-    if review_provider not in DEMO_PROVIDERS:
+    if not isinstance(review_provider, str) or review_provider not in DEMO_PROVIDERS:
         raise HTTPException(400, f"bad review_provider: {review_provider}")
     strict_llm = body.get("strict_llm", True)
     if not isinstance(strict_llm, bool):
         raise HTTPException(400, "strict_llm must be boolean")
     cleanup_policy = body.get("cleanup_policy", "restore")
-    if cleanup_policy not in DEMO_CLEANUP_POLICIES:
+    if not isinstance(cleanup_policy, str) or cleanup_policy not in DEMO_CLEANUP_POLICIES:
         raise HTTPException(400, f"bad cleanup_policy: {cleanup_policy}")
-    client_request_id = str(body.get("client_request_id", "") or "")
+    client_request_id = body.get("client_request_id", "") or ""
+    if not isinstance(client_request_id, str) or len(client_request_id) > 200:
+        raise HTTPException(400, "client_request_id must be a string of at most 200 characters")
 
+    request_options = {"case_id": case_id, "patch_provider": patch_provider,
+                       "review_provider": review_provider, "strict_llm": strict_llm,
+                       "cleanup_policy": cleanup_policy}
+    fingerprint = hashlib.sha256(json.dumps(request_options, sort_keys=True,
+                                          separators=(",", ":")).encode()).hexdigest()
     # 幂等：同一 client_request_id 返回同一 run（不重复攻击）
     if client_request_id:
         existing = _run_store.find_by_client_request_id(client_request_id)
         if existing is not None:
+            if existing.request_fingerprint and existing.request_fingerprint != fingerprint:
+                raise HTTPException(409, "client_request_id was already used with different parameters")
             return {"run_id": existing.run_id, "state": existing.state,
                     "last_seq": existing.last_seq, "created": False,
                     "idempotent_replay": True}
@@ -618,7 +641,7 @@ def demo_create_run(body: dict = None):
     # ORPHAN_QUEUED_S 未刷新 —— 任务进程从未接管（后端在 create 与 spawn
     # 之间崩溃），落 failed 可见终态，避免永久 409 假死。running 态带 pid，
     # 归属任务进程/恢复器，不在此处猜。
-    for m in _run_store.list_runs(limit=100):
+    for m in _run_store.list_runs(limit=None):
         if m.state == "queued" and not m.pid and _heartbeat_age_s(m) > ORPHAN_QUEUED_S:
             _run_store.append_event(
                 m.run_id, "run.failed", "preflight", "backend",
@@ -646,6 +669,7 @@ def demo_create_run(body: dict = None):
     meta = _run_store.create(
         case_id, providers={"patch": patch_provider, "review": review_provider},
         options={"client_request_id": client_request_id,
+                 "request_fingerprint": fingerprint, "request_options": request_options,
                  "strict_llm": strict_llm, "cleanup_policy": cleanup_policy})
     _run_store.append_event(
         meta.run_id, "run.created", "preflight", "backend",

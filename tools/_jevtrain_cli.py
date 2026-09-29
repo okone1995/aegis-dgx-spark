@@ -69,12 +69,12 @@ def main() -> int:
                 continue
             if args.only_disagreements and not (r.get("agreement") is False):
                 continue
-            targets.append(r["sample_id"])
-        for sid in targets:
-            JT.stamp_reviewer(q, sid, args.reviewer, note="jevtrain approve-all")
-            q.approve(sid)
+            targets.append((r["sample_id"], int(r.get("label_revision", 0))))
+        for sid, revision in targets:
+            q.approve(sid, reviewer=args.reviewer, note="jevtrain approve-all",
+                      expected_label_revision=revision)
         print(json.dumps({"approved": len(targets), "reviewer": args.reviewer,
-                          "sample_ids": targets}, ensure_ascii=False))
+                          "sample_ids": [sid for sid, _ in targets]}, ensure_ascii=False))
         return 0
     out = pathlib.Path(args.out) if args.out else None
     m = JT.export(q, args.version, out_root=out)

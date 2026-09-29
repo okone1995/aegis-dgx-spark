@@ -1,0 +1,15 @@
+class: brute_no_lock
+display_name: "登录暴破无锁定"
+severity: medium
+cve_patterns: ["无速率限制/无账号锁定类（CWE-307 通用模式）"]
+endpoint: "POST /login"
+verify_mode: last_blocked   # 前 N-1 次 401 是合法行为，最后一次仍被处理 = 漏洞在场
+detector:
+  type: response_marker
+  markers: ["bad credentials"]
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "漏洞=第 6 次尝试仍正常处理（无锁定）；补丁=5 次失败锁 10 分钟。verify 语义见 plugin.yaml verify_mode"

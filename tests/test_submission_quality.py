@@ -68,7 +68,10 @@ def test_label_review_is_separate_and_invalidates_old_approval(queue,tmp_path):
     assert changed['review_state']=='pending' and changed['label_review_state']=='human_reviewed'
     assert changed['label_audit'][-1]['before']=='attack' and changed['label_audit'][-1]['after']=='benign'
     assert changed['agreement'] is False
-    JT.stamp_reviewer(queue,sid,'unit-operator','reapprove corrected label');queue.approve(sid)
+    with pytest.raises(ValueError, match="revision"):
+        queue.approve(sid, expected_label_revision=0)
+    queue.approve(sid, reviewer="unit-operator", note="reapprove corrected label",
+                  expected_label_revision=changed["label_revision"])
     JT.export(queue,'after',out_root=tmp_path/'after')
     records=[json.loads(s) for n in ('train.jsonl','holdout.jsonl') for s in (tmp_path/'after'/n).read_text(encoding="utf-8").splitlines()]
     assert records[0]['meta']['label_audit'][-1]['after']=='benign'

@@ -1,0 +1,14 @@
+class: lfi
+display_name: "路径穿越读取（下载参数无归一化）"
+severity: high
+cve_patterns: ["下载/导出参数穿越类（文件包含 CVE 通用模式）"]
+endpoint: "GET /download"
+detector:
+  type: response_marker
+  markers: ["EduBackupLogger", "avatar_url_field", "logFile"]
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "marker=被穿越读出的源码特征（app.php/gadget.php/instances.php 内容）"

@@ -18,7 +18,6 @@ import argparse
 import json
 import pathlib
 import sys
-import threading
 import time
 
 # T3 契约修复(F1):原为三层 parent(指向仓库父目录),bench/train 从未真正
@@ -44,10 +43,6 @@ REQ_CAP, RESP_CAP = BJ.REQ_CAP, BJ.RESP_CAP
 ABSTAIN_LO, ABSTAIN_HI = BJ.ABSTAIN_LO, BJ.ABSTAIN_HI
 PROTOCOL_ID = BJ.PROTOCOL_ID
 RENDER_SPEC = BJ.RENDER_SPEC
-# 契约 2.8:模型调用串行化(有界队列)——等锁 60s 拿不到回 503,
-# 不任由 HTTP 线程无限并发直打 GPU。
-_GPU_SEMA = threading.Semaphore(1)
-
 
 def build_shadow_record(e: dict) -> dict:
     """flow.jsonl 条目 → 与训练/评估同构的判读输入。
@@ -74,6 +69,10 @@ def main() -> int:
     ap.add_argument("--base", default=_default_base)
     ap.add_argument("--adapter", default=_default_adapter)
     ap.add_argument("--port", type=int, default=30002)
+    ap.add_argument("--capacity", type=int, default=8)
+    ap.add_argument("--queue-timeout", type=float, default=10)
+    ap.add_argument("--read-timeout", type=float, default=5)
+    ap.add_argument("--max-body-bytes", type=int, default=262144)
     a = ap.parse_args()
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -91,103 +90,46 @@ def main() -> int:
     a_id, b_id = a_id[0], b_id[0]
     print(f"[judge] v3 loaded (bf16 merged) on cuda:0", flush=True)
 
-    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-
-    _STARTED_AT = time.time()
-
-    class H(BaseHTTPRequestHandler):
-        def do_GET(self):
-            """契约 2.8:/health 与 /metadata。"""
-            if self.path == "/health":
-                out = json.dumps({
-                    "status": "ok", "model_loaded": True,
-                    "uptime_s": round(time.time() - _STARTED_AT, 1),
-                    "protocol_id": PROTOCOL_ID}).encode()
-            elif self.path == "/metadata":
-                dev = "unknown"
-                try:
-                    import torch
-                    if torch.cuda.is_available():
-                        dev = torch.cuda.get_device_name(0)
-                except Exception:  # noqa: BLE001
-                    pass
-                out = json.dumps({
-                    "protocol_id": PROTOCOL_ID,
-                    "render_spec": RENDER_SPEC,
-                    "abstain_band": [ABSTAIN_LO, ABSTAIN_HI],
-                    "band_basis": "online_hard_verdict",
-                    # 离线评估口径一并自报:两条带不同源,禁止混算(差异已登记)。
-                    "offline_abstain_band": [BJ.EVAL_ABSTAIN_LO, BJ.EVAL_ABSTAIN_HI],
-                    "threshold": 0.5, "input_mode": "exchange",
-                    "adapter": a.adapter, "base_model": a.base,
-                    "device": dev}).encode()
-            else:
-                self.send_response(404); self.end_headers(); return
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(out)))
-            self.end_headers()
-            self.wfile.write(out)
-
-        def do_POST(self):
-            if self.path != "/judge":
-                self.send_response(404); self.end_headers(); return
-            # 契约 2.8:串行化有界队列——拿不到锁回 503,调用方按
-            # unavailable 处理;不无限堆线程打 GPU。
-            if not _GPU_SEMA.acquire(timeout=60):
-                self.send_response(503); self.end_headers(); return
-            try:
-                self._judge_locked()
-            finally:
-                _GPU_SEMA.release()
-
-        def _judge_locked(self):
-                n = int(self.headers.get("content-length", 0))
-                e = json.loads(self.rfile.read(n) or b"{}")
-                rec = build_shadow_record(e)
-                ids = EL.prompt_ids(tok, rec)
-                x = torch.tensor([ids], device="cuda")
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                s = time.perf_counter()
-                with torch.no_grad():
-                    logits = model(input_ids=x,
-                                   attention_mask=torch.ones_like(x)).logits[:, -1, :]
-                    two = torch.stack([logits[:, a_id], logits[:, b_id]], dim=-1).float()
-                    pr = torch.softmax(two, dim=-1)[0, 0].item()
-                if torch.cuda.is_available():
-                    torch.cuda.synchronize()
-                ms = round((time.perf_counter() - s) * 1000, 1)
-                # 契约 2.8(F7):悬置带内 verdict=abstain,raw_verdict 保留
-                # 阈值二分类;统计不得把 abstain 默认为 attack/benign。
-                raw = "attack" if pr >= 0.5 else "benign"
-                if ABSTAIN_LO < pr < ABSTAIN_HI:
-                    verdict, band = "abstain", "abstain"
-                else:
-                    verdict, band = raw, "confident"
-                out = json.dumps({"p_attack": round(pr, 4), "verdict": verdict,
-                                  "raw_verdict": raw, "band": band,
-                                  "protocol_id": PROTOCOL_ID,
-                                  # 渲染级 hash:与训练卷同源的凭证(单次自检即可发现
-                                  # 渲染分叉),与 demo_case.input_hash(观测级)互补。
-                                  "render_spec": RENDER_SPEC,
-                                  "prompt_hash": BJ.prompt_hash(rec),
-                                  # T7 真机实测:响应曾缺模型身份 → judge.jsonl
-                                  # 的 model_version 恒 unknown(MF2 要求可核验)
-                                  "model_version": pathlib.Path(a.adapter).name,
-                                  "adapter": a.adapter, "latency_ms": ms,
-                                  "n_prompt_tokens": len(ids)}).encode()
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(out)))
-                self.end_headers()
-                self.wfile.write(out)
-
-        def log_message(self, *a2):
-            pass
-
-    print(f"[judge] shadow service on http://127.0.0.1:{a.port}", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", a.port), H).serve_forever()
+    from engine.judge_http import JudgeRuntime, make_server
+    device = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "unknown"
+    metadata = {
+        "protocol_id": PROTOCOL_ID, "render_spec": RENDER_SPEC,
+        "abstain_band": [ABSTAIN_LO, ABSTAIN_HI], "band_basis": "online_hard_verdict",
+        "offline_abstain_band": [BJ.EVAL_ABSTAIN_LO, BJ.EVAL_ABSTAIN_HI],
+        "threshold": 0.5, "input_mode": "exchange", "adapter": a.adapter,
+        "base_model": a.base, "device": device}
+    def predict(e):
+        prep = time.perf_counter()
+        rec = build_shadow_record(e)
+        ids = EL.prompt_ids(tok, rec)
+        if len(ids) > 2048:
+            raise ValueError("prompt exceeds validated model input length")
+        x = torch.tensor([ids], device="cuda")
+        preprocess_ms = (time.perf_counter() - prep) * 1000
+        torch.cuda.synchronize()
+        started = time.perf_counter()
+        with torch.inference_mode():
+            logits = model(input_ids=x, attention_mask=torch.ones_like(x)).logits[:, -1, :]
+            two = torch.stack([logits[:, a_id], logits[:, b_id]], dim=-1).float()
+            probability = torch.softmax(two, dim=-1)[0, 0].item()
+        torch.cuda.synchronize()
+        raw = "attack" if probability >= 0.5 else "benign"
+        abstain = ABSTAIN_LO < probability < ABSTAIN_HI
+        return {
+            "p_attack": round(probability, 4), "raw_verdict": raw,
+            "verdict": "abstain" if abstain else raw, "band": "abstain" if abstain else "confident",
+            "protocol_id": PROTOCOL_ID, "render_spec": RENDER_SPEC,
+            "prompt_hash": BJ.prompt_hash(rec), "model_version": pathlib.Path(a.adapter).name,
+            "adapter": a.adapter, "latency_ms": round((time.perf_counter()-started)*1000, 1),
+            "preprocess_ms": round(preprocess_ms, 2), "n_prompt_tokens": len(ids)}
+    runtime = JudgeRuntime(predict, metadata, capacity=a.capacity, queue_timeout=a.queue_timeout)
+    server = make_server(("127.0.0.1", a.port), runtime,
+                         max_body_bytes=a.max_body_bytes, read_timeout=a.read_timeout)
+    print(f"[judge] bounded shadow service on http://127.0.0.1:{a.port}", flush=True)
+    try:
+        server.serve_forever()
+    finally:
+        server.server_close()
     return 0
 
 

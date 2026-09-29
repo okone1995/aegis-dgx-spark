@@ -1,0 +1,11 @@
+rules:
+  - id: SF-001
+    class: ssrf
+    pattern: "/profile/avatar-url"
+    where: request_path
+    confidence: 0.4   # 低置信：交给 judge 道升级
+  - id: SF-002
+    class: ssrf
+    pattern: "(avatar_url|pic_url)=https?://"
+    where: request_body
+    confidence: 0.85

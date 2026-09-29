@@ -34,7 +34,7 @@ from engine import llm  # noqa: F401  (测试整体 monkeypatch demo_case.llm)
 from engine import run_store
 from engine.demo_contracts import VALID_EVENTS, utcnow_iso
 from engine.models import Finding, FindingStatus
-from engine.run_lock import DEFAULT_IDENTITY, RunLock
+from engine.run_lock import DEFAULT_IDENTITY, RunLock, default_lock_path
 from engine.run_store import RunStore
 
 # ---- T3/T5 并行模块: 缺则降级(不阻塞,登记于事件/状态字段) ----
@@ -68,7 +68,7 @@ MAX_SNIP = 4000  # 事件/文件中的响应体截断长度
 MAX_TOTAL_S = 600.0
 REVIEW_TIMEOUT_S = 120
 # 进程间排他锁路径(与 console/backend 同源;后端预检也读它)
-_LOCK_PATH = ROOT / "workspace" / ".aegis.lock"
+_LOCK_PATH = default_lock_path()
 
 # F9 业务探针(测试整体 monkeypatch 这两个包装)
 login_and_search = case_probes.login_and_search

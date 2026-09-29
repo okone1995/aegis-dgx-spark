@@ -1,0 +1,11 @@
+rules:
+  - id: DS-001
+    class: rce_deser
+    pattern: 'O:\d+:"'
+    where: request_body
+    confidence: 0.9
+  - id: DS-002
+    class: rce_deser
+    pattern: "EduBackupLogger"
+    where: request_body
+    confidence: 0.98

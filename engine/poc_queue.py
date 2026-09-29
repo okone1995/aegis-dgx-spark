@@ -19,6 +19,7 @@ import pathlib
 import re
 import sys
 from typing import Dict, List, Optional
+from engine.storage import JsonlStore
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 _DATASET = ROOT / "dataset"
@@ -74,7 +75,7 @@ def split_request(request_text: str) -> tuple[str, str, str]:
 
 
 class PocQueue:
-    """单写者 JSONL 候选队列（只追加；审核状态原地重写同一行文件）。"""
+    """跨进程事务 JSONL 候选队列。"""
 
     def __init__(self, queue_path: pathlib.Path = DEFAULT_QUEUE):
         self.path = pathlib.Path(queue_path)
@@ -82,19 +83,7 @@ class PocQueue:
 
     # ---------- 读 ----------
     def load(self) -> List[dict]:
-        if not self.path.is_file():
-            return []
-        rows = []
-        with self.path.open(encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rows.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue  # 坏行跳过，不当成功候选
-        return rows
+        return JsonlStore(self.path).load()
 
     def get(self, candidate_id: str) -> Optional[dict]:
         for r in self.load():
@@ -141,31 +130,23 @@ class PocQueue:
             c["candidate_id"] = f"{cls}-{ph[:12]}"
         if c["evidence_state"] not in EVIDENCE_STATES:
             raise PocQueueError(f"非法 evidence_state: {c['evidence_state']!r}")
-        for existing in self.load():
-            if (existing.get("poc_hash") == ph
-                    and existing.get("class") == cls
-                    and existing.get("intent") == c.get("intent")):
-                return {"duplicate": True, "existing": existing}
-        with self.path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
-        return {"duplicate": False, "candidate": c}
-
-    def _rewrite(self, rows: List[dict]) -> None:
-        tmp = self.path.with_suffix(".jsonl.tmp")
-        with tmp.open("w", encoding="utf-8") as f:
-            for r in rows:
-                f.write(json.dumps(r, ensure_ascii=False) + "\n")
-        from engine.demo_contracts import atomic_replace
-        atomic_replace(tmp, self.path)
+        def change(rows):
+            for existing in rows:
+                if (existing.get("poc_hash") == ph and existing.get("class") == cls
+                        and existing.get("intent") == c.get("intent")):
+                    return {"duplicate": True, "existing": existing}
+            rows.append(c)
+            return {"duplicate": False, "candidate": c}
+        return JsonlStore(self.path).update(change)
 
     def _mutate(self, candidate_id: str, fn) -> dict:
-        rows = self.load()
-        hit = next((r for r in rows if r.get("candidate_id") == candidate_id), None)
-        if hit is None:
-            raise KeyError(f"unknown candidate_id: {candidate_id}")
-        fn(hit)
-        self._rewrite(rows)
-        return hit
+        def change(rows):
+            hit = next((r for r in rows if r.get("candidate_id") == candidate_id), None)
+            if hit is None:
+                raise KeyError(f"unknown candidate_id: {candidate_id}")
+            fn(hit)
+            return hit
+        return JsonlStore(self.path).update(change)
 
     # ---------- 取证与审核 ----------
     def confirm(self, candidate_id: str, exchange: dict, markers_hit: List[str],

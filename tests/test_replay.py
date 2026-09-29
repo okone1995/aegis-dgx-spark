@@ -28,6 +28,12 @@ def test_fetch_paths_upload_and_deser():
     assert fetch_paths(body_deser) == ["uploads/pwn_v1.txt"]
 
 
-def test_replay_result_error_on_unreachable():
+def test_replay_result_error_on_unreachable(monkeypatch):
+    import requests
+    calls = []
+    def unreachable(method, url, **kwargs):
+        calls.append((method, url))
+        raise requests.ConnectionError("isolated connection failure")
+    monkeypatch.setattr("engine.replay.requests.request", unreachable)
     res = replay_payload("http://127.0.0.1:59999", REQ, "x.txt", {"TARGET": "http://127.0.0.1:59999"}, ["m"])
-    assert res.error and not res.markers_hit
+    assert calls and res.error and not res.markers_hit
