@@ -325,11 +325,11 @@
       "source_sha256": "178d62d749e76de10aa3af9c5890903563b9b8c0b31250ea22f24c86b9d321c7"
     },
     "docs/ten-days.md": {
-      "bytes": 10290,
-      "sha256": "43fb52c1d72fd4c9d21e6737ac774624824b59f00e510130191c3fdc409b8d6c",
+      "bytes": 11840,
+      "sha256": "9fec640d644499f01d1faf7bd6454fd6b9664f97149bdaa86d30e904e9cf007f",
       "source": "main",
       "source_path": "docs/ten-days.md",
-      "source_sha256": "43fb52c1d72fd4c9d21e6737ac774624824b59f00e510130191c3fdc409b8d6c"
+      "source_sha256": "9fec640d644499f01d1faf7bd6454fd6b9664f97149bdaa86d30e904e9cf007f"
     },
     "docs/video-script.md": {
       "bytes": 9706,
