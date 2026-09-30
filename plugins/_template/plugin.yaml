@@ -1,0 +1,13 @@
+# 漏洞类别插件包清单 — "漏洞类别即插件"（SPEC §5.2）
+# 复制本目录为 plugins/<class>/，填充以下内容；管线代码不改。
+class: template            # 类别 id，与 scope.yaml allowed_classes 对应
+display_name: "Template"
+severity: medium           # default severity, finding 可覆盖
+detector:
+  type: response_marker    # response_marker | status_diff | echo | timing
+  markers: []              # 响应特征正则（成功判定器）
+payloads: payloads/        # *.req.txt，占位符 {{TARGET}} {{SESSION}}
+patch_template: patch-template/fix.patch.tpl
+functional_tests: functional-tests/test_plugin.py
+held_out: false            # true = B 集实例（仅 D7 评估运行）
+notes: ""

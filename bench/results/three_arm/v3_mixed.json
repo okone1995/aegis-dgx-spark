@@ -1,0 +1,49 @@
+{
+  "baseline_classification": {
+    "status": "historical_baseline_only",
+    "source": "original aegis repository snapshot; source run timestamp preserved below",
+    "measured_in_aegis_next": false,
+    "weights_included": false,
+    "note": "Curated aggregate metrics only; local model paths, token counters, and sample dump references omitted."
+  },
+  "run_at": "2026-09-26T00:17:25+0800",
+  "model": {
+    "adapter": "judge_v3_mix_lora (historical; weights not included)"
+  },
+  "n": 4244,
+  "protocol": {
+    "band": [
+      0.2,
+      0.8
+    ]
+  },
+  "confusion_attack_positive": {
+    "tp": 2722,
+    "fp": 14,
+    "fn": 5,
+    "tn": 1503
+  },
+  "accuracy_overall": {
+    "n": 4244,
+    "acc": 0.9955
+  },
+  "precision_attack": 0.9949,
+  "recall_attack": 0.9982,
+  "abstain": {
+    "ratio": 0.0007
+  },
+  "by_class": {
+    "csrf": {
+      "n": 7,
+      "acc": 0.4286
+    },
+    "authbypass": {
+      "n": 12,
+      "acc": 0.8333
+    },
+    "nearmiss": {
+      "n": 6,
+      "acc": 0.6667
+    }
+  }
+}

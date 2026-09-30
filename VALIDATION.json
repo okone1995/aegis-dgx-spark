@@ -3,7 +3,7 @@
   "problems": [],
   "public_suite": {
     "returncode": 0,
-    "stdout": ".................s.s.......................................................                                                      [100%]\n73 passed, 2 skipped, 16 subtests passed in 1.57s\n",
+    "stdout": ".................s.s.......................................................                                                      [100%]\n73 passed, 2 skipped, 16 subtests passed in 0.69s\n",
     "stderr": ""
   },
   "json_value_assertions": 39,

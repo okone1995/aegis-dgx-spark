@@ -1,0 +1,14 @@
+class: ssrf
+display_name: "SSRF（远程头像拉取无校验）"
+severity: high
+cve_patterns: ["远程资源拉取类 SSRF（图片代理/导入功能 CVE 通用模式）"]
+endpoint: "POST /profile/avatar-url"
+detector:
+  type: response_marker
+  markers: ['"bytes":', '"head":']
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "判定面=端点 JSON 响应（bytes/head 字段仅在成功拉取时出现）；policy 允许 payload 指向本地 {{TARGET}}"

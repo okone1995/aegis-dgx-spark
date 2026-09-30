@@ -48,6 +48,8 @@ def test_spawn_passes_whitelist_params(monkeypatch, tmp_path):
     # 必须用显式 bootstrap(-c + sys.path.insert),否则引擎 import 不进去
     assert "-c" in cmd and "sys.path.insert" in " ".join(cmd), cmd
     assert str(ROOT) in " ".join(cmd)
+    assert seen["env"]["AEGIS_LOCK_PATH"] == str(M._LOCK_PATH.resolve())
+    assert seen["env"]["AEGIS_WORKSPACE"] == str(M.WS.resolve())
 
 
 def test_spawn_defaults_are_strict_and_restore(monkeypatch):

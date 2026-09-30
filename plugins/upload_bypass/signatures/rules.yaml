@@ -1,0 +1,12 @@
+# 蓝方确定性签名（flow.jsonl 命中即告警；judge 只接规则未命中道）
+rules:
+  - id: UP-001
+    class: upload_bypass
+    pattern: 'filename="[^"]+\.(phtml|pht|php\d+|phar)"'
+    where: request_body
+    confidence: 0.95
+  - id: UP-002
+    class: upload_bypass
+    pattern: '/profile/avatar'
+    where: request_path
+    confidence: 0.4   # 低置信规则：命中交给 judge 升级判定

@@ -53,8 +53,8 @@ def main() -> int:
         take(r)
 
     for r in picked:
-        JT.stamp_reviewer(q, r["sample_id"], REVIEWER, note="v8 mutation selection")
-        q.approve(r["sample_id"])
+        q.approve(r["sample_id"], reviewer=REVIEWER, note="v8 mutation selection",
+                  expected_label_revision=r.get("label_revision", 0))
     print(json.dumps({"approved": len(picked),
                       "attack": sum(1 for r in picked if r.get("intent_label") == "attack"),
                       "benign": sum(1 for r in picked if r.get("intent_label") == "benign"),

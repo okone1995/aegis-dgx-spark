@@ -1,0 +1,675 @@
+{
+  "schema_version": 1,
+  "source_repositories": [
+    {
+      "commit": "5e2403c",
+      "name": "aegis-fork",
+      "read_only": true
+    }
+  ],
+  "copied_assets": [
+    {
+      "path": "plugins/_template/functional-tests/README.md",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/_template/functional-tests/README.md",
+      "sha256": "0273b4e0adc52a36b4f1b8efd9d5bae04228194fc52ab3e3f8f33549bc5b9b78",
+      "size_bytes": 153
+    },
+    {
+      "path": "plugins/_template/patch-template/README.md",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/_template/patch-template/README.md",
+      "sha256": "494cd34f698c5108c38ac2649929b0e2c5e2a391aade1cab2b1a22d218c570f9",
+      "size_bytes": 137
+    },
+    {
+      "path": "plugins/_template/payloads/README.md",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/_template/payloads/README.md",
+      "sha256": "ec3f2b970f89a43c8c580f4cc45b208a2a69cc0261491d1dd362837593c709fa",
+      "size_bytes": 238
+    },
+    {
+      "path": "plugins/_template/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/_template/plugin.yaml",
+      "sha256": "43e3767ec9fa3bd76df27f1e20ae01763f1214e45e5e11883d731e2b6ecff6a2",
+      "size_bytes": 732
+    },
+    {
+      "path": "plugins/_template/signatures/README.md",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/_template/signatures/README.md",
+      "sha256": "83304322d69552dd9c5589c473f6ac77d06a1d34232f77b05f9f1a82e4282aac",
+      "size_bytes": 133
+    },
+    {
+      "path": "plugins/brute_no_lock/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/patch-template/fix.patch.tpl",
+      "sha256": "bd345fc4ee85f6e1b1c0420c986a6e07d18d36323b4441f3e3da0b34afe38e11",
+      "size_bytes": 1722
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/01_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/01_attempt.txt",
+      "sha256": "4ddddd5ba7fe26c0ddabd688a80711c1edd8e033a58ba6c5fc624e35d5d1be95",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/02_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/02_attempt.txt",
+      "sha256": "fb0529b77a402847890eb57f2a3f21c0ea84cdcd41c85f8337f7cd2a6df5c60f",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/03_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/03_attempt.txt",
+      "sha256": "e0bfa4d43fc1e89a59d6972867299ee1d25c74b977929e0206aad2273187c785",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/04_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/04_attempt.txt",
+      "sha256": "5cbb0c8a1150a400e3ad3b1b7d5f69d9a9aeb1d4b257311fa05e0bf517959cc1",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/05_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/05_attempt.txt",
+      "sha256": "2a101722a2894750ddfff6dab7e77547ae1e198da971b9687c81db74872f586b",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/attack/06_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/attack/06_attempt.txt",
+      "sha256": "87f20f8f674956a678ba39aa2590319a85c1ae12cda571fe7a7956c1f2cdf01a",
+      "size_bytes": 116
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/01_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/01_attempt.txt",
+      "sha256": "efe398002ebd29d643c639bf24902732b079d541c22b67340d92837c1cb16c8e",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/02_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/02_attempt.txt",
+      "sha256": "5811533febe4e1df94d17172ddf979970e02ed7dfa6e8bea7f35ab732892e4cc",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/03_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/03_attempt.txt",
+      "sha256": "69aed79f45c0cf478ea48579fa205b82d5357644709ae1eb6fa42db159948dff",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/04_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/04_attempt.txt",
+      "sha256": "05ff319836412a5784ab10a044f57a7860e3b734f993bde47228ca2762a7c188",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/05_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/05_attempt.txt",
+      "sha256": "0722e8a429008bb4cdc0be9aa6efde26b2835c6a4517b2ab0e75038f86b2c860",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/payloads/verify/06_attempt.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/payloads/verify/06_attempt.txt",
+      "sha256": "c11c679d4cb95b7d3474542985a2bea55ae1d0db0c4c7659ffeebd36c07f3a1e",
+      "size_bytes": 112
+    },
+    {
+      "path": "plugins/brute_no_lock/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/plugin.yaml",
+      "sha256": "91103e9251be15d80c1bfd92bc7845d729a27cc1969900e6d1c349fa388a11b5",
+      "size_bytes": 661
+    },
+    {
+      "path": "plugins/brute_no_lock/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/brute_no_lock/signatures/rules.yaml",
+      "sha256": "0987ded8197b38caa2a301d5d98aa54755e2c1f4a0d4637b94b5531d16bac27d",
+      "size_bytes": 214
+    },
+    {
+      "path": "plugins/idor/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/patch-template/fix.patch.tpl",
+      "sha256": "f6bb96f8a922ec1c00e4106c3336b8cc2e291d9ad25291d6b73ca4d75ed02b17",
+      "size_bytes": 1006
+    },
+    {
+      "path": "plugins/idor/payloads/attack/01_edit_bob.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/payloads/attack/01_edit_bob.txt",
+      "sha256": "455592a18319a2533e407f6dfc5e83401d847a618e783aefba8c7d80173178b8",
+      "size_bytes": 158
+    },
+    {
+      "path": "plugins/idor/payloads/attack/02_edit_admin.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/payloads/attack/02_edit_admin.txt",
+      "sha256": "a1eeb356f49d1500364cf5871916275f84a3ab197ea3a552fe7bfe0f4671c1bd",
+      "size_bytes": 158
+    },
+    {
+      "path": "plugins/idor/payloads/verify/01_edit_admin_v.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/payloads/verify/01_edit_admin_v.txt",
+      "sha256": "4ff54b1857e55a50eaadbe2bf574ac80e6e2a6d8b2d296361379bc7600d97924",
+      "size_bytes": 158
+    },
+    {
+      "path": "plugins/idor/payloads/verify/02_edit_bob_v.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/payloads/verify/02_edit_bob_v.txt",
+      "sha256": "c3c2bf14c0dc002116fd550213ec5466751fbbeedb53007cd8cf7f358bb3dbcf",
+      "size_bytes": 158
+    },
+    {
+      "path": "plugins/idor/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/plugin.yaml",
+      "sha256": "a403f615dc5ec0dee908176757bc37d986aa2935e13d8550630eafcce9561114",
+      "size_bytes": 568
+    },
+    {
+      "path": "plugins/idor/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/idor/signatures/rules.yaml",
+      "sha256": "a9dc7b0047262144e7e2658a957d9e17f6409568e762b151065652963531553e",
+      "size_bytes": 176
+    },
+    {
+      "path": "plugins/lfi/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/patch-template/fix.patch.tpl",
+      "sha256": "8ef8a361b055304f2c9e52aa1a38c10f73420fb0e6380d7e2c84c4b0e1d201b8",
+      "size_bytes": 937
+    },
+    {
+      "path": "plugins/lfi/payloads/attack/01_traverse_appphp.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/payloads/attack/01_traverse_appphp.txt",
+      "sha256": "fd7d25af6d4409ea3903772aa708a1f52fdcbb44f7fd43b64659f879fe48e88e",
+      "size_bytes": 82
+    },
+    {
+      "path": "plugins/lfi/payloads/attack/02_traverse_instances.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/payloads/attack/02_traverse_instances.txt",
+      "sha256": "7812ceabbe00b461cd94e9fada7884dc1717c7c5ceefd0afc7d79ac046396788",
+      "size_bytes": 91
+    },
+    {
+      "path": "plugins/lfi/payloads/verify/01_encoded_traversal.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/payloads/verify/01_encoded_traversal.txt",
+      "sha256": "4b2786a96582c7516eef7eaa22ac83ac4ab5906ca031c016e78681bb2619f351",
+      "size_bytes": 86
+    },
+    {
+      "path": "plugins/lfi/payloads/verify/02_traverse_gadget.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/payloads/verify/02_traverse_gadget.txt",
+      "sha256": "1eb1db32f741cb0d0c466d278415e1dba88df8ccbe8765f30ed83a886c0f66d2",
+      "size_bytes": 85
+    },
+    {
+      "path": "plugins/lfi/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/plugin.yaml",
+      "sha256": "3ae6b5e3903e1dbba6b3201b0af07c7105de829be22c4b414edc65bc571af90e",
+      "size_bytes": 561
+    },
+    {
+      "path": "plugins/lfi/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/lfi/signatures/rules.yaml",
+      "sha256": "25c81cb5ef688cea23a1bec14bd8fbd9da0c37eb9c1d30ac8fdeb5d4d9e72be3",
+      "size_bytes": 261
+    },
+    {
+      "path": "plugins/rce_deser/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/patch-template/fix.patch.tpl",
+      "sha256": "6e28e8fd5297c01da0d6d1bfef793098b3c3a8c840ce28d54e539b7f9795c4a9",
+      "size_bytes": 1362
+    },
+    {
+      "path": "plugins/rce_deser/payloads/attack/01_pop_write.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/payloads/attack/01_pop_write.txt",
+      "sha256": "c84d99fa0c5e7035d967c129f58bf37965c8459ea0e262d7fdc20b5141c55c34",
+      "size_bytes": 226
+    },
+    {
+      "path": "plugins/rce_deser/payloads/attack/02_pop_write.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/payloads/attack/02_pop_write.txt",
+      "sha256": "01124d9367d72e86c6b4846b6388105ad7dff7190e15b0f7256dac4f008d2c9c",
+      "size_bytes": 226
+    },
+    {
+      "path": "plugins/rce_deser/payloads/verify/01_pop_write.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/payloads/verify/01_pop_write.txt",
+      "sha256": "84a97cef6648e031f40954af50f6c8a7fef2f7ec7a72e871eac751221920a53c",
+      "size_bytes": 227
+    },
+    {
+      "path": "plugins/rce_deser/payloads/verify/02_pop_write.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/payloads/verify/02_pop_write.txt",
+      "sha256": "0b504a8b9fbb957eccb4997dd4fe411d53b195e5c644b6f37f649f665e229f7d",
+      "size_bytes": 227
+    },
+    {
+      "path": "plugins/rce_deser/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/plugin.yaml",
+      "sha256": "cc1aa7bbf9a4d8ad3b0ef53cf562ddbaa83f6a30795316aaca37bb2d18af5585",
+      "size_bytes": 729
+    },
+    {
+      "path": "plugins/rce_deser/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/rce_deser/signatures/rules.yaml",
+      "sha256": "f7b30013b4f1414e2d4b1afd9a3792cfa5866a47571c9ec60356b972e2af8df0",
+      "size_bytes": 222
+    },
+    {
+      "path": "plugins/sqli/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/patch-template/fix.patch.tpl",
+      "sha256": "00e18b39d6ec30609c7c57e8e1655462915f77d82c192b745751df5a79a09cdf",
+      "size_bytes": 1534
+    },
+    {
+      "path": "plugins/sqli/payloads/attack/01_union_exfil.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/payloads/attack/01_union_exfil.txt",
+      "sha256": "af0bde89f16c35231954d9de598f6c90b82e48b803528c04232b51e48264e752",
+      "size_bytes": 141
+    },
+    {
+      "path": "plugins/sqli/payloads/attack/02_error_based.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/payloads/attack/02_error_based.txt",
+      "sha256": "1684d736aea38b19bc5b03e259c9942d5a8bec0ba875a462bb48759b8ed57c38",
+      "size_bytes": 107
+    },
+    {
+      "path": "plugins/sqli/payloads/verify/01_union_marker.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/payloads/verify/01_union_marker.txt",
+      "sha256": "127f21ed9ae80e7fe83903e56b4363d66b133057fc15511b86d9b4ba79ea32c4",
+      "size_bytes": 190
+    },
+    {
+      "path": "plugins/sqli/payloads/verify/02_tautology.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/payloads/verify/02_tautology.txt",
+      "sha256": "ff3fce9bdd2c679ad9bc3e7c8537e1a0628242e90af0303e1df19c1b88b72395",
+      "size_bytes": 111
+    },
+    {
+      "path": "plugins/sqli/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/plugin.yaml",
+      "sha256": "a4d28c71777fefca274bdc4443e3e212766aaf2305ffd52e0c27f499633fdbe2",
+      "size_bytes": 891
+    },
+    {
+      "path": "plugins/sqli/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/sqli/signatures/rules.yaml",
+      "sha256": "6cd73900b7d293b2fac321397086a215ae8c260c843d53a320a622908c16e422",
+      "size_bytes": 579
+    },
+    {
+      "path": "plugins/ssrf/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/patch-template/fix.patch.tpl",
+      "sha256": "1725cca962e301c6342c53bff3ee1feba4ac0b2bf69ef2729e2135e9cfbc2c57",
+      "size_bytes": 1588
+    },
+    {
+      "path": "plugins/ssrf/payloads/attack/01_fetch_login.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/payloads/attack/01_fetch_login.txt",
+      "sha256": "c9ab1eb80e8cc45253fc3bbc2cc288fffc233ff4ae3683bf983a6acb584e0e5c",
+      "size_bytes": 151
+    },
+    {
+      "path": "plugins/ssrf/payloads/attack/02_fetch_news.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/payloads/attack/02_fetch_news.txt",
+      "sha256": "b3942aef620507e01d87cc4bc202e6f08735289fda2431ab982a4fb9fb37c39d",
+      "size_bytes": 150
+    },
+    {
+      "path": "plugins/ssrf/payloads/verify/01_fetch_logout.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/payloads/verify/01_fetch_logout.txt",
+      "sha256": "cb586d90c45781d40b8df70151591876afdc6dd78795b14a7fea2ffb0c6c835b",
+      "size_bytes": 152
+    },
+    {
+      "path": "plugins/ssrf/payloads/verify/02_fetch_profile.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/payloads/verify/02_fetch_profile.txt",
+      "sha256": "fde264f079aa2e44472ca6376f185276ec52225ffd4003f7f469c39d0a99815b",
+      "size_bytes": 153
+    },
+    {
+      "path": "plugins/ssrf/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/plugin.yaml",
+      "sha256": "de985a55d2f3b7c1c301d40aeb04abbfe82713b9fe0de256775d61e690f98730",
+      "size_bytes": 590
+    },
+    {
+      "path": "plugins/ssrf/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/ssrf/signatures/rules.yaml",
+      "sha256": "aa0578e19752b5826dd3c0355c64d61d17faf36b9dbbfed3fbb26d20594b1495",
+      "size_bytes": 278
+    },
+    {
+      "path": "plugins/upload_bypass/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/patch-template/fix.patch.tpl",
+      "sha256": "ffcccb65af3db9f812f545c346dba603a3dce8bfce2bfb8eaad002eacd9c1691",
+      "size_bytes": 1608
+    },
+    {
+      "path": "plugins/upload_bypass/payloads/attack/01_phtml.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/payloads/attack/01_phtml.txt",
+      "sha256": "2d0b51aa260584bd9b9a9dbc2ddf50f08a0234ff5f7a4ce5e093a1dde08133a7",
+      "size_bytes": 283
+    },
+    {
+      "path": "plugins/upload_bypass/payloads/attack/02_pht.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/payloads/attack/02_pht.txt",
+      "sha256": "0a40085e9423c4894bbbc9d95c914efeeb71ebd16b8bb778a0fddca0ac3899bb",
+      "size_bytes": 281
+    },
+    {
+      "path": "plugins/upload_bypass/payloads/verify/01_php4.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/payloads/verify/01_php4.txt",
+      "sha256": "26b4f07da6d4911d4d6deb36450da2fed15bc2c19d4ab1c02ba30ee7b32230c7",
+      "size_bytes": 282
+    },
+    {
+      "path": "plugins/upload_bypass/payloads/verify/02_phar.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/payloads/verify/02_phar.txt",
+      "sha256": "8ba6b0cbb2a368b78d9a96abe6c05d837a54485ce0eaaa00fdbe53edbf800aa4",
+      "size_bytes": 282
+    },
+    {
+      "path": "plugins/upload_bypass/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/plugin.yaml",
+      "sha256": "26bd7be5450dabce503fe876772f056dc4333b1b5983b265b12fd21ffa03048d",
+      "size_bytes": 782
+    },
+    {
+      "path": "plugins/upload_bypass/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/upload_bypass/signatures/rules.yaml",
+      "sha256": "1a326fa146883bb8178ba9ebe3aa71ff0404efd8b1b9361020a1a7de8ca2c9ca",
+      "size_bytes": 407
+    },
+    {
+      "path": "plugins/xss_stored/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/patch-template/fix.patch.tpl",
+      "sha256": "cece57f70f3078fcf7bff882752684aae7b4b0137129f596d66710342e7e4d1e",
+      "size_bytes": 1210
+    },
+    {
+      "path": "plugins/xss_stored/payloads/attack/01_script_tag.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/payloads/attack/01_script_tag.txt",
+      "sha256": "64baaff5113b20c6388806b537d416f644ffa19d6debf649e07c071309b3f197",
+      "size_bytes": 156
+    },
+    {
+      "path": "plugins/xss_stored/payloads/attack/02_img_onerror.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/payloads/attack/02_img_onerror.txt",
+      "sha256": "dba30641641d8df2a1c180c6b350f57ed3ecfd65486786e181cee3e74c95b67a",
+      "size_bytes": 161
+    },
+    {
+      "path": "plugins/xss_stored/payloads/verify/01_svg_onload.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/payloads/verify/01_svg_onload.txt",
+      "sha256": "70fe149340d0a9e6c0bb68ffa6693f0559ea4d7a7f320121fb05ec02bdc2b699",
+      "size_bytes": 150
+    },
+    {
+      "path": "plugins/xss_stored/payloads/verify/02_body_onload.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/payloads/verify/02_body_onload.txt",
+      "sha256": "7bba8386d8e9fb481e742273318630560140e9cdfb8d866f70d2ca35f3a64fd5",
+      "size_bytes": 151
+    },
+    {
+      "path": "plugins/xss_stored/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/plugin.yaml",
+      "sha256": "d6fb72b289044df40e1c96d84252b2a1615b70662b925e948c463c8878521b55",
+      "size_bytes": 875
+    },
+    {
+      "path": "plugins/xss_stored/signatures/rules.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "plugins/xss_stored/signatures/rules.yaml",
+      "sha256": "e30fd47f1fd9eae6b853019af74e5de8cc7bd43008b05a6085cb7eaa2801e353",
+      "size_bytes": 291
+    },
+    {
+      "path": "target/edu-lite/config/instances.php",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/config/instances.php",
+      "sha256": "8039c32ff79756d36bf2c482431c945a1dfa89df874431b1a1e673150ff0abdb",
+      "size_bytes": 746
+    },
+    {
+      "path": "target/edu-lite/deploy.sh",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/deploy.sh",
+      "sha256": "bcb5277c8424f15b4181aa17a3888991645edf5ae1178063d6d653fdefe8d65c",
+      "size_bytes": 4014
+    },
+    {
+      "path": "target/edu-lite/files/avatar.png",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/files/avatar.png",
+      "sha256": "e315101a30fe663e67c9cd0b8c22704f15f5fa20a376b811c6662d30ad276583",
+      "size_bytes": 49
+    },
+    {
+      "path": "target/edu-lite/files/notice.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/files/notice.txt",
+      "sha256": "734372ee87032acc22887b68e23f1662eba98a200f5136d9a0988c802f2e1990",
+      "size_bytes": 118
+    },
+    {
+      "path": "target/edu-lite/router.php",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/router.php",
+      "sha256": "c1906f5b5d1336feda39538176dc0e1e12c22226188b2f7f46670485f16264f6",
+      "size_bytes": 342
+    },
+    {
+      "path": "target/edu-lite/src/app.php",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/src/app.php",
+      "sha256": "4b7c0d2d2e9a7a03303eb1b9540a152ca8f1e352cbd234c203ce08111e1bcfd5",
+      "size_bytes": 10100
+    },
+    {
+      "path": "target/edu-lite/src/gadget.php",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/src/gadget.php",
+      "sha256": "bcaa3d035c546f95fdc6811ee5a0deda095609c051d1ca95913268db84d6a3ba",
+      "size_bytes": 343
+    },
+    {
+      "path": "target/edu-lite/tests/test_functional.py",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/tests/test_functional.py",
+      "sha256": "4c10f5469d92d6fdacb083488c524eb8823557521c17e82cb82838324ac8e751",
+      "size_bytes": 4349
+    },
+    {
+      "path": "target/edu-lite/tools/asset_server.py",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/tools/asset_server.py",
+      "sha256": "e51bb8f8af88ca30887b44c91ec0e7c3778f25ecb292efcf9c6e0e2e8922015c",
+      "size_bytes": 843
+    },
+    {
+      "path": "target/edu-lite/tools/benign_traffic.py",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/tools/benign_traffic.py",
+      "sha256": "38a5daa1c5916b4451f125499447a4f3ffa8104d48877cd882ed8de296c1fe30",
+      "size_bytes": 3427
+    },
+    {
+      "path": "target/edu-lite/tools/test_deser.php",
+      "source_repo": "aegis-fork",
+      "source_path": "target/edu-lite/tools/test_deser.php",
+      "sha256": "34670e57db1dfa3662e8caa44637a6f860c0cb723a42cf5431aee19317837f64",
+      "size_bytes": 282
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/patch-template/fix.patch.tpl",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/patch-template/fix.patch.tpl",
+      "sha256": "01612bee926bcb3df2487bebf1bb90b04935216cfa6d03b768dec0c58bf0a3fa",
+      "size_bytes": 836
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/payloads/attack/01_union_exfil.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/payloads/attack/01_union_exfil.txt",
+      "sha256": "0276af6f127136a2d10602e296f31b60ee5443a8e9cd587679c17aabb7a6dd0f",
+      "size_bytes": 153
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/payloads/attack/02_union_like.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/payloads/attack/02_union_like.txt",
+      "sha256": "a6664924eeb25257b886877fa72868c7f097a89bc689ea782455026f9a5e3033",
+      "size_bytes": 188
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/payloads/verify/01_union_exfil.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/payloads/verify/01_union_exfil.txt",
+      "sha256": "a25ced34a85955df6d02e53ff1b4880f59f8a737a88808955e12b8dc5630ded8",
+      "size_bytes": 161
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/payloads/verify/02_or_true.txt",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/payloads/verify/02_or_true.txt",
+      "sha256": "e5683642e41fe0087cbf835062f626a8be9d037916582fb2e45400b290d64f09",
+      "size_bytes": 97
+    },
+    {
+      "path": "targets/miniledger/plugins/sqli/plugin.yaml",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/plugins/sqli/plugin.yaml",
+      "sha256": "8dc66f2eb81b17b0975d8d59018deb7dc97515a21a602e492b3dc942fe147ea6",
+      "size_bytes": 742
+    },
+    {
+      "path": "targets/miniledger/src/index.php",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/src/index.php",
+      "sha256": "525f7837d4c059a2d0fc73abb4aa333599d2c245e264098f92d3499e37de443d",
+      "size_bytes": 3306
+    },
+    {
+      "path": "targets/miniledger/tools/business_probe.py",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/tools/business_probe.py",
+      "sha256": "5c54332f7361066efa06499e815cc0a44b512c402c776777309bacbaec20e0cd",
+      "size_bytes": 2674
+    },
+    {
+      "path": "targets/miniledger/tools/seed.php",
+      "source_repo": "aegis-fork",
+      "source_path": "targets/miniledger/tools/seed.php",
+      "sha256": "15ba2e82474e1da9493d91db3d0b9e3921d34b5f4b500284dc708862117e1a52",
+      "size_bytes": 1639
+    }
+  ],
+  "locally_ignored_runtime_paths": [
+    "target/edu-lite/runtime/",
+    "target/edu-lite/logs/",
+    "targets/miniledger/var/"
+  ],
+  "excluded_asset_classes": [
+    "secrets and environment files",
+    "runtime databases",
+    "pid files",
+    "model weights",
+    "logs",
+    "caches",
+    "workspace snapshots",
+    "archived run data"
+  ],
+  "generated_assets": [
+    {
+      "path": "targets/miniledger/tools/benign_traffic.py",
+      "provenance": "Implemented locally because this file is absent from both inspected source repositories.",
+      "source_checks": [
+        {
+          "repository": "aegis",
+          "path": "targets/miniledger/tools/benign_traffic.py",
+          "result": "absent"
+        },
+        {
+          "repository": "aegis-fork",
+          "path": "targets/miniledger/tools/benign_traffic.py",
+          "result": "absent"
+        }
+      ],
+      "sha256": "26b2a98d2c0c75ae69a9f2f18b8fe7de31c1a57f0da3a164b366eca162c3be45",
+      "size_bytes": 5587,
+      "safety": "Requires explicit --base and --instance; accepts only numeric HTTP loopback at the profile port; disables environment proxies; refuses HTTP redirects; sends GET requests to public teaching routes.",
+      "transformations": [
+        "All file line endings normalized to LF."
+      ],
+      "offline_verification": "Verified acceptance CLI arguments, loopback restriction, proxy bypass, and redirect rejection against ephemeral 127.0.0.1-only test servers; no deployed service contacted."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+class: idor
+display_name: "越权修改资料（user-edit 缺所有权检查）"
+severity: high
+cve_patterns: ["水平越权修改类（uid 参数无所有权校验 CVE 通用模式）"]
+endpoint: "POST /admin/user-edit"
+detector:
+  type: response_marker
+  markers: ['"updated":"bob"', '"updated":"admin"']
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "判定面=成功修改他人资料的 JSON 确认；补丁=仅允许改自己"

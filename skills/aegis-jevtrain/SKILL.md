@@ -2,7 +2,7 @@
 name: aegis-jevtrain
 description: Turn real attack/benign exchanges into judge (JEV) training material — collect from a finished Aegis run or an external flow corpus, label by HARD SIGNALS, queue for human review, then export a trainable dataset draft (train/holdout + manifest + TRAINING.md) with sealed-family guards. Use when asked to "collect attack records", "把攻击记录存成训练材料", "给判官做数据集", or after a run worth learning from. Never let a model's own verdict become the label, and never export without human approval.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   tags: [security, judge, dataset, provenance, human-in-the-loop]
 ---
 
@@ -76,7 +76,7 @@ argparse 的用法错误也返回 `2` —— **请以 JSON 里的 `code` 为准*
 | `selftest` | — | no | engine, queue, label-policy and B-seal probe |
 | `collect --run <run_dir>` | `--run` | no | reads `flow.jsonl` + `judge.jsonl` of a finished run |
 | `collect-flows --file <flows.jsonl>` | `--file` | no | external corpus (e.g. an audit's flow dump) |
-| `report` | — | no | counts by truth label, judge agreement, and the **disagreements** (FP/FN) |
+| `report` | — | no | confirmed-label FP/FN, suspected disagreements, and abstentions separately |
 | `pairs` | — | no | per-family pairing: families with only one side would train a biased judge |
 | `approve --id <sample_id>` | `--id`, `--reviewer` | **yes** | refuses samples with no hard-signal label |
 | `export --version <v>` | `--version`, `--reviewer` | **yes** | `--only-approved` is implicit: unapproved rows never export |
@@ -111,4 +111,22 @@ Operator-only, separate from approving sample admission:
 python scripts/aegis_jevtrain.py review-label --id <sample_id> --traffic-intent attack --reviewer <operator> --note "independent evidence basis"
 python scripts/aegis_jevtrain.py approve --id <sample_id> --reviewer <operator>
 ```
-A corrected label invalidates its old sample approval. The exported metadata retains the label audit. `training_ready=false` forbids training; the public package has no sealed registry, so its material remains a draft. Environmental gates record intent/provenance; they are not OS security isolation.
+A label review increments its revision and invalidates its old sample approval. Approval binds the revision that the bridge read; a concurrent label change refuses stale admission. Re-read the label and its evidence before retrying. The exported metadata retains the label audit. `training_ready=false` forbids training; the public package has no sealed registry, so its material remains a draft. Environmental gates record intent/provenance; they are not OS security isolation.
+
+## Report and storage contract (v0.2)
+
+Report schema 2 counts FP/FN only for non-rejected samples with confirmed labels
+(auto_ok or human_reviewed). Labels awaiting review enter
+suspected_disagreements; abstain is counted separately and is never a
+verified error. Lists contain at most 20 sample IDs; use
+verified_false_positive_count, verified_false_negative_count, and
+suspected_disagreement_count for totals. sample_references links diagnostic
+samples to input hashes, model versions and label revisions.
+
+All cooperating queue writers and exports share a cross-process transaction lock.
+Read-only reports do not change samples, but may create a sidecar lock file;
+the configured local queue directory must be writable by the process.
+A malformed queue causes an explicit failure and preserves the original file.
+Do not delete lock files or bypass the queue API; an OS lock is released when
+its owner exits. An export binds its records, diagnostics and queue hash to the
+same snapshot. This does not make environment variables an authorization sandbox.

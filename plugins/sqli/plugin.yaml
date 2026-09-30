@@ -1,0 +1,16 @@
+class: sqli
+display_name: "SQL 注入（新闻搜索，字符串拼接）"
+severity: high
+cve_patterns: ["LIKE 拼接注入类（phpMyAdmin/老 CMS CVE 通用模式）"]
+endpoint: "GET /news/search"
+detector:
+  type: response_marker
+  markers: ["admin123", "alice123", "SQL error", "运动会报名开始"]
+  benign_exempt: ["运动会报名开始"]  # 行数信号类 marker：良性全量列表场景必然出现，良性验收豁免（蓝方用请求侧签名，不用响应 marker）
+  marker_rule: "marker 不得出现在 payload 文本中（防关键字回显信道的自命中误报——D3 实战教训）"
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "SQLite 方言；参数名随实例变化（{{SEARCH_PARAM}}），由 surface 解析后替换"

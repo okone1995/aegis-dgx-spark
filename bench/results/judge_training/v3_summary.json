@@ -1,0 +1,37 @@
+{
+  "baseline_classification": {
+    "status": "historical_baseline_only",
+    "measured_in_aegis_next": false,
+    "weights_included": false,
+    "source": "2026-09-26 v3 train_summary.json from original training environment",
+    "source_sha256": "b0c3e073ddebc80cb1f676427a2d27e856b138ab55d05797f9c16c8f19222271",
+    "note": "Only aggregate values are shipped; host path and model weights are omitted."
+  },
+  "model": "Qwen3.5-4B",
+  "hyperparams": {
+    "lora_r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "lr": 0.0001,
+    "epochs": 3,
+    "cutoff": 2048,
+    "batch": 4,
+    "grad_accum": 4,
+    "target_count": 7
+  },
+  "data": {
+    "train": 17403,
+    "holdout": 4244
+  },
+  "peak_vram_gib": 30.7,
+  "wall_seconds": 9236.4
+}

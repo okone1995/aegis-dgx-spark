@@ -1,0 +1,6 @@
+rules:
+  - id: ID-001
+    class: idor
+    pattern: "/admin/user-edit"
+    where: request_path
+    confidence: 0.3   # 低置信：合法自改也走此路径，judge 道判定

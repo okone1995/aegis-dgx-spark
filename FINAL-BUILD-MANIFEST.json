@@ -254,6 +254,13 @@
       "source_path": "jevtrain_candidates.jsonl",
       "source_sha256": "40e1aa872b4d9e242da13049b1b9c387264a59fce426400d34386b509a3f9e42"
     },
+    "DECISIONS.md": {
+      "bytes": 7750,
+      "sha256": "72ecb6573245a5ea60af3cc55169a03d65e053f59897d95406c1b2446e89b458",
+      "source": "main",
+      "source_path": "DECISIONS.md",
+      "source_sha256": "6016e66efec1726a10e9c935cda16e95280ec7911055c30942f11ef7769c1922"
+    },
     "demo/index.html": {
       "bytes": 123023,
       "sha256": "0767868b0404297b6c5e0caa482cf4f47e0b8ad617e75b06ef208c390fb82e41",
@@ -297,11 +304,11 @@
       "source_sha256": "5854119aee7de0271f47a526372fb955db40eccc31bbe330516d8ec48976de74"
     },
     "docs/DEMO-HANDBOOK.md": {
-      "bytes": 17460,
-      "sha256": "0acbad7a507f2d332a3a1e13994cbed04fbc772c9d3b1f02e0864a3d65d14f39",
+      "bytes": 17572,
+      "sha256": "f6573fb5b887bf3d444974ac41e57e84ffb55759890cf1da9fe565b27b9f08a0",
       "source": "main",
       "source_path": "docs/DEMO-HANDBOOK.md",
-      "source_sha256": "0acbad7a507f2d332a3a1e13994cbed04fbc772c9d3b1f02e0864a3d65d14f39"
+      "source_sha256": "a8501da6e8194532b5975bc02f40cb82694c04c81e8a38da11c1b13fa3cd4634"
     },
     "docs/FINAL-ACCEPTANCE-20260929.md": {
       "bytes": 4466,
@@ -325,11 +332,11 @@
       "source_sha256": "178d62d749e76de10aa3af9c5890903563b9b8c0b31250ea22f24c86b9d321c7"
     },
     "docs/ten-days.md": {
-      "bytes": 11840,
-      "sha256": "9fec640d644499f01d1faf7bd6454fd6b9664f97149bdaa86d30e904e9cf007f",
+      "bytes": 10003,
+      "sha256": "b89a5de8bda03ed6b00be8b3d67c1b4567aa809b992286058106c1c4e434fca5",
       "source": "main",
       "source_path": "docs/ten-days.md",
-      "source_sha256": "9fec640d644499f01d1faf7bd6454fd6b9664f97149bdaa86d30e904e9cf007f"
+      "source_sha256": "b89a5de8bda03ed6b00be8b3d67c1b4567aa809b992286058106c1c4e434fca5"
     },
     "docs/video-script.md": {
       "bytes": 9706,
@@ -337,6 +344,48 @@
       "source": "main",
       "source_path": "docs/video-script.md",
       "source_sha256": "f5b3da280bb30ebf7fbcbb83c713ce8c5e1ff8127514419f0b95a9379536cf39"
+    },
+    "docs/worklog/finalist-last-day-plan-20260928.md": {
+      "bytes": 9293,
+      "sha256": "b507e468b2371f5fc0e4ad779ccdb47d2ebe3f11afe97e44c38f70450a1a11ad",
+      "source": "main",
+      "source_path": "docs/worklog/finalist-last-day-plan-20260928.md",
+      "source_sha256": "ebcaff783a2b7ae151c5af1c4079018d2cc89733a9d9233d52825d4091820ace"
+    },
+    "docs/worklog/T11-skillization-plan.md": {
+      "bytes": 6883,
+      "sha256": "1d01b6ced8abe1960ceb585ad090bc639fdd596f886edd541238025a07a9bc52",
+      "source": "main",
+      "source_path": "docs/worklog/T11-skillization-plan.md",
+      "source_sha256": "831062b68a803f96e26e17f93cb80030a76071afe0ca809887b203819abbbcba"
+    },
+    "docs/worklog/T12-skill-construction-spec.md": {
+      "bytes": 22092,
+      "sha256": "c7595dee799e4a43d0709ba32b723d7b1bb5e05c08539c5a993f1d4aac156c60",
+      "source": "main",
+      "source_path": "docs/worklog/T12-skill-construction-spec.md",
+      "source_sha256": "5f7c4af082c8ea0b9ddc8279eda79d5f70f8a2fe50cb4edbf0ccfd1eca8f55c0"
+    },
+    "docs/worklog/T13-skill-construction-log.md": {
+      "bytes": 9880,
+      "sha256": "cd67c4db88df219da9f15903f7cfd7c156eae08bc346eeb91c65d6e8585d7d0a",
+      "source": "main",
+      "source_path": "docs/worklog/T13-skill-construction-log.md",
+      "source_sha256": "b39ac1f621a314ac3a2ce5ce4f09cf5e5e9711cff239e3b93be406756574f710"
+    },
+    "docs/worklog/T14-agent-handover.md": {
+      "bytes": 22598,
+      "sha256": "a6907e605bb7c1ec8731397bd68b1cc7a6e939bcb411c7c60bbdf1974a36b121",
+      "source": "main",
+      "source_path": "docs/worklog/T14-agent-handover.md",
+      "source_sha256": "7485033719f17ad27fd656d6cf26aa2a43e1139d3d547b6d025ec16d94899ff4"
+    },
+    "docs/worklog/T15-gate-ab-verdict.md": {
+      "bytes": 16616,
+      "sha256": "1af311d96da6d25ed0a63b049d7b78fc0933f149c5fc0e6f82c5f8ef3ef2511e",
+      "source": "main",
+      "source_path": "docs/worklog/T15-gate-ab-verdict.md",
+      "source_sha256": "eecd852caa3f319935b25b71035ade93d13b028e51db1eaeeb0c9bf8a129f59f"
     },
     "engine/__init__.py": {
       "bytes": 64,
@@ -710,11 +759,11 @@
       "source_sha256": "6f10318d6bcb88731b3f9877dc86cf1a8e25a33ea5521b5d2c5951d0c9429f8d"
     },
     "evidence/media/ppt-validation.json": {
-      "bytes": 6328,
-      "sha256": "be0394f57d05ce1ec52004cd6a0b6087c0a26d4a8bd9409e15b8c90f1c92485d",
-      "source": "main",
-      "source_path": "evidence/media/ppt-validation.json",
-      "source_sha256": "be0394f57d05ce1ec52004cd6a0b6087c0a26d4a8bd9409e15b8c90f1c92485d"
+      "bytes": 5359,
+      "sha256": "0a1235da906c58a34785e121ef12ff72a0bc0d67f83ab4466adae79ef1678919",
+      "source": "final-ppt-validation",
+      "source_path": "aegis-ppt-validation.json",
+      "source_sha256": "76af0504a4df7bf912613d1014d8b2bf8f9ffc7278e5b73a573a5ab47eb56505"
     },
     "evidence/portability/blind-layer3-report.md": {
       "bytes": 3402,
@@ -897,6 +946,13 @@
       "source_path": "governance/scope.example.yaml",
       "source_sha256": "dbb48cc0548ee1f06c4602aa32a101c368eaa6d5bf870a23898a83a1f79a400b"
     },
+    "HANDOFF.md": {
+      "bytes": 66703,
+      "sha256": "79f7c4dfbb5be27a81124ecaa498fa4b981670944fba2c2d5bd72ab7671cd9de",
+      "source": "main",
+      "source_path": "HANDOFF.md",
+      "source_sha256": "5190326250e5a3a0cbcdbcd23d138655a3bc9c644f582d8d1fafe3af185d349a"
+    },
     "harness/stepcode/compat_shim.py": {
       "bytes": 3349,
       "sha256": "5c9a97432c09529149a98f34ccc067a8d8925cada1b6c52bc5195f20a47e8e26",
@@ -926,8 +982,8 @@
       "source_sha256": "f93a3397ccbe19fb8067a68a14389850c9652a7abda7065880368b03209589eb"
     },
     "README.md": {
-      "bytes": 16499,
-      "sha256": "e82a1b4f1549bd67a20ee1821bdc2c3ecd7928fb3a998a36ab7aec863e28422c",
+      "bytes": 16491,
+      "sha256": "218cd6c135116f3e43fa4a6224cba38891ae884c4a95d6b7b868555e9158b144",
       "source": "final-release-docs",
       "source_path": "README.md",
       "source_sha256": "eda9d8d1098f954cd4f67d6d566db9d0058ab4932df0011a78c22598b97e959f"
@@ -1227,11 +1283,11 @@
       "source_sha256": "8824f95a09a1d35cf3b2d1bf707ed52cb2090e2d6f13040b5d613f8706d9d5c4"
     },
     "skills/secaudit-run/SKILL.md": {
-      "bytes": 4253,
-      "sha256": "3923601c2bb1a32b5ababa6356e55f3c2d1c4dc7e7f0d546971615a52b869d44",
+      "bytes": 4224,
+      "sha256": "44a100b3f024726ecfbdcc12a6499ad30fd5c7c2e91812cd36f71c3d15c9a95a",
       "source": "capability",
       "source_path": "skills/secaudit-run/SKILL.md",
-      "source_sha256": "3923601c2bb1a32b5ababa6356e55f3c2d1c4dc7e7f0d546971615a52b869d44"
+      "source_sha256": "44a100b3f024726ecfbdcc12a6499ad30fd5c7c2e91812cd36f71c3d15c9a95a"
     },
     "skills/secaudit-verify/runner.yaml": {
       "bytes": 736,
@@ -1246,6 +1302,13 @@
       "source": "capability",
       "source_path": "skills/secaudit-verify/SKILL.md",
       "source_sha256": "92e38478fde0bd7d019a452039aebc7ba2443f6ca0a5e76e1a95c9f94d8667db"
+    },
+    "SPEC.md": {
+      "bytes": 33851,
+      "sha256": "1466f81d2d78675aa17e92edef0009d9b8c76dee968e25eecfad251ace94e5af",
+      "source": "main",
+      "source_path": "SPEC.md",
+      "source_sha256": "73db22818f03c75dabbf95388e47e40fa04cee3da30caf3e0279c05fe9890877"
     },
     "targets/_operator_targets.json": {
       "bytes": 199,
@@ -1773,11 +1836,11 @@
       "source_sha256": "f2f90e8f7d5b08708c9ec8fd75156a5f21e90447defbd5ec799ebc28feb8d280"
     },
     "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": {
-      "bytes": 777501,
-      "sha256": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52",
+      "bytes": 766204,
+      "sha256": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96",
       "source": "main-media",
       "source_path": "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx",
-      "source_sha256": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52"
+      "source_sha256": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96"
     },
     "workspace/video/aegis-final-demo-20260929.mp4": {
       "bytes": 26626816,
@@ -1814,7 +1877,7 @@
   "media_sha256": {
     "workspace/video/aegis-final-demo-20260929.mp4": "8af723c093139af57b00bc9871515869257184b2473627ce844a453f63d1ceb4",
     "workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4": "cb5256edb26c6a36f56534cee28f9b95f99241d5e92f604c8611b1389bfe346d",
-    "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52"
+    "workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96"
   },
   "model_adapter_sha256": "01b21886b6f65bee45a9a058ba8059115f52b9ff0ee6604deda3d147dfb36842",
   "model_adapter_hash_basis": "read-only Spark sha256sum; weights not distributed",

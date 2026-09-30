@@ -10,7 +10,7 @@
 
 项目从保险业务对数据安全、业务连续性和审计追溯的需求出发：一次修补既要阻断攻击，也要保证正常业务仍然可用。Aegis 将这个要求落实到每轮运行的代码变更、测试和证据收据中。
 
-我们用 **RSI**（Recursive Self-Improvement，递归自我改进）来组织整个系统：每轮对抗不仅修补当前代码，还把有效攻击沉淀到经验库，把真实流量与判读分歧回流为模型学习材料。下一轮可以复用上一轮的发现，持续积累更强的安全能力。
+我们以 <strong>RSI（Recursive Self-Improvement，递归自我改进）</strong> 组织整个系统：每轮对抗不仅修补当前代码，还把有效攻击沉淀到经验库，把真实流量与判读分歧回流为模型学习材料。下一轮可以复用上一轮的发现，持续积累更强的安全能力。
 
 **一次对抗，获得三份成果：经过复测的代码修补、可复用的攻击经验、面向下一轮训练的流量样本。**
 
@@ -38,7 +38,7 @@ JEV 基于 **Qwen3.5-4B + LoRA**，以分类方式输出攻击、正常或弃权
 
 ### 6. 过程看得见，结果查得到
 
-FastAPI 与 SSE 将每轮红蓝对抗、JEV 判断、补丁 diff、门禁、复测和恢复展示在同一大屏；统一 `run_id` 把前端故事与后台证据串起来。公开离线验收覆盖 **73 项测试、16 项子测试与 39 项数值对账**，视频、PPT、模型成绩和运行工件一起交付。
+FastAPI 与 SSE 将每轮红蓝对抗、JEV 判断、补丁 diff、门禁、复测和恢复展示在同一大屏；统一 `run_id` 把前端故事与后台证据串起来。r4 提交版的公开离线验收覆盖 **73 项测试、16 项子测试与 39 项数值对账**，视频、PPT、模型成绩和运行工件一起交付。
 
 ## 看一次完整演示
 
@@ -47,7 +47,7 @@ FastAPI 与 SSE 将每轮红蓝对抗、JEV 判断、补丁 diff、门禁、复�
 | 演示材料 | 看点 |
 |---|---|
 | [四分钟完整演示](workspace/video/aegis-final-demo-20260929.mp4) | 保险安全需求 → 红蓝对抗 → JEV 判读 → 模型修补与复测 → RSI 经验回流 → Skills 调用 |
-| [44 秒真实 Skills 执行](workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4) | CLI 与实时大屏同屏，中文旁白，等待段标注 4× 加速 |
+| [44 秒真实 Skills 执行](workspace/video/skills-live/aegis-skills-real-execution-20260929.mp4) | CLI 与实时大屏同屏，中文旁白，等待段标注加速 |
 | [9 页项目 PPT](workspace/ppt-final/aegis-dgx-spark-judge-pitch-rsi-20260929.pptx) | 项目价值、RSI、架构、JEV、实测成果与技能复用 |
 | [Release 下载](https://github.com/okone1995/aegis-dgx-spark/releases) | 一次下载源码、演示材料和证据 |
 
@@ -101,14 +101,14 @@ Web 大屏和自修补 Skill 共用后台运行入口，`DemoCase` 按阶段推�
 | 4 | 蓝方生成修补 | 本地模型根据发现生成候选代码 diff | 原代码、候选代码、补丁哈希 |
 | 5 | 补丁门禁 | 检查改动范围、危险模式并进行异构复核 | 门禁结果与审查记录 |
 | 6 | 部署与双重复测 | 重放同一攻击，同时检查正常业务和功能测试 | 攻击结果、业务断言、测试结果 |
-| 7 | 恢复与归档 | 恢复实验环境，核验本轮工件 | 收据、事件台账、部署身份 |
+| 7 | 恢复与归档 | 恢复实验环境，核验同轮工件 | 收据、事件台账、部署身份 |
 | 8 | 经验与样本回流 | 审核 POC 入库，审核流量标签并导出学习材料 | 下轮可复用经验、判官训练材料 |
 
-RSI 在这里同时作用于**攻击策略、应用代码与判官学习材料**。历史对抗材料已经完成 JEV v3 的训练、评估与 Spark 部署；新一轮产生的经验和候选样本继续进入审核与学习流程。
+RSI 在这里同时作用于 <strong>攻击策略、应用代码与判官学习材料</strong>。历史对抗材料已经完成 JEV v3 的训练、评估与 Spark 部署；新一轮产生的经验和候选样本继续进入审核与学习流程。
 
 ## JEV：对抗系统中的小模型判官
 
-JEV 将真实请求与响应渲染成判读输入，通过受限首 token softmax 得到 `p_attack`，再输出攻击、正常或弃权。分类协议、训练数据、模型评估和部署元数据是打通的，方便比较模型版本、追溯每条判断。
+JEV 将真实请求与响应渲染成判读输入，通过受限首 token softmax 得到 `p_attack`，再输出攻击、正常或弃权。分类协议、训练数据、模型评估和部署元数据贯通，方便比较模型版本与追溯每条判断。
 
 ### 模型与训练
 
@@ -173,7 +173,7 @@ aegis-dgx-spark/
 │   └── aegis-jevtrain/
 ├── targets/                  # 目标 profile 与登记配置
 ├── governance/               # scope 与载荷策略
-├── harness/stepcode/         # 本地模型调用适配
+├── harness/stepcode/          # 本地模型调用适配
 ├── dataset/                  # 数据构建、材料快照与候选队列
 ├── bench/train/              # LoRA 训练与 logit 评估
 ├── tools/                    # 操作员工具、数据处理与验收
@@ -189,7 +189,7 @@ aegis-dgx-spark/
 
 ## 快速开始
 
-准备 **Python 3.10+**（推荐 3.12）和 Git。普通 CPU 环境即可运行公开离线验收、查看训练材料报告并启动前端与 API。
+准备 **Python 3.12** 和 Git。普通 CPU 环境即可运行公开离线验收、查看训练材料报告并启动前端与 API。
 
 ### 1. 获取项目并安装依赖
 
@@ -203,13 +203,13 @@ Linux / macOS：
 
 ```bash
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt
 ```
 
 Windows PowerShell：
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
 ```
 
 下面命令使用 `python`；Windows PowerShell 可将它替换为 `.\.venv\Scripts\python.exe`。
@@ -217,10 +217,12 @@ Windows PowerShell：
 ### 2. 运行公开验收
 
 ```bash
-python tools/verify_clean_export.py .
+python tools/doctor.py --offline
+python -m pytest -q -rs --import-mode=importlib tests skills/aegis-hunt/tests skills/aegis-self-repair/tests skills/aegis-jevtrain/tests skills/aegis-evolve/tests
+python bench/train/assert_claims.py --public
 ```
 
-验收同时检查交付文件哈希、演示媒体、运行证据和模型成绩，并运行核心离线测试与四个技能桥接测试。结果可与仓库中的 [VALIDATION.json](VALIDATION.json) 对照。
+开发环境先自检，再运行 CPU 回归与四个技能桥接测试；公开数值核对会列明需要私有原始证据的未检条目。当前代码的结果见 [开发验收记录](docs/development/regression-final.json)。[VALIDATION.json](VALIDATION.json) 是 r4 提交版的历史验收记录，不能代表这轮修改。
 
 ### 3. 查看学习材料与 Skill 接口
 
@@ -254,6 +256,8 @@ python -m uvicorn console.backend.main:app --host 127.0.0.1 --port 8000
 **接入新宿主智能体**：加载对应 `SKILL.md`，使用 CLI 和 JSON 契约调用 Aegis。`aegis-self-repair` 通过 `AEGIS_CONSOLE_ORIGIN` 接入后台；操作员准备并固定授权 scope，智能体据此执行任务。
 
 **扩展判官学习材料**：沿用“真实交换 → 标签审核 → 去重 → 家族切分 → 质量门禁 → 导出”的数据链，再调用 `bench/train/` 中的训练与评估工具。权重与实验环境按部署需求分别配置，便于研究者复用不同模型和目标。
+
+本轮开发改动与验收范围见 [开发说明](docs/DEVELOPMENT.md)和[硬化记录](docs/development/HARDENING.md)。
 
 ## 文档与开发历程
 

@@ -19,6 +19,7 @@ import pathlib
 import re
 import sys
 from typing import Dict, List, Optional, Tuple
+from engine.storage import JsonlStore, file_mutex
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 _DATASET = ROOT / "dataset"
@@ -185,47 +186,33 @@ def review_label(queue: LearningQueue, sample_id: str, traffic_intent: str,
     """
     if traffic_intent not in ("attack", "benign") or not reviewer.strip() or not note.strip():
         raise JevTrainError("explicit label, reviewer and evidence note required")
-    rows = queue.load()
-    row = next((r for r in rows if r.get("sample_id") == sample_id), None)
-    if row is None or row.get("review_state") == "rejected":
-        raise JevTrainError("sample missing or rejected")
-    before = row.get("intent_label")
-    row.setdefault("label_audit", []).append({"before": before, "after": traffic_intent,
-        "reviewer": reviewer, "evidence_note": scrub_v2(note), "reviewed_at": _utcnow()})
-    row.update(intent_label=traffic_intent, traffic_intent=traffic_intent,
-               pair_role=traffic_intent, label_review_state="human_reviewed")
-    verdict = (row.get("judge") or {}).get("verdict")
-    row["agreement"] = (verdict == traffic_intent) if verdict else None
-    if before != traffic_intent:
-        # A corrected label invalidates any old sample approval.
+    def change(row):
+        if row.get("review_state") == "rejected":
+            raise JevTrainError("sample rejected")
+        before = row.get("intent_label")
+        row.setdefault("label_audit", []).append({
+            "before": before, "after": traffic_intent, "reviewer": reviewer,
+            "evidence_note": scrub_v2(note), "reviewed_at": _utcnow()})
+        row.update(intent_label=traffic_intent, traffic_intent=traffic_intent,
+                   pair_role=traffic_intent, label_review_state="human_reviewed")
+        verdict = (row.get("judge") or {}).get("verdict")
+        row["agreement"] = (verdict == traffic_intent) if verdict in ("attack", "benign") else None
+        # Every reviewed revision invalidates a concurrently prepared approval.
+        row["label_revision"] = int(row.get("label_revision", 0)) + 1
         row["review_state"] = "pending"
-    tmp = queue.path.with_suffix(".label.tmp")
-    tmp.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
-    from engine.demo_contracts import atomic_replace
-    atomic_replace(tmp, queue.path)
-    return row
+    try:
+        return queue.mutate(sample_id, change)
+    except KeyError as exc:
+        raise JevTrainError("sample missing") from exc
 
 
-def stamp_reviewer(queue: LearningQueue, sample_id: str, reviewer: str,
-                   note: str = "") -> dict:
-    """在审核前把 reviewer/note/时间盖到样本上（learning_queue.approve 不接收审核人）。
-
-    为什么必须盖：导出产物的 provenance 要能回答"谁批的、何时批的"。
-    """
-    rows = queue.load()
-    hit = next((r for r in rows if r.get("sample_id") == sample_id), None)
-    if hit is None:
-        raise JevTrainError(f"unknown sample_id: {sample_id}")
-    hit["reviewer"] = reviewer
-    hit["review_note"] = note
-    hit["reviewed_at"] = _utcnow()
-    tmp = queue.path.with_suffix(".jsonl.tmp")
-    with tmp.open("w", encoding="utf-8") as f:
-        for r in rows:
-            f.write(json.dumps(r, ensure_ascii=False) + "\n")
-    from engine.demo_contracts import atomic_replace
-    atomic_replace(tmp, queue.path)
-    return hit
+def stamp_reviewer(queue: LearningQueue, sample_id: str, reviewer: str, note: str = "") -> dict:
+    """Compatibility metadata operation. New admission callers approve atomically."""
+    if not reviewer.strip():
+        raise JevTrainError("reviewer required")
+    def change(hit):
+        hit.update(reviewer=reviewer, review_note=note, reviewed_at=_utcnow())
+    return queue.mutate(sample_id, change)
 
 
 def collect_from_flows_jsonl(path: pathlib.Path, queue: LearningQueue,
@@ -395,31 +382,54 @@ def collect_from_hunt(result_path: pathlib.Path, queue: LearningQueue,
 
 def report(queue: LearningQueue) -> dict:
     rows = queue.load()
-    by_truth: Dict[str, int] = {}
-    agree = disagree = nojudge = 0
-    fp, fn = [], []
-    for r in rows:
-        by_truth[r.get("intent_label")] = by_truth.get(r.get("intent_label"), 0) + 1
-        j = (r.get("judge") or {}).get("verdict")
-        if j is None:
+    by_truth = {}
+    verified = {"agree": 0, "disagree": 0}
+    fp, fn, suspected = [], [], []
+    abstain = nojudge = unreviewed = rejected = 0
+    references = {}
+    for row in rows:
+        sid = row.get("sample_id")
+        label = row.get("intent_label")
+        by_truth[label] = by_truth.get(label, 0) + 1
+        if row.get("review_state") == "rejected":
+            rejected += 1
+            continue
+        verdict = (row.get("judge") or {}).get("verdict")
+        if verdict == "abstain":
+            abstain += 1
+            continue
+        if verdict not in ("attack", "benign"):
             nojudge += 1
-        elif r.get("agreement"):
-            agree += 1
+            continue
+        trusted = label in ("attack", "benign") and row.get("label_review_state") in ("auto_ok", "human_reviewed")
+        references[sid] = {
+            "input_hash": row.get("input_hash"), "run_id": row.get("run_id") or row.get("run"),
+            "model_version": (row.get("judge") or {}).get("model_version"),
+            "label_revision": row.get("label_revision", 0),
+            "label_review_state": row.get("label_review_state"),
+            "evidence_refs": row.get("evidence_refs", [])}
+        if not trusted:
+            unreviewed += 1
+            if label in ("attack", "benign") and verdict != label:
+                suspected.append(sid)
+            continue
+        if verdict == label:
+            verified["agree"] += 1
         else:
-            disagree += 1
-            if j == "attack" and r.get("intent_label") == "benign":
-                fp.append(r.get("sample_id"))       # 判官误报
-            elif j == "benign" and r.get("intent_label") == "attack":
-                fn.append(r.get("sample_id"))       # 判官漏报
+            verified["disagree"] += 1
+            (fp if verdict == "attack" else fn).append(sid)
     return {
-        "total": len(rows),
-        "review": {"pending": sum(1 for r in rows if r.get("review_state") == "pending"),
-                   "approved": sum(1 for r in rows if r.get("review_state") == "approved"),
-                   "rejected": sum(1 for r in rows if r.get("review_state") == "rejected")},
+        "schema_version": 2, "total": len(rows),
+        "review": {s: sum(r.get("review_state") == s for r in rows)
+                   for s in ("pending", "approved", "rejected")},
         "by_truth": by_truth,
-        "judge_agreement": {"agree": agree, "disagree": disagree, "no_judge": nojudge},
+        "judge_agreement": {**verified, "no_judge": nojudge, "abstain": abstain,
+                            "unreviewed": unreviewed, "excluded_rejected": rejected},
         "false_positives": fp[:20], "false_negatives": fn[:20],
-        "note": "队列 ≠ 已训练；只有 approved 才会进入导出",
+        "verified_false_positive_count": len(fp), "verified_false_negative_count": len(fn),
+        "suspected_disagreements": suspected[:20], "suspected_disagreement_count": len(suspected),
+        "sample_references": references,
+        "note": "FP/FN only use confirmed labels; abstentions and pending labels are separate. Queue is not training."
     }
 
 
@@ -457,7 +467,14 @@ def _split_for(family: str, sample_id: str) -> str:
 
 def export(queue: LearningQueue, version: str, out_root: Optional[pathlib.Path] = None,
            with_response: bool = True) -> dict:
-    """把 **approved** 样本导出为可训练版本草案。"""
+    """Export one consistent queue snapshot, including its provenance and diagnostics."""
+    root = pathlib.Path(out_root or (ROOT / "dataset" / f"judge_{version}")).resolve()
+    with file_mutex(JsonlStore(queue.path).lock_path):
+        with file_mutex(root.parent / f".{root.name}.export.lock"):
+            return _export_locked(queue, version, root, with_response)
+
+
+def _export_locked(queue, version, out_root, with_response):
     import build_judge as BJ
     root = pathlib.Path(out_root or (ROOT / "dataset" / f"judge_{version}"))
     rows = [r for r in queue.load() if r.get("review_state") == "approved"]

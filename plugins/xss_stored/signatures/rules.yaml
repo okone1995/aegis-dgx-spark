@@ -1,0 +1,7 @@
+rules:
+  - id: XS-001
+    class: xss_stored
+    # 双形态：URL 编码体（%3Cscript…）与解码体（<script…）——SQ-002 同款教训
+    pattern: "(%3C|<)(script|img|svg|body)|(%3C|<)(script|img|svg|body)[^>]*(onerror|onload|%3E|>)"
+    where: request_body
+    confidence: 0.9

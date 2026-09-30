@@ -72,7 +72,7 @@ class _Meta:
 
     __slots__ = tuple(_UPDATABLE_FIELDS | {
         "schema_version", "run_id", "case_id", "created_at", "last_seq",
-        "owner_generation", "client_request_id"})
+        "owner_generation", "client_request_id", "request_fingerprint", "request_options"})
 
     def __init__(self, **kw: Any) -> None:
         for k in self.__slots__:
@@ -175,6 +175,8 @@ class RunStore:
                 cleanup="pending",
                 owner_generation=1,
                 client_request_id=client_request_id,
+                request_fingerprint=options.get("request_fingerprint"),
+                request_options=options.get("request_options"),
             )
             _atomic_write_json(d / "run.json", meta.to_dict())
             return meta
@@ -210,7 +212,7 @@ class RunStore:
                 out.append(_Meta.from_dict(data))
             except Exception:  # noqa: BLE001 —— 坏行跳过契约
                 continue
-            if len(out) >= limit:
+            if limit is not None and len(out) >= limit:
                 break
         # 排序:created_at 倒序。**同毫秒创建的 tie 必须确定性**——否则
         # 同秒内两次 create 的顺序在快文件系统(Spark)上不稳定(T7 实测:
@@ -228,7 +230,7 @@ class RunStore:
         """幂等键查重(POST /api/demo/runs client_request_id)。"""
         if not client_request_id:
             return None
-        for m in self.list_runs(limit=1000):
+        for m in self.list_runs(limit=None):
             if m.client_request_id == client_request_id:
                 return m
         return None

@@ -1,0 +1,16 @@
+class: sqli
+display_name: "SQL 注入（货运查询，字符串拼接）——MiniLedger"
+severity: high
+cve_patterns: ["等值查询字符串拼接注入类（通用模式）"]
+endpoint: "GET /shipments"
+detector:
+  type: response_marker
+  # 只认"本该被掩码/从不渲染"的机密前缀：良性的任何页面都不会出现 mlk_
+  markers: ["mlk_"]
+  marker_rule: "marker 不得出现在 payload 文本中（防关键字回显信道的自命中误报）"
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../targets/miniledger/tests/test_functional.py
+notes: "SQLite 方言；5 列表（id, ref, carrier, status, eta）；参数名 {{CARRIER_PARAM}}"

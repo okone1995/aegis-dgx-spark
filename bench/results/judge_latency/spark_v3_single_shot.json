@@ -1,0 +1,28 @@
+{
+  "baseline_classification": {
+    "status": "historical_baseline_only",
+    "source": "original aegis repository: bench/results/judge_latency/spark_v3_single_shot.json",
+    "source_run_at": "2026-09-25T16:39:42+0000",
+    "measured_in_aegis_next": false,
+    "weights_included": false,
+    "note": "Aggregate latency and agreement values only; sample rows and host model paths omitted."
+  },
+  "device": "NVIDIA GB10",
+  "model": {
+    "adapter": "judge_v3_adapter",
+    "dtype": "bf16",
+    "merged": true
+  },
+  "single_shot_ms": {
+    "mean": 82.2,
+    "median": 80.8,
+    "p95": 118.5
+  },
+  "throughput_1by1_per_second": 12.17,
+  "agreement_with_5090": {
+    "verdict_flips": 0,
+    "max_abs_drift": 0.000107,
+    "n_joined": 60
+  },
+  "samples": 60
+}

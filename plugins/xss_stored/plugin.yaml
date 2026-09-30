@@ -1,0 +1,14 @@
+class: xss_stored
+display_name: "存储型 XSS（签名存储与回显不转义）"
+severity: medium
+cve_patterns: ["用户资料/评论区存储型 XSS（UGC 字段 CVE 通用模式）"]
+endpoint: "POST /profile"
+detector:
+  type: response_marker
+  markers: ["<script>", "<img", "<svg", "<body"]   # marker=被转义必然消灭的标签结构——属性文本(onerror=)转义后存活会造成假命中（D5实战教训×2）
+payloads:
+  attack: payloads/attack/
+  verify: payloads/verify/
+patch_template: patch-template/fix.patch.tpl
+functional_tests: ../../target/edu-lite/tests/test_functional.py
+notes: "判定面=存储接口的 JSON 原样回显与 /profile 页渲染（两处都不转义）。注意：marker '<body' 的安全性依赖判定面为 JSON/该页——若页面模板自身含 <body> 标签会全量假命中，勿改判定面（D5 评审记录项）"

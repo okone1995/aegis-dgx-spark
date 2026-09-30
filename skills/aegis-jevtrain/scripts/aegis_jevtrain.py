@@ -143,8 +143,8 @@ def cmd_approve(a) -> int:
                          ensure_ascii=False, sort_keys=True))
         return 2
     try:
-        JT.stamp_reviewer(q, a.id, a.reviewer, note=a.note or "")
-        q.approve(a.id)
+        q.approve(a.id, reviewer=a.reviewer, note=a.note or "",
+                  expected_label_revision=int(row.get("label_revision", 0)))
     except Exception as exc:  # noqa: BLE001
         print(json.dumps({"status": "error", "code": "approve_refused",
                           "detail": str(exc)[:200]}, ensure_ascii=False))

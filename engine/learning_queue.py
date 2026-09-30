@@ -16,6 +16,7 @@ import pathlib
 import re
 import sys
 from typing import Dict, List, Optional
+from engine.storage import JsonlStore
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 _DATASET = ROOT / "dataset"
@@ -179,7 +180,7 @@ def lookup_split(family: str) -> Optional[str]:
 
 
 class LearningQueue:
-    """单写者 JSONL 候选队列(只追加;审核状态原地重写同一行文件)。"""
+    """跨进程事务 JSONL 队列；标签修订使旧审批失效。"""
 
     def __init__(self, queue_path: pathlib.Path):
         self.path = pathlib.Path(queue_path)
@@ -187,19 +188,16 @@ class LearningQueue:
 
     # ---------- 读 ----------
     def load(self) -> List[dict]:
-        if not self.path.is_file():
-            return []
-        rows = []
-        with self.path.open(encoding="utf-8-sig") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rows.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue  # 坏行跳过,不当成功样本
-        return rows
+        return JsonlStore(self.path).load()
+
+    def mutate(self, sample_id, callback):
+        def change(rows):
+            hit = next((r for r in rows if r.get("sample_id") == sample_id), None)
+            if hit is None:
+                raise KeyError(f"unknown sample_id: {sample_id}")
+            callback(hit)
+            return hit
+        return JsonlStore(self.path).update(change)
 
     def stats(self) -> dict:
         rows = self.load()
@@ -226,40 +224,42 @@ class LearningQueue:
         if not sample.get("sample_id"):
             sample["sample_id"] = ih[:12] + "-" + BJ.h(
                 f"{sample.get('intent_label', '')}|{sample.get('input_mode', '')}")[:6]
-        for existing in self.load():
-            if (existing.get("input_hash") == ih
-                    and existing.get("intent_label") == sample.get("intent_label")
-                    and existing.get("input_mode") == sample.get("input_mode")):
-                return {"duplicate": True, "existing": existing}
-        with self.path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(sample, ensure_ascii=False) + "\n")
-        return {"duplicate": False, "sample": sample}
+        def change(rows):
+            for existing in rows:
+                if (existing.get("input_hash") == ih
+                        and existing.get("intent_label") == sample.get("intent_label")
+                        and existing.get("input_mode") == sample.get("input_mode")):
+                    return {"duplicate": True, "existing": existing}
+            sample.setdefault("label_revision", 0)
+            rows.append(sample)
+            return {"duplicate": False, "sample": sample}
+        return JsonlStore(self.path).update(change)
 
-    def _set_state(self, sample_id: str, state: str) -> dict:
-        rows = self.load()
-        hit = None
-        for r in rows:
-            if r.get("sample_id") == sample_id:
-                hit = r
-                break
-        if hit is None:
-            raise KeyError(f"unknown sample_id: {sample_id}")
-        if hit.get("review_state") != "pending":
-            raise ValueError(
-                f"sample {sample_id} already {hit.get('review_state')} — 审核状态单向")
-        hit["review_state"] = state
-        tmp = self.path.with_suffix(".jsonl.tmp")
-        with tmp.open("w", encoding="utf-8") as f:
-            for r in rows:
-                f.write(json.dumps(r, ensure_ascii=False) + "\n")
-        from engine.demo_contracts import atomic_replace
-        atomic_replace(tmp, self.path)
-        return hit
+    def _set_state(self, sample_id, state, *, expected_label_revision=None,
+                   reviewer=None, note=""):
+        def change(hit):
+            revision = int(hit.get("label_revision", 0))
+            expected = 0 if expected_label_revision is None else expected_label_revision
+            if state == "approved" and revision != expected:
+                raise ValueError("label revision changed; review the current label before approval")
+            if hit.get("review_state") != "pending":
+                raise ValueError(f"sample {sample_id} already {hit.get('review_state')}")
+            hit["review_state"] = state
+            if reviewer is not None:
+                if not reviewer.strip():
+                    raise ValueError("reviewer must not be empty")
+                hit.update(reviewer=reviewer, review_note=note, reviewed_at=_utcnow())
+            hit.setdefault("admission_audit", []).append(
+                {"state": state, "label_revision": revision,
+                 "reviewer": reviewer or hit.get("reviewer"), "at": _utcnow()})
+        return self.mutate(sample_id, change)
 
-    def approve(self, sample_id: str) -> dict:
-        return self._set_state(sample_id, "approved")
+    def approve(self, sample_id, *, expected_label_revision=None, reviewer=None, note=""):
+        return self._set_state(sample_id, "approved",
+                               expected_label_revision=expected_label_revision,
+                               reviewer=reviewer, note=note)
 
-    def reject(self, sample_id: str) -> dict:
+    def reject(self, sample_id):
         return self._set_state(sample_id, "rejected")
 
 
