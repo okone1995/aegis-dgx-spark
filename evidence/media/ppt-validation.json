@@ -186,5 +186,27 @@
     "sourceChartOwnersExplicitlyDeclared": true,
     "validatorRan": false,
     "passed": true
+  },
+  "supersededByRevision": {
+    "date": "2026-09-30",
+    "actor": "owner",
+    "reason": "owner-revised deck content; package structure unchanged",
+    "previousSha256": "e796c8b16d8c9cf5b6109cd520859f6c3c1c9c51cd36401a431c8bf3a4250c96",
+    "newSha256": "dcb0c88fc94d47c5bf36262c69ec813e0b3654dce48763b9f6d24fca1c8dcc52",
+    "newByteCount": 777501,
+    "structuralRecheck": {
+      "method": "zip-level inspection of the revised file (stdlib zipfile)",
+      "zip_container_valid": true,
+      "slide_count": 9,
+      "notes_parts": 9,
+      "relationship_part_count": 23,
+      "slide_size_emu": "12192000,6858000",
+      "observed_font_families": [
+        "Microsoft YaHei"
+      ],
+      "text_runs": 206
+    },
+    "revalidated": false,
+    "note": "Sections above are the original build validation of the pre-revision deck and were not re-run."
   }
 }
